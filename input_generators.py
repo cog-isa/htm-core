@@ -124,6 +124,54 @@ class HardSteps:
         self.moves.append([1,1])
         self.moves.append([0,2])
         self.moves.append([0,1])
+        print("moves: ", len(self.moves))
+        # self.moves.append([0,0])
+        self.size = len(self.moves)
+
+    def move(self):
+        x, y = self.moves[self.current_step]
+        self.a[x][y] = 0
+        self.current_step = (self.current_step + 1) % self.size
+        x, y = self.moves[self.current_step]
+        self.a[x][y] = 1
+
+
+    def out(self):
+        for i in self.a:
+            print(i)
+        print()
+
+    def get_data(self):
+        return self.a
+
+
+
+class HardStepsLen2:
+    def __init__(self, square_size):
+        self.square_size = square_size
+        self.a = [[0 for __ in range(square_size)] for _ in range(square_size)]
+        self.current_step = 0
+        self.state = "MOVE_FORWARD"
+        self.a[self.current_step][self.current_step] = 1
+
+        self.moves = []
+        self.moves.append([0, 0])
+        self.moves.append([2, 2])
+        self.moves.append([4, 4])
+        self.moves.append([2, 2])
+        self.moves.append([0, 0])
+        self.moves.append([0, 1])
+        self.moves.append([0, 2])
+        self.moves.append([0, 3])
+        self.moves.append([0, 4])
+        self.moves.append([2,2])
+        self.moves.append([4,0])
+        self.moves.append([2,2])
+        self.moves.append([0,4])
+        self.moves.append([0, 3])
+        self.moves.append([0,2])
+        self.moves.append([0, 1])
+        print("moves: ", len(self.moves))
         # self.moves.append([0,0])
         self.size = len(self.moves)
 

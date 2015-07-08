@@ -14,6 +14,8 @@ class Region:
         cnt = 0
         self.ptr_to_cell = {}
         self.ok_times = 0
+        self.ok = 0
+        self.max_ok_times = 0
         for i in self.columns:
             for j in i:
                 for k in j.cells:
@@ -35,6 +37,7 @@ class Region:
     def step_forward(self, a):
         self.a = a
         active_cells = self.get_active_cells()
+        self.ok = 0
         for i in range(self.region_size):
             for j in range(self.region_size):
                 skill = False
@@ -49,21 +52,24 @@ class Region:
                         active_den.active = False
 
                     if cell.state == PREDICTION and a[i][j]:
-                        print('GOOD_JOB')
+                        # TODO Корректировать вес только синапсов активных клеток
                         self.ok_times += 1
+
                         self.ok = 1
                         # Увеличим силу дендрита
                         cell.update_new_state(ACTIVE)
 
                         skill = True
                         for syn in active_den.synapses:
-                            syn.permanence += 0.01
+                            syn.change_permanence(0.01)
+                            # syn.permanence += 0.01
 
 
                     if cell.state == PREDICTION and not a[i][j]:
-
+                        self.ok = 0
                         for syn in active_den.synapses:
-                            syn.permanence -= 0.05
+                            syn.change_permanence(-0.05)
+                            # syn.permanence -= 0.05
                         # Уменьшим силу дендрита
                         pass
 
@@ -93,6 +99,12 @@ class Region:
 
 
         we_make_prediction = False
+
+        if not self.ok:
+            self.ok_times = 0
+        else:
+             print('GOOD_JOB')
+        self.max_ok_times = max(self.max_ok_times, self.ok_times)
 
         for i in range(self.region_size):
             for j in range(self.region_size):
@@ -142,6 +154,7 @@ class Region:
                     if cell.passive_time == 0:
                         res[i][j] += "A" + str(cnt)
         print("Правильно предсказано раз: ", self.ok_times)
+        print("Максимально правильно предсказано раз: ", self.max_ok_times)
         for i in res:
             print(i)
         print()
