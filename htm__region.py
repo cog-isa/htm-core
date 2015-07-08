@@ -13,6 +13,7 @@ class Region:
         self.initial_permanence = 0.5
         cnt = 0
         self.ptr_to_cell = {}
+        self.ok_times = 0
         for i in self.columns:
             for j in i:
                 for k in j.cells:
@@ -26,7 +27,7 @@ class Region:
             for j in range(self.region_size):
                 for I in self.columns[i][j].cells:
                     if I.state_mem:
-                        # print(i, j, I.state_mem)
+
                         if I.state == ACTIVE:
                             res.append(I)
         return res
@@ -43,21 +44,24 @@ class Region:
                     for den in cell.dendrites:
                         if den.active:
                             active_den = den
-                            print("ok")
+
                     if active_den:
                         active_den.active = False
 
                     if cell.state == PREDICTION and a[i][j]:
+                        print('GOOD_JOB')
+                        self.ok_times += 1
+                        self.ok = 1
                         # Увеличим силу дендрита
                         cell.update_new_state(ACTIVE)
-                        print("Скиллуха поперла")
+
                         skill = True
                         for syn in active_den.synapses:
                             syn.permanence += 0.01
 
 
                     if cell.state == PREDICTION and not a[i][j]:
-                        print("Чет не прет")
+
                         for syn in active_den.synapses:
                             syn.permanence -= 0.05
                         # Уменьшим силу дендрита
@@ -66,12 +70,12 @@ class Region:
 
                 if skill:
                     continue
+
+
                 # если активация этой колонки не была предсказана
                 if a[i][j]:
-
-                    for cell in self.columns[i][j].cells:
-
-                        print(i, j, cell.passive_time)
+                    for I in self.columns[i][j].cells:
+                        I.update_new_state(ACTIVE)
                     # выберем клетку с максимальным временем простоя, назначим ее активной,
                     # присоединим к клетке дендрит из активных на прошлом шаге клеток
                     ptr = 0
@@ -79,15 +83,13 @@ class Region:
                         if self.columns[i][j].cells[ptr].passive_time < self.columns[i][j].cells[I].passive_time:
                             ptr = I
                     new_dendrite = Dendrite()
-                    print(active_cells)
+
                     for k in active_cells:
                         new_dendrite.add_synapse(Synapse(k.id, self.initial_permanence))
 
                     self.columns[i][j].cells[ptr].dendrites.append(new_dendrite)
-                    self.columns[i][j].cells[ptr].update_new_state(ACTIVE)
 
-                    print("active_on_next:", i, j)
-                    print("active_cell_id ", self.columns[i][j].cells[ptr].id)
+
 
 
         we_make_prediction = False
@@ -119,9 +121,8 @@ class Region:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
                     we_make_prediction = True
-                    print(":::", i, j)
-        if not we_make_prediction:
-            print("йо-хо-хо мы ничего не предсказали, зато на следующем шаге создадим новую связь")
+
+
         for i in range(self.region_size):
             for j in range(self.region_size):
                 for I in self.columns[i][j].cells:
@@ -133,11 +134,14 @@ class Region:
             for j in range(self.region_size):
                 # if self.a[i][j]:
                 #     res[i][j] += 'A'
+                cnt = 0
                 for cell in self.columns[i][j].cells:
+                    cnt += 1
                     if cell.state == PREDICTION:
-                        res[i][j] += "P"
+                        res[i][j] += "P" + str(cnt)
                     if cell.passive_time == 0:
-                        res[i][j] += "D"
+                        res[i][j] += "A" + str(cnt)
+        print("Правильно предсказано раз: ", self.ok_times)
         for i in res:
             print(i)
         print()
