@@ -7,7 +7,7 @@ from settings import *
 class Region:
     def __init__(self, region_size, column_size):
         self.region_size = region_size
-        self.columns = [[Column(column_size) for jj in range(region_size)] for ii in range(region_size)]
+        self.columns = [[Column(column_size) for _ in range(region_size)] for _ in range(region_size)]
         cnt = 0
         self.ptr_to_cell = {}
         self.ok_times = 0
@@ -146,7 +146,7 @@ class Region:
 
     def out_prediction(self):
         # отображение информации
-        res = [["" for _ in range(self.region_size)] for __ in range(self.region_size)]
+        res = [["" for _ in range(self.region_size)] for _ in range(self.region_size)]
         for i in range(self.region_size):
             for j in range(self.region_size):
                 cnt = 0

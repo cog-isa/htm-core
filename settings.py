@@ -1,4 +1,4 @@
-from input_generators import TestSimpleSteps, TooTestSimpleSteps, Too2TestSimpleSteps, HardSteps, HardStepsLen2, Cross
+from input_generators import *
 
 REGION_SIZE_N = 5
 COLUMN_SIZE = 3

@@ -1,7 +1,7 @@
 class TestSimpleSteps:
     def __init__(self, square_size):
         self.square_size = square_size
-        self.a = [[0 for __ in range(square_size)] for _ in range(square_size)]
+        self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.current_step = 0
         self.state = "MOVE_FORWARD"
         self.a[self.current_step][self.current_step] = 1
@@ -34,7 +34,7 @@ class TestSimpleSteps:
 class TooTestSimpleSteps:
     def __init__(self, square_size):
         self.square_size = square_size
-        self.a = [[0 for __ in range(square_size)] for _ in range(square_size)]
+        self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.current_step = 0
         self.state = "MOVE_FORWARD"
         self.a[self.current_step][self.current_step] = 1
@@ -67,7 +67,7 @@ class TooTestSimpleSteps:
 class Too2TestSimpleSteps:
     def __init__(self, square_size):
         self.square_size = square_size
-        self.a = [[0 for __ in range(square_size)] for _ in range(square_size)]
+        self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.current_step = 0
         self.state = "MOVE_FORWARD"
         self.a[self.current_step][self.current_step] = 1
@@ -103,7 +103,7 @@ class Too2TestSimpleSteps:
 class HardSteps:
     def __init__(self, square_size):
         self.square_size = square_size
-        self.a = [[0 for __ in range(square_size)] for _ in range(square_size)]
+        self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.current_step = 0
         self.state = "MOVE_FORWARD"
         self.a[self.current_step][self.current_step] = 1
@@ -130,7 +130,6 @@ class HardSteps:
         x, y = self.moves[self.current_step]
         self.a[x][y] = 1
 
-
     def out(self):
         for i in self.a:
             print(i)
@@ -143,7 +142,7 @@ class HardSteps:
 class HardStepsLen2:
     def __init__(self, square_size):
         self.square_size = square_size
-        self.a = [[0 for __ in range(square_size)] for _ in range(square_size)]
+        self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.current_step = 0
         self.state = "MOVE_FORWARD"
         self.a[self.current_step][self.current_step] = 1
@@ -184,20 +183,11 @@ class HardStepsLen2:
     def get_data(self):
         return self.a
 
-        """
-            TODO добавить тест
-            00100
-            00100
-            11111
-            00100
-            00100
-        """
-
 
 class Cross:
     def __init__(self, square_size):
         self.square_size = square_size
-        self.a = [[0 for __ in range(square_size)] for _ in range(square_size)]
+        self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.center_x = self.x = (square_size - 1) // 2
         self.center_y = self.y = (square_size - 1) // 2
         self.kx = [1, -1, 0, 0]
@@ -230,7 +220,6 @@ class Cross:
             self.direction = 0
             self.a[self.x][self.y] = 1
             self.move()
-
 
     def out(self):
         for i in self.a:

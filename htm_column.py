@@ -1,5 +1,5 @@
 from htm_cell import Cell
-from util import PASSIVE, PREDICTION, ACTIVE
+from util import *
 
 
 class Column:

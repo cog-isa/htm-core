@@ -11,16 +11,3 @@ for i in range(STEPS_NUMBER):
     r.step_forward(generator.get_data())
     r.out_prediction()
     generator.move()
-
-
-
-
-
-
-
-
-
-
-
-
-
