@@ -1,0 +1,14 @@
+from input_generators import TestSimpleSteps, TooTestSimpleSteps, Too2TestSimpleSteps, HardSteps, HardStepsLen2, Cross
+
+REGION_SIZE_N = 5
+COLUMN_SIZE = 3
+
+STEPS_NUMBER = 300
+
+GENERATOR = Cross
+
+INITIAL_PERMANENCE = 0.5
+DENDRITE_PERMANENCE_INC_DELTA = 0.01
+DENDRITE_PERMANENCE_DEC_DELTA = -0.07
+
+SYNAPSE_THRESHOLD = 0.25

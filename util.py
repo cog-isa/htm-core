@@ -1,4 +1,4 @@
 # constants
-PASSIVE = "Passive"
-ACTIVE = "Active"
-PREDICTION = "Prediction"
+PASSIVE = 1
+ACTIVE = 2
+PREDICTION = 3
