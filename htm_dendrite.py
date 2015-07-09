@@ -16,3 +16,12 @@ class Dendrite:
 
     def get_synapses(self):
         return self.synapses
+
+    def equal(self, other):
+        a = set()
+        b = set()
+        for i in self.synapses:
+            a.add(i.id_to)
+        for i in other.synapses:
+            b.add(i.id_to)
+        return len(a ^ b) == 0

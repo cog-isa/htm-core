@@ -2,6 +2,7 @@ from htm_column import Column
 from htm_dendrite import Dendrite
 from util import ACTIVE, PREDICTION, PASSIVE
 from settings import *
+from random import randrange
 
 
 class Region:
@@ -84,27 +85,68 @@ class Region:
                         for syn in active_den.synapses:
                             if syn.id_to in [a_cell.id for a_cell in active_cells]:
                                 syn.change_permanence(DENDRITE_PERMANENCE_DEC_DELTA)
-                                # syn.dec_permanence()
-                                # syn.change_permanence(-0.07)
-                                # syn.permanence -= 0.05
-                        # Уменьшим силу дендрита
-                        pass
+                                # ОЧЕНЬ ВАЖНЫЙ МОМЕНт
+                                # нам нужно понять,что активность какой-то клетки привела к неправильному предсказанию
+                                # такую клетку стоит заменить в колонке
+                                # если клетка активность клетки часто приводит к неправильным предсказаниям
+                                # увеличим порог ошибки этой клетки,для последующего перестроения структуры связей
+                                self.ptr_to_cell[syn.id_to].passive_time = -100
+                                self.ptr_to_cell[syn.id_to].error_impulse += 1
 
-                if not self.check_column_state(current_column, a[i][j]) and a[i][j]:
+                hard_learning = False
+                if a[i][j]:
+                    for cell in current_column.cells:
+                        if cell.error_impulse > ERROR_IMPULSE_THRESHOLD:
+                            cell.error_impulse = 0
+                            hard_learning = True
+                            break
+                if hard_learning:
+                    print('hard_learning')
+                # hard_learning = False
+                if a[i][j] and (not self.check_column_state(current_column, a[i][j])) or hard_learning:
+
                     # если активация этой колонки не была предсказана
 
-                    for I in current_column.cells:
-                        I.update_new_state(ACTIVE)
-                    # выберем клетку с максимальным временем простоя, назначим ее активной,
-                    # присоединим к клетке дендрит из активных на прошлом шаге клеток
-                    new_active_cell = current_column.cells[0]
+                    cnt = 0
+                    for cell in current_column.cells:
+                        print("A%d " % cnt, cell.passive_time)
+                        cnt += 1
 
+                    new_active_cell = current_column.cells[0]
+                    # [randrange(0, len(current_column.cells))]
+                    print('A1 passive time: ', current_column.cells[0].passive_time)
+                    cnt = 0
                     for cell in current_column.cells:
                         if new_active_cell.passive_time < cell.passive_time:
                             new_active_cell = cell
+                            print('active_cnt :', cnt, new_active_cell.passive_time)
+                        cnt += 1
+                    new_dendrite = Dendrite(active_cells)
+                    for den in new_active_cell.dendrites:
+                        if den.equal(new_dendrite):
+                            new_dendrite = None
+                            for syn in den.synapses:
+                                syn.change_permanence(DENDRITE_PERMANENCE_INC_DELTA)
+                            break
 
+                    # for den in new_active_cell.dendrites:
+
+                    # присоединим к клетке дендрит из активных на прошлом шаге клеток
+                    # но прежде проверим может такой дендрит уже существует, тогда просто увеличим силу его синапсов
                     # добавляем дендрит, подключенный к активным клеткам
-                    new_active_cell.dendrites.append(Dendrite(active_cells))
+                    # new_active_cell.update_new_state(ACTIVE)
+
+                    if new_dendrite:
+                        new_active_cell.dendrites.append(new_dendrite)
+
+
+                    # ВАЖНО
+                    if hard_learning:
+                        new_active_cell.update_new_state(ACTIVE)
+                    else:
+                        for I in current_column.cells:
+                            I.update_new_state(ACTIVE)
+                    # выберем клетку с максимальным временем простоя, назначим ее активной,
 
         # делаем предсказание
         for i in range(self.region_size):
@@ -132,17 +174,22 @@ class Region:
 
         # проверяем предыдущее предсказание
         if self.prediction_was_ok(a):
+
             self.very_ok_times += 1
             self.max_ok_times = max(self.max_ok_times, self.very_ok_times)
             print('Предсказание было правильным.')
         else:
             self.very_ok_times = 0
 
+        # досрочный выход если научились
+        if self.max_ok_times > 50:
+            exit(0)
+
         # применяем новое состояние клеток
         for i in range(self.region_size):
             for j in range(self.region_size):
-                for I in self.columns[i][j].cells:
-                    I.apply_new_state()
+                for cell in self.columns[i][j].cells:
+                    cell.apply_new_state()
 
     def out_prediction(self):
         # отображение информации
