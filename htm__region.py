@@ -59,6 +59,8 @@ class Region:
             for j in range(self.region_size):
                 current_column = self.columns[i][j]
 
+                ololo = False
+
                 for cell in current_column.cells:
                     active_den = None
                     for den in cell.dendrites:
@@ -79,6 +81,8 @@ class Region:
                             if syn.id_to in [a_cell.id for a_cell in active_cells]:
                                 syn.change_permanence(DENDRITE_PERMANENCE_INC_DELTA)
 
+                        ololo = True
+
                     if cell.state == PREDICTION and not a[i][j]:
                         # Предсказание активности данной клетки было выполнено неправильно
 
@@ -98,7 +102,7 @@ class Region:
                     for cell in current_column.cells:
                         if cell.error_impulse > ERROR_IMPULSE_THRESHOLD:
                             cell.error_impulse = 0
-                            hard_learning = True
+                            #hard_learning = True
                             break
                 if hard_learning:
                     print('hard_learning')
@@ -146,7 +150,21 @@ class Region:
                     else:
                         for I in current_column.cells:
                             I.update_new_state(ACTIVE)
+
                     # выберем клетку с максимальным временем простоя, назначим ее активной,
+                if ololo:
+                    for cell1 in current_column.cells:
+                        if cell1.passive_time > 10:
+                            for cell in current_column.cells:
+                                cell.new_state = PASSIVE
+
+                            new_active_cell = current_column.cells[0]
+
+                            for cell in current_column.cells:
+                                if new_active_cell.passive_time < cell.passive_time:
+                                    new_active_cell = cell
+                            new_active_cell.update_new_state(ACTIVE)
+                            break;
 
         # делаем предсказание
         for i in range(self.region_size):
