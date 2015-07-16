@@ -82,6 +82,7 @@ class Region:
                                 syn.change_permanence(DENDRITE_PERMANENCE_INC_DELTA)
 
                         ololo = True
+                        print('OLOLOLOLO')
 
                     if cell.state == PREDICTION and not a[i][j]:
                         # Предсказание активности данной клетки было выполнено неправильно
