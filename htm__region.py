@@ -97,28 +97,20 @@ class Region:
                                 self.ptr_to_cell[syn.id_to].passive_time = -100
                                 self.ptr_to_cell[syn.id_to].error_impulse += 1
 
-                hard_learning = False
-                if a[i][j]:
-                    for cell in current_column.cells:
-                        if cell.error_impulse > ERROR_IMPULSE_THRESHOLD:
-                            cell.error_impulse = 0
-                            #hard_learning = True
-                            break
-                if hard_learning:
-                    print('hard_learning')
+
                 # hard_learning = False
-                if a[i][j] and (not self.check_column_state(current_column, a[i][j])) or hard_learning:
+                if a[i][j] and (not self.check_column_state(current_column, a[i][j])):
 
                     # если активация этой колонки не была предсказана
 
-                    cnt = 0
-                    for cell in current_column.cells:
-                        print("A%d " % cnt, cell.passive_time)
-                        cnt += 1
+                    # cnt = 0
+                    # for cell in current_column.cells:
+                    #     print("A%d " % cnt, cell.passive_time)
+                    #     cnt += 1
 
                     new_active_cell = current_column.cells[0]
                     # [randrange(0, len(current_column.cells))]
-                    print('A1 passive time: ', current_column.cells[0].passive_time)
+                    # print('A1 passive time: ', current_column.cells[0].passive_time)
                     cnt = 0
                     for cell in current_column.cells:
                         if new_active_cell.passive_time < cell.passive_time:
@@ -145,16 +137,15 @@ class Region:
 
 
                     # ВАЖНО
-                    if hard_learning:
-                        new_active_cell.update_new_state(ACTIVE)
-                    else:
-                        for I in current_column.cells:
+
+                    for I in current_column.cells:
+                        if randrange(3) == 2:
                             I.update_new_state(ACTIVE)
 
                     # выберем клетку с максимальным временем простоя, назначим ее активной,
                 if ololo:
                     for cell1 in current_column.cells:
-                        if cell1.passive_time > 10:
+                        if cell1.passive_time > PASSIVE_TIME_TO_ACTIVE_THRESHOLD:
                             for cell in current_column.cells:
                                 cell.new_state = PASSIVE
 
@@ -164,7 +155,7 @@ class Region:
                                 if new_active_cell.passive_time < cell.passive_time:
                                     new_active_cell = cell
                             new_active_cell.update_new_state(ACTIVE)
-                            break;
+                            break
 
         # делаем предсказание
         for i in range(self.region_size):
@@ -187,6 +178,7 @@ class Region:
                             dendrite_mx = dendrite
 
                 if mx and cell_for_update.new_state == PASSIVE:
+                # if mx:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
 
