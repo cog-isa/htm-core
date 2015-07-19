@@ -82,7 +82,7 @@ class Region:
                                 syn.change_permanence(DENDRITE_PERMANENCE_INC_DELTA)
 
                         ololo = True
-                        print('OLOLOLOLO')
+
 
                     if cell.state == PREDICTION and not a[i][j]:
                         # Предсказание активности данной клетки было выполнено неправильно
@@ -146,7 +146,7 @@ class Region:
                     # выберем клетку с максимальным временем простоя, назначим ее активной,
                 if ololo:
                     for cell1 in current_column.cells:
-                        if cell1.passive_time > PASSIVE_TIME_TO_ACTIVE_THRESHOLD:
+                        if cell1.passive_time > PASSIVE_TIME_TO_ACTIVE_THRESHOLD and cell1.new_state != ACTIVE:
                             for cell in current_column.cells:
                                 cell.new_state = PASSIVE
 
@@ -156,6 +156,11 @@ class Region:
                                 if new_active_cell.passive_time < cell.passive_time:
                                     new_active_cell = cell
                             new_active_cell.update_new_state(ACTIVE)
+                            cell1.ololo = True
+                            for other_cell in current_column.cells:
+                                if other_cell != cell1:
+                                    if other_cell.new_state == ACTIVE:
+                                        other_cell.new_state = PASSIVE
                             break
 
         # делаем предсказание
@@ -210,10 +215,16 @@ class Region:
                 cnt = 0
                 for cell in self.columns[i][j].cells:
                     cnt += 1
+
                     if cell.state == PREDICTION:
                         res[i][j] += "P" + str(cnt)
-                    if cell.passive_time == 0:
+                    if cell.passive_time == 0 and not cell.ololo:
                         res[i][j] += "A" + str(cnt)
+                    # клетка активировалсь из-за долгого простоя
+                    if cell.ololo:
+                        res[i][j] += "O" + str(cnt)
+                        cell.ololo = False
+
 
         print("Правильно предсказано раз: ", self.very_ok_times)
         print("Максимально правильно предсказано раз: ", self.max_ok_times)

@@ -228,3 +228,30 @@ class Cross:
 
     def get_data(self):
         return self.a
+
+
+class ConstantActiveBit:
+    def __init__(self, square_size):
+        self.square_size = square_size
+        assert (square_size >= 2)
+        self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
+        self.a[0][0] = 1
+        self.x = 0
+        self.y = 1
+        self.state = 0
+        self.MOD = 6
+
+    def move(self):
+        if self.state > 2:
+            self.a[self.x][self.y] = 1
+        else:
+            self.a[self.x][self.y] = 0
+        self.state = (self.state + 1) % self.MOD
+
+    def out(self):
+        for i in self.a:
+            print(i)
+        print()
+
+    def get_data(self):
+        return self.a

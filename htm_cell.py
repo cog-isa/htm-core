@@ -10,6 +10,7 @@ class Cell:
         self.passive_time = 0
         self.was_active = False
         self.error_impulse = 0
+        self.ololo = False
 
     def update_new_state(self, state):
         self.new_state = state
