@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import HTMSettings
 
 __author__ = 'AVPetrov'
@@ -19,11 +20,11 @@ class SpatialPooler:
         return self.activeDutyCycles
 
 
-    # Вычисление значения перекрытия каждой колонки с заданным входным вектором.
+    # Р’С‹С‡РёСЃР»РµРЅРёРµ Р·РЅР°С‡РµРЅРёСЏ РїРµСЂРµРєСЂС‹С‚РёСЏ РєР°Р¶РґРѕР№ РєРѕР»РѕРЅРєРё СЃ Р·Р°РґР°РЅРЅС‹Рј РІС…РѕРґРЅС‹Рј РІРµРєС‚РѕСЂРѕРј.
     #
-    # @param input - входной сигнал
-    # @param cols - колонки
-    # @return значения переключения для каждой колонки
+    # @param input - РІС…РѕРґРЅРѕР№ СЃРёРіРЅР°Р»
+    # @param cols - РєРѕР»РѕРЅРєРё
+    # @return Р·РЅР°С‡РµРЅРёСЏ РїРµСЂРµРєР»СЋС‡РµРЅРёСЏ РґР»СЏ РєР°Р¶РґРѕР№ РєРѕР»РѕРЅРєРё
     def updateOverlaps(cols, input):
         overlaps=[0 for i in range(len(cols))]
         i=0
@@ -33,7 +34,7 @@ class SpatialPooler:
             i=i+1
         return overlaps
 
-    # Вычисление колонок, остающихся победителями после применения взаимного подавления.
+    # Р’С‹С‡РёСЃР»РµРЅРёРµ РєРѕР»РѕРЅРѕРє, РѕСЃС‚Р°СЋС‰РёС…СЃСЏ РїРѕР±РµРґРёС‚РµР»СЏРјРё РїРѕСЃР»Рµ РїСЂРёРјРµРЅРµРЅРёСЏ РІР·Р°РёРјРЅРѕРіРѕ РїРѕРґР°РІР»РµРЅРёСЏ.
     def inhibitionPhase(self, cols, overlaps):
         activeColumns=[]
 
@@ -42,18 +43,18 @@ class SpatialPooler:
         for indx in indexies:
             column=cols.get(indx)
             if column.getNeighbors().size() > 0:
-                # выборка перекрытий колонок, соседних с данной
+                # РІС‹Р±РѕСЂРєР° РїРµСЂРµРєСЂС‹С‚РёР№ РєРѕР»РѕРЅРѕРє, СЃРѕСЃРµРґРЅРёС… СЃ РґР°РЅРЅРѕР№
                 neighborOverlaps = [overlaps[i] for i in column.getNeighbors()]
-                # определить порог перекрытия
+                # РѕРїСЂРµРґРµР»РёС‚СЊ РїРѕСЂРѕРі РїРµСЂРµРєСЂС‹С‚РёСЏ
                 minLocalOverlap = MathUtils.kthScore(neighborOverlaps, self.settings.desiredLocalActivity)
-                # если колонка имеет перекрытие большее, чем у соседей, то она становиться активной
+                # РµСЃР»Рё РєРѕР»РѕРЅРєР° РёРјРµРµС‚ РїРµСЂРµРєСЂС‹С‚РёРµ Р±РѕР»СЊС€РµРµ, С‡РµРј Сѓ СЃРѕСЃРµРґРµР№, С‚Рѕ РѕРЅР° СЃС‚Р°РЅРѕРІРёС‚СЊСЃСЏ Р°РєС‚РёРІРЅРѕР№
 
                 if overlaps[column.getIndex()] > 0 and overlaps[column.getIndex()] >= minLocalOverlap:
-                    # для случая одинаковых оверлапов у выбраныных соседей
+                    # РґР»СЏ СЃР»СѓС‡Р°СЏ РѕРґРёРЅР°РєРѕРІС‹С… РѕРІРµСЂР»Р°РїРѕРІ Сѓ РІС‹Р±СЂР°РЅС‹РЅС‹С… СЃРѕСЃРµРґРµР№
                     n=0
                     for i in column.getNeighbors():
                         n=n+(findByColIndex(cols,i).isActive() if  1 else 0)
-                    if n<=(self.settings.desiredLocalActivity-1): #-1 - считая саму колонку
+                    if n<=(self.settings.desiredLocalActivity-1): #-1 - СЃС‡РёС‚Р°СЏ СЃР°РјСѓ РєРѕР»РѕРЅРєСѓ
                         column.setIsActive(True)
                         activeColumns.add(column)
                 else:
@@ -67,10 +68,10 @@ class SpatialPooler:
             if(c.getIndex()==index): return c
         return None
 
-    # Если синапс был активен (через него шел сигнал от входного вектора), его значение преманентности увеличивается,
-    # а иначе - уменьшается.
+    # Р•СЃР»Рё СЃРёРЅР°РїСЃ Р±С‹Р» Р°РєС‚РёРІРµРЅ (С‡РµСЂРµР· РЅРµРіРѕ С€РµР» СЃРёРіРЅР°Р» РѕС‚ РІС…РѕРґРЅРѕРіРѕ РІРµРєС‚РѕСЂР°), РµРіРѕ Р·РЅР°С‡РµРЅРёРµ РїСЂРµРјР°РЅРµРЅС‚РЅРѕСЃС‚Рё СѓРІРµР»РёС‡РёРІР°РµС‚СЃСЏ,
+    # Р° РёРЅР°С‡Рµ - СѓРјРµРЅСЊС€Р°РµС‚СЃСЏ.
     #
-    # @param input - входной сигнал
+    # @param input - РІС…РѕРґРЅРѕР№ СЃРёРіРЅР°Р»
     def updateSynapses(cols,input):
         for col in cols:
             for synapse in col.getPotentialSynapses().values():
@@ -88,10 +89,10 @@ class SpatialPooler:
         self.overlapDutyCycles[col.getIndex()] = self.overlapDutyCycles[col.getIndex()] + (overlaps[col.getIndex()] > self.settings.minOverlap if 1 else 0)
 
 
-    # Если activeDutyCycle больше minValue, то значение ускорения равно 1. Ускорение начинает линейно увеличиваться
-    # как только activeDutyCycle колонки падает ниже minDutyCycle.
+    # Р•СЃР»Рё activeDutyCycle Р±РѕР»СЊС€Рµ minValue, С‚Рѕ Р·РЅР°С‡РµРЅРёРµ СѓСЃРєРѕСЂРµРЅРёСЏ СЂР°РІРЅРѕ 1. РЈСЃРєРѕСЂРµРЅРёРµ РЅР°С‡РёРЅР°РµС‚ Р»РёРЅРµР№РЅРѕ СѓРІРµР»РёС‡РёРІР°С‚СЊСЃСЏ
+    # РєР°Рє С‚РѕР»СЊРєРѕ activeDutyCycle РєРѕР»РѕРЅРєРё РїР°РґР°РµС‚ РЅРёР¶Рµ minDutyCycle.
     #
-    # @param minValue - минимальнео число активных циклов
+    # @param minValue - РјРёРЅРёРјР°Р»СЊРЅРµРѕ С‡РёСЃР»Рѕ Р°РєС‚РёРІРЅС‹С… С†РёРєР»РѕРІ
     def updateBoostFactor(self,col, minValue):
         value = 1
 
@@ -99,36 +100,36 @@ class SpatialPooler:
                 value = 1 + (minValue - self.activeDutyCycles[col.getIndex()]) * (self.settings.maxBoost - 1)
         col.setBoostFactor(value)
 
-    # Обновление значений перманентности, фактора ускорения и радиуса подавления колонок.
-    # Механизм ускорения работает в том случае, если колонка не побеждает достаточно долго (activeDutyCycle).
-    # Если колонка плохо перекрывается с входным сигналом достоачно долго (overlapDutyCycle), то увеличиваются
-    # перманентности.
+    # РћР±РЅРѕРІР»РµРЅРёРµ Р·РЅР°С‡РµРЅРёР№ РїРµСЂРјР°РЅРµРЅС‚РЅРѕСЃС‚Рё, С„Р°РєС‚РѕСЂР° СѓСЃРєРѕСЂРµРЅРёСЏ Рё СЂР°РґРёСѓСЃР° РїРѕРґР°РІР»РµРЅРёСЏ РєРѕР»РѕРЅРѕРє.
+    # РњРµС…Р°РЅРёР·Рј СѓСЃРєРѕСЂРµРЅРёСЏ СЂР°Р±РѕС‚Р°РµС‚ РІ С‚РѕРј СЃР»СѓС‡Р°Рµ, РµСЃР»Рё РєРѕР»РѕРЅРєР° РЅРµ РїРѕР±РµР¶РґР°РµС‚ РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РґРѕР»РіРѕ (activeDutyCycle).
+    # Р•СЃР»Рё РєРѕР»РѕРЅРєР° РїР»РѕС…Рѕ РїРµСЂРµРєСЂС‹РІР°РµС‚СЃСЏ СЃ РІС…РѕРґРЅС‹Рј СЃРёРіРЅР°Р»РѕРј РґРѕСЃС‚РѕР°С‡РЅРѕ РґРѕР»РіРѕ (overlapDutyCycle), С‚Рѕ СѓРІРµР»РёС‡РёРІР°СЋС‚СЃСЏ
+    # РїРµСЂРјР°РЅРµРЅС‚РЅРѕСЃС‚Рё.
 
     def learningPhase(self,cols, input,overlaps):
 
-        # 1. изменить значения перманентности всех синапсов проксимальных сегментов *активных* колонок
+        # 1. РёР·РјРµРЅРёС‚СЊ Р·РЅР°С‡РµРЅРёСЏ РїРµСЂРјР°РЅРµРЅС‚РЅРѕСЃС‚Рё РІСЃРµС… СЃРёРЅР°РїСЃРѕРІ РїСЂРѕРєСЃРёРјР°Р»СЊРЅС‹С… СЃРµРіРјРµРЅС‚РѕРІ *Р°РєС‚РёРІРЅС‹С…* РєРѕР»РѕРЅРѕРє
         self.updateSynapses(cols,input)
 
         for column in cols:
-            # определить максимальное число срабатываний колонки среди соседей колонки и её самой колонку
+            # РѕРїСЂРµРґРµР»РёС‚СЊ РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ С‡РёСЃР»Рѕ СЃСЂР°Р±Р°С‚С‹РІР°РЅРёР№ РєРѕР»РѕРЅРєРё СЃСЂРµРґРё СЃРѕСЃРµРґРµР№ РєРѕР»РѕРЅРєРё Рё РµС‘ СЃР°РјРѕР№ РєРѕР»РѕРЅРєСѓ
             maxActiveDuty = 0
             for index in column.getNeighbors():
                 maxActiveDuty = maxActiveDuty > self.activeDutyCycles[index] if maxActiveDuty else self.activeDutyCycles[index]
 
-            # определить минимальное число срабатываний (% от maxActiveDuty)
+            # РѕРїСЂРµРґРµР»РёС‚СЊ РјРёРЅРёРјР°Р»СЊРЅРѕРµ С‡РёСЃР»Рѕ СЃСЂР°Р±Р°С‚С‹РІР°РЅРёР№ (% РѕС‚ maxActiveDuty)
             minDutyCycle = self.settings.minDutyCycleFraction * maxActiveDuty
 
             self.updateBoostFactor(column,minDutyCycle)
 
             self.updateOverlapDutyCycle(column,overlaps)
-            # если колонка редко срабатывает стимулировать её
+            # РµСЃР»Рё РєРѕР»РѕРЅРєР° СЂРµРґРєРѕ СЃСЂР°Р±Р°С‚С‹РІР°РµС‚ СЃС‚РёРјСѓР»РёСЂРѕРІР°С‚СЊ РµС‘
             if self.overlapDutyCycles[column.getIndex()] < minDutyCycle:
                 column.stimulate()
 
-            # TODO: в оригинальной реализиации радиус менялся и соседи тоже...
+            # TODO: РІ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕР№ СЂРµР°Р»РёР·РёР°С†РёРё СЂР°РґРёСѓСЃ РјРµРЅСЏР»СЃСЏ Рё СЃРѕСЃРµРґРё С‚РѕР¶Рµ...
             # column.updateNeighbors(averageReceptiveFieldSize())
 
-        # теперь обновим activeDutyCycle всех колонок.
+        # С‚РµРїРµСЂСЊ РѕР±РЅРѕРІРёРј activeDutyCycle РІСЃРµС… РєРѕР»РѕРЅРѕРє.
         self.updateActiveDutyCycle(cols)
 
 #######################################################################################################################
@@ -157,7 +158,7 @@ def _tests():
     return
 
 
-    # //TODO: переписать, сейчас не верно беруться размеры
+    # //TODO: РїРµСЂРµРїРёСЃР°С‚СЊ, СЃРµР№С‡Р°СЃ РЅРµ РІРµСЂРЅРѕ Р±РµСЂСѓС‚СЊСЃСЏ СЂР°Р·РјРµСЂС‹
     # public void testDiff() throws IOException
     # {
     #     FileInputStream fis_truth=new FileInputStream("in.txt");
@@ -494,7 +495,7 @@ def testLadder():
 #         r=new Region(settings,new SimpleMapper());
 #         sp=new SpatialPooler(settings);
 #         overlaps=sp.updateOverlaps( r.getColumns(),input);
-#         // ожидаем разные результаты теста из-за рандомного шафла
+#         // РѕР¶РёРґР°РµРј СЂР°Р·РЅС‹Рµ СЂРµР·СѓР»СЊС‚Р°С‚С‹ С‚РµСЃС‚Р° РёР·-Р·Р° СЂР°РЅРґРѕРјРЅРѕРіРѕ С€Р°С„Р»Р°
 #         cols=sp.inhibitionPhase(r.getColumns(), overlaps);
 #         Assert.assertTrue(cols.size()==2);
 #         cols=sp.inhibitionPhase(r.getColumns(), overlaps);
@@ -610,3 +611,6 @@ def testHTMConstructuion():
     assert r.getColumns().get(0).getNeighbors().size()==2
     v=r.getColumns().get(r.getColumns().get(0).getNeighbors().get(0)).getCoord();
     assert v.getX()==1.0 and v.getY()==0.0
+
+if __name__ == "__main__":
+    print(1234)
