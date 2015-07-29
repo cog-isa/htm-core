@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import random
 
 __author__ = 'AVPetrov'
@@ -12,42 +13,42 @@ class Synapse:
 
 
     # /**
-    #  * Случайные значения преманентности должны быть из малого диапазона около connectedPerm
+    #  * РЎР»СѓС‡Р°Р№РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ РїСЂРµРјР°РЅРµРЅС‚РЅРѕСЃС‚Рё РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РёР· РјР°Р»РѕРіРѕ РґРёР°РїР°Р·РѕРЅР° РѕРєРѕР»Рѕ connectedPerm
     #  */
     def initPermanence(self,k):
         if self.settings.debug==True:
             self.permanence = self.settings.connectedPerm
-            self.permanence=self.permanence*(1/(k==0 if 0.5 else k))
+            self.permanence=self.permanence*(1/(0.5 if k==0 else k))
         else:
             if random.nextDouble() <= self.settings.initConnectedPct:
                 self.permanence = self.settings.connectedPerm + self.rand.random() * self.settings.permanenceInc / 4.0
             else:
                 self.permanence = self.settings.connectedPerm - self.random.random() * self.settings.permanenceInc / 4.0
-                self.permanence=self.permanence*(1/(k==0 if 0.5 else k))
+                self.permanence=self.permanence*(1/(0.5 if k==0 else k))
 
     def increasePermanence(self):
         self.permanence = self.permanence + self.settings.permanenceInc
-        self.permanence = self.permanence > 1 if 1 else self.permanence
+        self.permanence = 1 if self.permanence > 1 else self.permanence
 
 
     def decreasePermanence(self):
         self.permanence = self.permanence - self.settings.permanenceDec
-        self.permanence = self.permanence < 0 if 0 else self.permanence
+        self.permanence = 0 if self.permanence < 0 else self.permanence
 
 
     def isConnected(self):
         return self.permanence > self.settings.connectedPerm
 
 
-    # /* connectToIndex - это либо номер бита из сигнала снизу, либо номер клетки (аксон) при латеральной связи */
+    # /* connectToIndex - СЌС‚Рѕ Р»РёР±Рѕ РЅРѕРјРµСЂ Р±РёС‚Р° РёР· СЃРёРіРЅР°Р»Р° СЃРЅРёР·Сѓ, Р»РёР±Рѕ РЅРѕРјРµСЂ РєР»РµС‚РєРё (Р°РєСЃРѕРЅ) РїСЂРё Р»Р°С‚РµСЂР°Р»СЊРЅРѕР№ СЃРІСЏР·Рё */
     def getIndexConnectTo(self):
         return self.indexConnectTo
 
 
-    # /* Получить степени связанности между аксоном и дендритом. */
+    # /* РџРѕР»СѓС‡РёС‚СЊ СЃС‚РµРїРµРЅРё СЃРІСЏР·Р°РЅРЅРѕСЃС‚Рё РјРµР¶РґСѓ Р°РєСЃРѕРЅРѕРј Рё РґРµРЅРґСЂРёС‚РѕРј. */
     def getPermanence(self):
         return self.permanence
 
-    # /* Установить степени связанности между аксоном и дендритом. */
+    # /* РЈСЃС‚Р°РЅРѕРІРёС‚СЊ СЃС‚РµРїРµРЅРё СЃРІСЏР·Р°РЅРЅРѕСЃС‚Рё РјРµР¶РґСѓ Р°РєСЃРѕРЅРѕРј Рё РґРµРЅРґСЂРёС‚РѕРј. */
     def setPermanence(self,permanence):
         self.permanence = permanence

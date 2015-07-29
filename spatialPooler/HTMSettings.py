@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 __author__ = 'AVPetrov'
 
 class HTMSettings:
@@ -17,6 +18,8 @@ class HTMSettings:
         self.initialInhibitionRadius = 0
         self.permanenceInc = 0
         self.permanenceDec = 0
+        self.cellsPerColumn=0
+        self.debug=True
 
     @staticmethod
     def getDefaultSettings():
@@ -32,5 +35,7 @@ class HTMSettings:
         setting.initialInhibitionRadius=1;
         setting.permanenceInc=0.1;
         setting.permanenceDec=0.1;
+        setting.cellsPerColumn=2
+        setting.debug=True
         return setting
 

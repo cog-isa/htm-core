@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import sys
 from Column import Column
 
@@ -9,14 +10,10 @@ class Region:
         self.mapper=mapper;
         self.columns=[];
         self.setting=setting;
-        bottomIndices=[]
-        try:
-            bottomIndices = mapper.mapAll((self.setting.xInput, self.setting.yInput), (self.setting.xDimension, self.setting.yDimension), self.setting.potentialRadius);
-        except:
-           print("Unexpected error:", sys.exc_info()[0])
+        bottomIndices = mapper.mapAll((self.setting.xInput, self.setting.yInput), (self.setting.xDimension, self.setting.yDimension), self.setting.potentialRadius);
 
-        for i in range(self.setting.xDimension):
-            for j in range(self.setting.yDimension):
+        for i in range(0,self.setting.xDimension):
+            for j in range(0,self.setting.yDimension):
                 self.columns.append((Column((i, j), bottomIndices[i*self.setting.yDimension+j], self)));
 
         return
@@ -24,6 +21,6 @@ class Region:
     def getColumns(self):
         return self.columns;
     def getInputW(self):
-        return self.settings.xInput
+        return self.setting.xInput
     def getInputH(self):
-        return self.settings.yInput;
+        return self.setting.yInput;
