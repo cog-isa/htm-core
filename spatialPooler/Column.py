@@ -50,7 +50,7 @@ class Column:
     def setIsActive(self,isActive):
         self.isActive=isActive;
 
-    def isActive(self):
+    def getIsActive(self):
         return self.isActive;
 
 

@@ -7,87 +7,86 @@ import random
 from region import Region
 
 class SpatialPooler:
-	def __init__(self, settings):
-		self.settings = settings
-		self.r = random.Random()
-		self.r.seed = 10
-		self.activeDutyCycles = []
-		self.overlapDutyCycles = []
-		# this.settings=settings;
-		# activeDutyCycles=new int[settings.xDimension*settings.yDimension];
-		# overlapDutyCycles=new int[settings.xDimension*settings.yDimension];
+    def __init__(self, settings):
+        self.settings = settings
+        self.r = random.Random()
+        self.r.seed = 10
+        self.activeDutyCycles = [0 for i in range(self.settings.xDimension*self.settings.yDimension)]
+        self.overlapDutyCycles = [0 for i in range(self.settings.xDimension*self.settings.yDimension)]
+    # this.settings=settings;
+    # activeDutyCycles=new int[settings.xDimension*settings.yDimension];
+    # overlapDutyCycles=new int[settings.xDimension*settings.yDimension];
 
-	def getActiveDutyCycles(self):
-		return self.activeDutyCycles
-
-
-	# Вычисление значения перекрытия каждой колонки с заданным входным вектором.
-	#
-	#  @param input - входной сигнал
-	# @param cols - колонки
-	# @return значения переключения для каждой колонки
-	def updateOverlaps(self,cols, input):
-		overlaps=[0 for i in range(len(cols))]
-		i=0
-		for c in cols:
-			for s in c.getConnectedSynapses():
-				overlaps[i]=overlaps[i] + (1 if input[s.getIndexConnectTo()==1] else 0)
-			i=i+1
-		return overlaps
-
-	# Вычисление колонок, остающихся победителями после применения взаимного подавления.
-	def inhibitionPhase(self, cols, overlaps):
-		activeColumns=[]
-
-		indexies = [i for i in range(len(cols))]
-		self.r.shuffle(indexies)
-		for indx in indexies:
-			column=cols[indx]
-			if len(column.getNeighbors()) > 0:
-				# выборка перекрытий колонок, соседних с данной
-				neighborOverlaps = [overlaps[i] for i in column.getNeighbors()]
-				# определить порог перекрытия
-				minLocalOverlap = kthScore(neighborOverlaps, self.settings.desiredLocalActivity)
-				# если колонка имеет перекрытие большее, чем у соседей, то она становиться активной
-
-				if overlaps[column.getIndex()] > 0 and overlaps[column.getIndex()] >= minLocalOverlap:
-					# для случая одинаковых оверлапов у выбраныных соседей
-					n=0
-					for i in column.getNeighbors():
-						n=n+(1 if self.findByColIndex(cols,i).isActive() else 0)
-					if n<=(self.settings.desiredLocalActivity-1): #-1 - считая саму колонку
-						column.setIsActive(True)
-						activeColumns.append(column)
-				else:
-					column.setIsActive(False)
-		return activeColumns
+    def getActiveDutyCycles(self):
+        return self.activeDutyCycles
 
 
-	def findByColIndex(self,cols, index):
-		for c in cols:
-			if(c.getIndex()==index):
-				return c
-		return None
+    # Вычисление значения перекрытия каждой колонки с заданным входным вектором.
+    #
+    #  @param input - входной сигнал
+    # @param cols - колонки
+    # @return значения переключения для каждой колонки
+    def updateOverlaps(self,cols, input):
+        overlaps=[0 for i in range(len(cols))]
+        i=0
+        for c in cols:
+            for s in c.getConnectedSynapses():
+                overlaps[i]=overlaps[i] + (1 if input[s.getIndexConnectTo()==1] else 0)
+            i=i+1
+        return overlaps
 
-	# Если синапс был активен (через него шел сигнал от входного вектора), его значение преманентности увеличивается,
-	# а иначе - уменьшается.
-	#
-	# @param inp - входной сигнал
-    def updateSynapses(cols,inp):
-		for col in cols:
-			for synapse in col.getPotentialSynapses().values():
-				if inp[synapse.getIndexConnectTo()]:
-					synapse.increasePermanence()
-				else:
-					synapse.decreasePermanence()
+    # Вычисление колонок, остающихся победителями после применения взаимного подавления.
+    def inhibitionPhase(self, cols, overlaps):
+        activeColumns=[]
 
-	def updateActiveDutyCycle(self,cols):
-		for i in range(len(cols)):
-			self.activeDutyCycles[i] = self.activeDutyCycles[i] + (1 if cols[i].isActive()  else 0)
+        indexies = [i for i in range(len(cols))]
+        self.r.shuffle(indexies)
+        for indx in indexies:
+            column=cols[indx]
+            if len(column.getNeighbors()) > 0:
+                # выборка перекрытий колонок, соседних с данной
+                neighborOverlaps = [overlaps[i] for i in column.getNeighbors()]
+                # определить порог перекрытия
+                minLocalOverlap = kthScore(neighborOverlaps, self.settings.desiredLocalActivity)
+                # если колонка имеет перекрытие большее, чем у соседей, то она становиться активной
+
+                if overlaps[column.getIndex()] > 0 and overlaps[column.getIndex()] >= minLocalOverlap:
+                    # для случая одинаковых оверлапов у выбраныных соседей
+                    n=0
+                    for i in column.getNeighbors():
+                        n=n+(1 if self.findByColIndex(cols,0).getIsActive() else 0)
+                    if n<=(self.settings.desiredLocalActivity-1): #-1 - считая саму колонку
+                        column.setIsActive(True)
+                        activeColumns.append(column)
+                else:
+                    column.setIsActive(False)
+        return activeColumns
 
 
-	def updateOverlapDutyCycle(self,col,overlaps):
-		self.overlapDutyCycles[col.getIndex()] = self.overlapDutyCycles[col.getIndex()] + (1 if overlaps[col.getIndex()] > self.settings.minOverlap else 0)
+    def findByColIndex(self,cols, index):
+        for c in cols:
+            if(c.getIndex()==index):
+                return c
+        return None
+
+    # Если синапс был активен (через него шел сигнал от входного вектора), его значение преманентности увеличивается,
+    # а иначе - уменьшается.
+    # @param inp - входной сигнал
+    def updateSynapses(self,cols,inp):
+        for col in cols:
+            for synapse in col.getPotentialSynapses().values():
+                if inp[synapse.getIndexConnectTo()]:
+                    synapse.increasePermanence()
+                else:
+                    synapse.decreasePermanence()
+
+    def updateActiveDutyCycle(self,cols):
+        for i in range(len(cols)):
+            self.activeDutyCycles[i] = self.activeDutyCycles[i] + (1 if cols[i].getIsActive()  else 0)
+
+
+    def updateOverlapDutyCycle(self,col,overlaps):
+        self.overlapDutyCycles[col.getIndex()] = self.overlapDutyCycles[col.getIndex()] + (1 if overlaps[col.getIndex()] > self.settings.minOverlap else 0)
 
 
     # Если activeDutyCycle больше minValue, то значение ускорения равно 1. Ускорение начинает линейно увеличиваться
@@ -208,113 +207,116 @@ class Dir(Enum):
     DOWN=2
 
 def testLadder():
-	# FileOutputStream fos=new FileOutputStream("out.txt");
-	#  PrintWriter pw=new PrintWriter(fos);
+    # FileOutputStream fos=new FileOutputStream("out.txt");
+    #  PrintWriter pw=new PrintWriter(fos);
 
-	# FileOutputStream fos_in=new FileOutputStream("in.txt");
-	# PrintWriter pw_in=new PrintWriter(fos_in);
+    # FileOutputStream fos_in=new FileOutputStream("in.txt");
+    # PrintWriter pw_in=new PrintWriter(fos_in);
 
-	W=95
-	H=95
-	begX=0
-	begY=0
-	stepSize=20
+    W=95
+    H=95
+    begX=0
+    begY=0
+    stepSize=20
 
-	map = [[0 for j in range(H)] for i in range(W)]
-	myArray=[[0 for j in range(H)] for i in range(W)]
-	inp=[]
-	inp=[0 for i in range(H*W)]
-	STEPS=25;
-	TOTAL_STEPS=1000;
-	STEP_SIZE=STEPS;
+    map = [[0 for j in range(H)] for i in range(W)]
+    myArray=[[0 for j in range(H)] for i in range(W)]
+    inp=[]
+    inp=[0 for i in range(H*W)]
+    STEPS=25;
+    TOTAL_STEPS=1000;
+    STEP_SIZE=STEPS;
 
-	setting=HTMSettings.HTMSettings.getDefaultSettings();
-	setting.debug=True;
+    setting=HTMSettings.HTMSettings.getDefaultSettings();
+    setting.debug=True;
 
-	setting.activationThreshold = 1;
-	setting.minOverlap = 1;
-	setting.desiredLocalActivity = 3;
-	setting.connectedPct=1;
-	setting.connectedPerm=0.01;
-	setting.xInput=W;
-	setting.yInput=H;
-	setting.potentialRadius=4;
-	setting.xDimension=10;
-	setting.yDimension=10;
-	setting.initialInhibitionRadius=1;
+    setting.activationThreshold = 1;
+    setting.minOverlap = 1;
+    setting.desiredLocalActivity = 3;
+    setting.connectedPct=1;
+    setting.connectedPerm=0.01;
+    setting.xInput=W;
+    setting.yInput=H;
+    setting.potentialRadius=4;
+    setting.xDimension=10;
+    setting.yDimension=10;
+    setting.initialInhibitionRadius=1;
 
-	# pw.print(setting.xDimension + " ");
-	# pw.print(setting.yDimension + " ");
-	# pw.print(TOTAL_STEPS);
-	# pw.println();
-	#
-	# pw_in.print(setting.xDimension + " ");
-	# pw_in.print(setting.yDimension + " ");
-	# pw_in.print(TOTAL_STEPS);
-	# pw_in.println();
+    # pw.print(setting.xDimension + " ");
+    # pw.print(setting.yDimension + " ");
+    # pw.print(TOTAL_STEPS);
+    # pw.println();
+    #
+    # pw_in.print(setting.xDimension + " ");
+    # pw_in.print(setting.yDimension + " ");
+    # pw_in.print(TOTAL_STEPS);
+    # pw_in.println();
 
-	r=Region(setting,verySimpleMapper());
+    r=Region(setting,verySimpleMapper());
 
-	sp=SpatialPooler(setting);
-	x=begX
-	y=begY
-	for  i in range(x,x+stepSize):
-		for  j in range(y,y+stepSize):
-			map[i][j] = 1;
+    sp=SpatialPooler(setting);
+    x=begX
+    y=begY
+    for  i in range(x,x+stepSize):
+        for  j in range(y,y+stepSize):
+            map[i][j] = 1;
 
-	for step in range(TOTAL_STEPS):
-		print("DATA:\n");
-		index = 0;
-		for k in range(W):
-			for m in range(H):
-				inp[index] = map[k][m];
-				# pw_in.print(in[index]);
-				index=index+1;
-			# pw_in.println()
-		# pw_in.println();
+    for step in range(TOTAL_STEPS):
+        print("DATA:\n");
+        index = 0;
+        for k in range(W):
+            for m in range(H):
+                inp[index] = map[k][m];
+                # pw_in.print(in[index]);
+                index=index+1;
+            # pw_in.println()
+        # pw_in.println();
 
-		for  i in range(x,x+stepSize):
-			for  j in range(y,y+stepSize):
-				if i<len(map) and j<len(map[0]):
-					map[i][j] = 0
+        for  i in range(x,x+stepSize):
+            for  j in range(y,y+stepSize):
+                if i<len(map) and j<len(map[0]):
+                    map[i][j] = 0
 
-		x=x+STEP_SIZE;
-		y=y+STEP_SIZE;
-		if(x>W):
-			x=0;
-			y=0;
+        x=x+STEP_SIZE;
+        y=y+STEP_SIZE;
+        if(x>W):
+            x=0;
+            y=0;
 
-		for  i in range(x,x+stepSize):
-			for  j in range(y,y+stepSize):
-				if i<len(map) and j<len(map[0]):
-					map[i][j] = 1
+        for  i in range(x,x+stepSize):
+            for  j in range(y,y+stepSize):
+                if i<len(map) and j<len(map[0]):
+                    map[i][j] = 1
 
-		for c in r.getColumns():
-			c.setIsActive(False);
-		ov=sp.updateOverlaps(r.getColumns(), inp);
-		sp.inhibitionPhase(r.getColumns(), ov);
-		sp.learningPhase(r.getColumns(), inp, ov);
+        for c in r.getColumns():
+            c.setIsActive(False);
+        ov=sp.updateOverlaps(r.getColumns(), inp);
+        sp.inhibitionPhase(r.getColumns(), ov);
+        sp.learningPhase(r.getColumns(), inp, ov);
 
 
-		cols=r.getColumns();
-		for i in range(setting.xDimension):
-			for j in range(setting.yDimension):
-				state=findByColXY(cols,i,j).isActive() if 1 else 0;
-				# pw.print(state);
-				# pw.print(" ");
-			# pw.println();
-		# pw.println();
+        cols=r.getColumns();
+        for i in range(setting.xDimension):
+            for j in range(setting.yDimension):
+                state=1 if findByColXY(cols,i,j).getIsActive() else 0;
+                print(str(state)+" ")
+                # pw.print(state);
+                # pw.print(" ");
+            print("\n")
+        print("\n")
+            # pw.println();
+        # pw.println();
 
-		# /*System.out.println("BOOST:");
-		# cols=r.getColumns();
-		# for(int i=0;i<settings.xDimension;i++)
-		# {
-		#     for(int j=0;j<settings.yDimension;j++) {
-		#         System.out.print(cols.get(i*settings.yDimension+j).getProximalDendrite().getBoostFactor()+" ");
-		#     }
-		#     System.out.println();
-		# }*/
-	# pw.close();
+        # /*System.out.println("BOOST:");
+        # cols=r.getColumns();
+        # for(int i=0;i<settings.xDimension;i++)
+        # {
+        #     for(int j=0;j<settings.yDimension;j++) {
+        #         System.out.print(cols.get(i*settings.yDimension+j).getProximalDendrite().getBoostFactor()+" ");
+        #     }
+        #     System.out.println();
+        # }*/
+    # pw.close();
 
 #     def testLearning()
 #     {
@@ -612,6 +614,6 @@ def testHTMConstructuion():
     assert v[0]==1.0 and v[1]==0.0
 
 if __name__ == "__main__":
-	print(1234)
-	testHTMConstructuion()
-	testLadder()
+    print(1234)
+    testHTMConstructuion()
+    testLadder()

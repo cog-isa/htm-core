@@ -19,7 +19,9 @@ class HTMSettings:
         self.permanenceInc = 0
         self.permanenceDec = 0
         self.cellsPerColumn=0
+        self.maxBoost=0
         self.debug=True
+        minDutyCycleFraction=0
 
     @staticmethod
     def getDefaultSettings():
@@ -36,6 +38,8 @@ class HTMSettings:
         setting.permanenceInc=0.1;
         setting.permanenceDec=0.1;
         setting.cellsPerColumn=2
+        setting.minDutyCycleFraction=2
+        setting.maxBoost=1
         setting.debug=True
         return setting
 
