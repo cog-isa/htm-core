@@ -1,5 +1,8 @@
 import random
-from htm_cell import Cell
+
+from Cell import Cell
+from Synapse import Synapse
+from utils import getDistance
 
 __author__ = 'AVPetrov'
 
@@ -15,17 +18,16 @@ class Column:
         self.neighbors=[]
         self.col_coords=coords;
         self.cells=[Cell(0) for i in range(0,set.cellsPerColumn)]
-		# хэш синапсов: индекс элемента с которым соединение и сам синапс
-	    self.potentialSynapses ={}
-		self.boostFactor = 1;
-		self.rand = random.Random()
-		self.rand.seed = 10
-
-        initSynapses();
-        updateNeighbors(self.set.initialInhibitionRadius);
+        # хэш синапсов: индекс элемента с которым соединение и сам синапс
+        self.potentialSynapses ={}
+        self.boostFactor = 1;
+        self.rand = random.Random()
+        self.rand.seed = 1
+        self.initSynapses()
+        self.updateNeighbors(self.set.initialInhibitionRadius)
 
     def getIndex(self):
-        return self.col_coords.getX()*Column.this.set.yDimension+self.col_coords.getY();
+        return self.col_coords.getX()*self.set.yDimension+self.col_coords.getY();
 
     # /**
     #  * Изменение списка соседних колонок, которые отстоят от данной в круге радиусом inhibitionRadius
@@ -62,45 +64,39 @@ class Column:
     def getConnectedSynapses(self):
         conn_syn=[]
         for s in self.potentialSynapses.values():
-			if s.isConnected():
-				conn_syn.add(s);
-		return  conn_syn;
-
-
-
-
+            if s.isConnected():
+                conn_syn.add(s)
+        return conn_syn
 
     def getBoostFactor(self):
         return self.boostFactor;
 
 
-	def setBoostFactor(self,boostFactor):
+    def setBoostFactor(self,boostFactor):
         self.boostFactor = 1;
 
 
- 	def stimulate(self):
-		for synapse in self.potentialSynapses.values():
-			synapse.increasePermanence();
+    def stimulate(self):
+        for synapse in self.potentialSynapses.values():
+            synapse.increasePermanence();
 
-	def initSynapses():
-		center =bottomIndices.get(bottomIndices.size()/2);
 
-            if(HTMSettings.debug==false)
-                Collections.shuffle(bottomIndices, random);
 
-            // выберем только часть синапсов для данной колонки (если set.connectedPct<1)
-            // предполагается, что set.connectedPct<1, в том случае, если рецептивные поля различных колонок пересекаются
-            int numPotential = (int) Math.round(bottomIndices.size() * Column.this.connectedPct);
-            for (int i = 0; i < numPotential; i++) {
-                Vector2D coord = bottomIndices.get(i);
-                int index=(int)coord.getX()*Column.this.set.yInput+(int)coord.getY();
-                Synapse synapse = new Synapse(set, index);
-                //радиальное затухание перманентности от центра рецептивного поля колонки
-                //double k = MathUtils.distFromCenter(index, set.potentialRadius, set.xDimension, set.yDimension);
-                double k = Vector2D.getDistance(coord,center );
-                synapse.initPermanence(k);
-                potentialSynapses.put(index,synapse);
-            }
-        }
-    }
-}
+    def initSynapses(self):
+        center = self.bottomIndices[len(self.bottomIndices)/2]
+
+        if self.set.debug==False:
+            self.rand.shuffle(self.bottomIndices)
+
+        # // выберем только часть синапсов для данной колонки (если set.connectedPct<1)
+        # // предполагается, что set.connectedPct<1, в том случае, если рецептивные поля различных колонок пересекаются
+        numPotential = round(self.bottomIndices.size() * self.connectedPct);
+        for i in range(0,numPotential):
+            coord = self.bottomIndices[i]
+            index= coord[0]*self.set.yInput+coord[1]
+            synapse = Synapse(set, index)
+            # //радиальное затухание перманентности от центра рецептивного поля колонки
+            # //double k = MathUtils.distFromCenter(index, set.potentialRadius, set.xDimension, set.yDimension);
+            k = getDistance (coord,center )
+            synapse.initPermanence(k)
+            self.potentialSynapses.put(index,synapse)
