@@ -59,7 +59,7 @@ class Region:
             for j in range(self.region_size):
                 current_column = self.columns[i][j]
 
-                ololo = False
+                can_activate_from_passive_time = False
 
                 for cell in current_column.cells:
                     active_den = None
@@ -81,8 +81,7 @@ class Region:
                             if syn.id_to in [a_cell.id for a_cell in active_cells]:
                                 syn.change_permanence(DENDRITE_PERMANENCE_INC_DELTA)
 
-                        ololo = True
-
+                        can_activate_from_passive_time = True
 
                     if cell.state == PREDICTION and not a[i][j]:
                         # Предсказание активности данной клетки было выполнено неправильно
@@ -95,7 +94,7 @@ class Region:
                                 # такую клетку стоит заменить в колонке
                                 # если клетка активность клетки часто приводит к неправильным предсказаниям
                                 # увеличим порог ошибки этой клетки,для последующего перестроения структуры связей
-                                self.ptr_to_cell[syn.id_to].passive_time = -100
+                                self.ptr_to_cell[syn.id_to].passive_time = 0
                                 self.ptr_to_cell[syn.id_to].error_impulse += 1
 
 
@@ -143,12 +142,12 @@ class Region:
                         if randrange(3) == 2:
                             I.update_new_state(ACTIVE)
 
-                    # выберем клетку с максимальным временем простоя, назначим ее активной,
-                if ololo:
+                            # выберем клетку с максимальным временем простоя, назначим ее активной,
+                if can_activate_from_passive_time:
                     for cell1 in current_column.cells:
                         if cell1.passive_time > PASSIVE_TIME_TO_ACTIVE_THRESHOLD and cell1.new_state != ACTIVE:
-                            for cell in current_column.cells:
-                                cell.new_state = PASSIVE
+                            # for cell in current_column.cells:
+                            #     cell.new_state = PASSIVE
 
                             new_active_cell = current_column.cells[0]
 
@@ -183,8 +182,8 @@ class Region:
                             cell_for_update = current_cell
                             dendrite_mx = dendrite
 
-                if mx and cell_for_update.new_state == PASSIVE:
-                # if mx:
+                if mx > DENDRITE_ACTIVATE_THRESHOLD and cell_for_update.new_state == PASSIVE:
+                    # if mx:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
 
@@ -224,7 +223,6 @@ class Region:
                     if cell.ololo:
                         res[i][j] += "O" + str(cnt)
                         cell.ololo = False
-
 
         print("Правильно предсказано раз: ", self.very_ok_times)
         print("Максимально правильно предсказано раз: ", self.max_ok_times)
