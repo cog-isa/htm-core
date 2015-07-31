@@ -37,7 +37,10 @@ class Synapse:
 
 
     def isConnected(self):
-        return self.permanence > self.settings.connectedPerm
+        if(self.settings.debug==True):
+            return True
+        else:
+            return self.permanence > self.settings.connectedPerm
 
 
     # /* connectToIndex - это либо номер бита из сигнала снизу, либо номер клетки (аксон) при латеральной связи */
