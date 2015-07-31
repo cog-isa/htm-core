@@ -3,7 +3,7 @@ from settings import *
 from input_generators import MakeBubble
 
 # generator = GENERATOR(REGION_SIZE_N)
-SCALE = 3
+
 generator = MakeBubble(GENERATOR, REGION_SIZE_N, SCALE)
 
 r = Region(REGION_SIZE_N * SCALE, COLUMN_SIZE)
