@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import random
 
 from Cell import Cell
@@ -8,39 +9,39 @@ __author__ = 'AVPetrov'
 
 
 class Column:
-    def __init__(self,coords, bottomIndices, region, set):
-        self.set = set;
+    def __init__(self,coords, bottomIndices, region):
+        self.setting = region.setting;
         self.bottomIndices=bottomIndices;
-        self.potentialRadius= set.potentialRadius;
-        self.connectedPct= set.connectedPct;
+        self.potentialRadius= self.setting.potentialRadius;
+        self.connectedPct= self.setting.connectedPct;
         self.r=region;
         self.isActive=False;
         self.neighbors=[]
         self.col_coords=coords;
-        self.cells=[Cell(0) for i in range(0,set.cellsPerColumn)]
-        # õıø ñèíàïñîâ: èíäåêñ ıëåìåíòà ñ êîòîğûì ñîåäèíåíèå è ñàì ñèíàïñ
+        self.cells=[Cell(0) for i in range(0,self.setting.cellsPerColumn+1)]
+        # Ñ…ÑÑˆ ÑĞ¸Ğ½Ğ°Ğ¿ÑĞ¾Ğ²: Ğ¸Ğ½Ğ´ĞµĞºÑ ÑĞ»ĞµĞ¼ĞµĞ½Ñ‚Ğ° Ñ ĞºĞ¾Ñ‚Ğ¾Ñ€Ñ‹Ğ¼ ÑĞ¾ĞµĞ´Ğ¸Ğ½ĞµĞ½Ğ¸Ğµ Ğ¸ ÑĞ°Ğ¼ ÑĞ¸Ğ½Ğ°Ğ¿Ñ
         self.potentialSynapses ={}
         self.boostFactor = 1;
         self.rand = random.Random()
         self.rand.seed = 1
         self.initSynapses()
-        self.updateNeighbors(self.set.initialInhibitionRadius)
+        self.updateNeighbors(self.setting.initialInhibitionRadius)
 
     def getIndex(self):
-        return self.col_coords.getX()*self.set.yDimension+self.col_coords.getY();
+        return self.col_coords[0]*self.setting.yDimension+self.col_coords[1];
 
     # /**
-    #  * Èçìåíåíèå ñïèñêà ñîñåäíèõ êîëîíîê, êîòîğûå îòñòîÿò îò äàííîé â êğóãå ğàäèóñîì inhibitionRadius
-    #  * @param inhibitionRadius ğàäèóñ ïîäàâëåíèÿ (â íà÷àëå íàçíà÷åòñÿ èç íàñòğîåê, ïîòîì áåğåòñÿ êàê óñğåäíåííûé ğàäèóñ ğåöåïòèâíîãî ïîëÿ)
+    #  * Ğ˜Ğ·Ğ¼ĞµĞ½ĞµĞ½Ğ¸Ğµ ÑĞ¿Ğ¸ÑĞºĞ° ÑĞ¾ÑĞµĞ´Ğ½Ğ¸Ñ… ĞºĞ¾Ğ»Ğ¾Ğ½Ğ¾Ğº, ĞºĞ¾Ñ‚Ğ¾Ñ€Ñ‹Ğµ Ğ¾Ñ‚ÑÑ‚Ğ¾ÑÑ‚ Ğ¾Ñ‚ Ğ´Ğ°Ğ½Ğ½Ğ¾Ğ¹ Ğ² ĞºÑ€ÑƒĞ³Ğµ Ñ€Ğ°Ğ´Ğ¸ÑƒÑĞ¾Ğ¼ inhibitionRadius
+    #  * @param inhibitionRadius Ñ€Ğ°Ğ´Ğ¸ÑƒÑ Ğ¿Ğ¾Ğ´Ğ°Ğ²Ğ»ĞµĞ½Ğ¸Ñ (Ğ² Ğ½Ğ°Ñ‡Ğ°Ğ»Ğµ Ğ½Ğ°Ğ·Ğ½Ğ°Ñ‡ĞµÑ‚ÑÑ Ğ¸Ğ· Ğ½Ğ°ÑÑ‚Ñ€Ğ¾ĞµĞº, Ğ¿Ğ¾Ñ‚Ğ¾Ğ¼ Ğ±ĞµÑ€ĞµÑ‚ÑÑ ĞºĞ°Ğº ÑƒÑÑ€ĞµĞ´Ğ½ĞµĞ½Ğ½Ñ‹Ğ¹ Ñ€Ğ°Ğ´Ğ¸ÑƒÑ Ñ€ĞµÑ†ĞµĞ¿Ñ‚Ğ¸Ğ²Ğ½Ğ¾Ğ³Ğ¾ Ğ¿Ğ¾Ğ»Ñ)
     #  */
     def updateNeighbors(self,inhibitionRadius):
-        neighbors=[]
-        for k in range(self.col_coords[0] - inhibitionRadius,self.col_coords[0] + inhibitionRadius):
-            if k >= 0 and k < set.xDimension:
-                for m in range(self.col_coords[1] - inhibitionRadius,self.col_coords[1] + inhibitionRadius):
-                    if m >= 0 and m < set.yDimension:
+        self.neighbors=[]
+        for k in range(self.col_coords[0] - inhibitionRadius,self.col_coords[0] + inhibitionRadius+1):
+            if k >= 0 and k < self.setting.xDimension:
+                for m in range(self.col_coords[1] - inhibitionRadius,self.col_coords[1] + inhibitionRadius+1):
+                    if m >= 0 and m < self.setting.yDimension:
                         if k!=self.col_coords[0] or m!=self.col_coords[1]:
-                            neighbors.add(k * set.yDimension + m);
+                            self.neighbors.append(k * self.setting.yDimension + m);
 
     def getNeighbors(self):
         return self.neighbors;
@@ -49,7 +50,7 @@ class Column:
     def setIsActive(self,isActive):
         self.isActive=isActive;
 
-    def isActive(self):
+    def getIsActive(self):
         return self.isActive;
 
 
@@ -65,7 +66,7 @@ class Column:
         conn_syn=[]
         for s in self.potentialSynapses.values():
             if s.isConnected():
-                conn_syn.add(s)
+                conn_syn.append(s)
         return conn_syn
 
     def getBoostFactor(self):
@@ -83,20 +84,20 @@ class Column:
 
 
     def initSynapses(self):
-        center = self.bottomIndices[len(self.bottomIndices)/2]
+        center = self.bottomIndices[len(self.bottomIndices)//2]
 
-        if self.set.debug==False:
+        if self.setting.debug==False:
             self.rand.shuffle(self.bottomIndices)
 
-        # // âûáåğåì òîëüêî ÷àñòü ñèíàïñîâ äëÿ äàííîé êîëîíêè (åñëè set.connectedPct<1)
-        # // ïğåäïîëàãàåòñÿ, ÷òî set.connectedPct<1, â òîì ñëó÷àå, åñëè ğåöåïòèâíûå ïîëÿ ğàçëè÷íûõ êîëîíîê ïåğåñåêàşòñÿ
-        numPotential = round(self.bottomIndices.size() * self.connectedPct);
+        # // Ğ²Ñ‹Ğ±ĞµÑ€ĞµĞ¼ Ñ‚Ğ¾Ğ»ÑŒĞºĞ¾ Ñ‡Ğ°ÑÑ‚ÑŒ ÑĞ¸Ğ½Ğ°Ğ¿ÑĞ¾Ğ² Ğ´Ğ»Ñ Ğ´Ğ°Ğ½Ğ½Ğ¾Ğ¹ ĞºĞ¾Ğ»Ğ¾Ğ½ĞºĞ¸ (ĞµÑĞ»Ğ¸ set.connectedPct<1)
+        # // Ğ¿Ñ€ĞµĞ´Ğ¿Ğ¾Ğ»Ğ°Ğ³Ğ°ĞµÑ‚ÑÑ, Ñ‡Ñ‚Ğ¾ set.connectedPct<1, Ğ² Ñ‚Ğ¾Ğ¼ ÑĞ»ÑƒÑ‡Ğ°Ğµ, ĞµÑĞ»Ğ¸ Ñ€ĞµÑ†ĞµĞ¿Ñ‚Ğ¸Ğ²Ğ½Ñ‹Ğµ Ğ¿Ğ¾Ğ»Ñ Ñ€Ğ°Ğ·Ğ»Ğ¸Ñ‡Ğ½Ñ‹Ñ… ĞºĞ¾Ğ»Ğ¾Ğ½Ğ¾Ğº Ğ¿ĞµÑ€ĞµÑĞµĞºĞ°ÑÑ‚ÑÑ
+        numPotential = round(len(self.bottomIndices) * self.connectedPct);
         for i in range(0,numPotential):
             coord = self.bottomIndices[i]
-            index= coord[0]*self.set.yInput+coord[1]
-            synapse = Synapse(set, index)
-            # //ğàäèàëüíîå çàòóõàíèå ïåğìàíåíòíîñòè îò öåíòğà ğåöåïòèâíîãî ïîëÿ êîëîíêè
+            index= coord[0]*self.setting.yInput+coord[1]
+            synapse = Synapse(self.setting, index, 0)
+            # //Ñ€Ğ°Ğ´Ğ¸Ğ°Ğ»ÑŒĞ½Ğ¾Ğµ Ğ·Ğ°Ñ‚ÑƒÑ…Ğ°Ğ½Ğ¸Ğµ Ğ¿ĞµÑ€Ğ¼Ğ°Ğ½ĞµĞ½Ñ‚Ğ½Ğ¾ÑÑ‚Ğ¸ Ğ¾Ñ‚ Ñ†ĞµĞ½Ñ‚Ñ€Ğ° Ñ€ĞµÑ†ĞµĞ¿Ñ‚Ğ¸Ğ²Ğ½Ğ¾Ğ³Ğ¾ Ğ¿Ğ¾Ğ»Ñ ĞºĞ¾Ğ»Ğ¾Ğ½ĞºĞ¸
             # //double k = MathUtils.distFromCenter(index, set.potentialRadius, set.xDimension, set.yDimension);
             k = getDistance (coord,center )
             synapse.initPermanence(k)
-            self.potentialSynapses.put(index,synapse)
+            self.potentialSynapses[index]=synapse

@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 import HTMSettings
+from utils import kthScore
 
 __author__ = 'AVPetrov'
 import random
@@ -10,11 +11,11 @@ class SpatialPooler:
         self.settings = settings
         self.r = random.Random()
         self.r.seed = 10
-        self.activeDutyCycles = []
-        self.overlapDutyCycles = []
-        # this.settings=settings;
-        # activeDutyCycles=new int[settings.xDimension*settings.yDimension];
-        # overlapDutyCycles=new int[settings.xDimension*settings.yDimension];
+        self.activeDutyCycles = [0 for i in range(self.settings.xDimension*self.settings.yDimension)]
+        self.overlapDutyCycles = [0 for i in range(self.settings.xDimension*self.settings.yDimension)]
+    # this.settings=settings;
+    # activeDutyCycles=new int[settings.xDimension*settings.yDimension];
+    # overlapDutyCycles=new int[settings.xDimension*settings.yDimension];
 
     def getActiveDutyCycles(self):
         return self.activeDutyCycles
@@ -22,15 +23,15 @@ class SpatialPooler:
 
     # Вычисление значения перекрытия каждой колонки с заданным входным вектором.
     #
-    # @param input - входной сигнал
+    #  @param input - входной сигнал
     # @param cols - колонки
     # @return значения переключения для каждой колонки
-    def updateOverlaps(cols, input):
+    def updateOverlaps(self,cols, input):
         overlaps=[0 for i in range(len(cols))]
         i=0
         for c in cols:
             for s in c.getConnectedSynapses():
-                overlaps[i]=overlaps[i] + (input.get(s.getIndexConnectTo()) if 1 else 0)
+                overlaps[i]=overlaps[i] + (1 if input[s.getIndexConnectTo()==1] else 0)
             i=i+1
         return overlaps
 
@@ -41,52 +42,51 @@ class SpatialPooler:
         indexies = [i for i in range(len(cols))]
         self.r.shuffle(indexies)
         for indx in indexies:
-            column=cols.get(indx)
-            if column.getNeighbors().size() > 0:
+            column=cols[indx]
+            if len(column.getNeighbors()) > 0:
                 # выборка перекрытий колонок, соседних с данной
                 neighborOverlaps = [overlaps[i] for i in column.getNeighbors()]
                 # определить порог перекрытия
-                minLocalOverlap = MathUtils.kthScore(neighborOverlaps, self.settings.desiredLocalActivity)
+                minLocalOverlap = kthScore(neighborOverlaps, self.settings.desiredLocalActivity)
                 # если колонка имеет перекрытие большее, чем у соседей, то она становиться активной
 
                 if overlaps[column.getIndex()] > 0 and overlaps[column.getIndex()] >= minLocalOverlap:
                     # для случая одинаковых оверлапов у выбраныных соседей
                     n=0
                     for i in column.getNeighbors():
-                        n=n+(findByColIndex(cols,i).isActive() if  1 else 0)
+                        n=n+(1 if self.findByColIndex(cols,0).getIsActive() else 0)
                     if n<=(self.settings.desiredLocalActivity-1): #-1 - считая саму колонку
                         column.setIsActive(True)
-                        activeColumns.add(column)
+                        activeColumns.append(column)
                 else:
                     column.setIsActive(False)
-
         return activeColumns
 
 
-    def findByColIndex(cols, index):
+    def findByColIndex(self,cols, index):
         for c in cols:
-            if(c.getIndex()==index): return c
+            if(c.getIndex()==index):
+                return c
         return None
 
     # Если синапс был активен (через него шел сигнал от входного вектора), его значение преманентности увеличивается,
     # а иначе - уменьшается.
-    #
-    # @param input - входной сигнал
-    def updateSynapses(cols,input):
+    # @param inp - входной сигнал
+    def updateSynapses(self,cols,inp):
         for col in cols:
             for synapse in col.getPotentialSynapses().values():
-                if input.get(synapse.getIndexConnectTo()):
+                if inp[synapse.getIndexConnectTo()]:
                     synapse.increasePermanence()
                 else:
                     synapse.decreasePermanence()
 
     def updateActiveDutyCycle(self,cols):
         for i in range(len(cols)):
-            self.activeDutyCycles[i] = self.activeDutyCycles[i] + (cols.get(i).isActive() if 1 else 0)
+            self.activeDutyCycles[i] = self.activeDutyCycles[i] + (1 if cols[i].getIsActive()  else 0)
 
 
     def updateOverlapDutyCycle(self,col,overlaps):
-        self.overlapDutyCycles[col.getIndex()] = self.overlapDutyCycles[col.getIndex()] + (overlaps[col.getIndex()] > self.settings.minOverlap if 1 else 0)
+        self.overlapDutyCycles[col.getIndex()] = self.overlapDutyCycles[col.getIndex()] + (1 if overlaps[col.getIndex()] > self.settings.minOverlap else 0)
 
 
     # Если activeDutyCycle больше minValue, то значение ускорения равно 1. Ускорение начинает линейно увеличиваться
@@ -105,16 +105,16 @@ class SpatialPooler:
     # Если колонка плохо перекрывается с входным сигналом достоачно долго (overlapDutyCycle), то увеличиваются
     # перманентности.
 
-    def learningPhase(self,cols, input,overlaps):
+    def learningPhase(self,cols, inp,overlaps):
 
         # 1. изменить значения перманентности всех синапсов проксимальных сегментов *активных* колонок
-        self.updateSynapses(cols,input)
+        self.updateSynapses(cols,inp)
 
         for column in cols:
             # определить максимальное число срабатываний колонки среди соседей колонки и её самой колонку
             maxActiveDuty = 0
             for index in column.getNeighbors():
-                maxActiveDuty = maxActiveDuty > self.activeDutyCycles[index] if maxActiveDuty else self.activeDutyCycles[index]
+                maxActiveDuty = maxActiveDuty  if maxActiveDuty > self.activeDutyCycles[index] else self.activeDutyCycles[index]
 
             # определить минимальное число срабатываний (% от maxActiveDuty)
             minDutyCycle = self.settings.minDutyCycleFraction * maxActiveDuty
@@ -197,7 +197,7 @@ def _tests():
 def findByColXY(cols, x, y):
     for c in cols:
         v=c.getCoord();
-        if(v.getX()==x and v.getY()==y): return c;
+        if(v[0]==x and v[1]==y): return c;
 
     return None;
 
@@ -207,115 +207,116 @@ class Dir(Enum):
     DOWN=2
 
 def testLadder():
+    # FileOutputStream fos=new FileOutputStream("out.txt");
+    #  PrintWriter pw=new PrintWriter(fos);
 
-        # FileOutputStream fos=new FileOutputStream("out.txt");
-        # PrintWriter pw=new PrintWriter(fos);
+    # FileOutputStream fos_in=new FileOutputStream("in.txt");
+    # PrintWriter pw_in=new PrintWriter(fos_in);
 
-        # FileOutputStream fos_in=new FileOutputStream("in.txt");
-        # PrintWriter pw_in=new PrintWriter(fos_in);
+    W=95
+    H=95
+    begX=0
+    begY=0
+    stepSize=20
 
-        W=95
-        H=95
-        begX=0
-        begY=0
-        stepSize=20
+    map = [[0 for j in range(H)] for i in range(W)]
+    myArray=[[0 for j in range(H)] for i in range(W)]
+    inp=[]
+    inp=[0 for i in range(H*W)]
+    STEPS=25;
+    TOTAL_STEPS=1000;
+    STEP_SIZE=STEPS;
 
-        map = [[]]
-        myArray=[[0 for j in H] for i in W]
-        inp=[]
-        inp=[0 for i in H*W]
-        STEPS=25;
-        TOTAL_STEPS=1000;
-        STEP_SIZE=STEPS;
+    setting=HTMSettings.HTMSettings.getDefaultSettings();
+    setting.debug=True;
 
-        setting=HTMSettings.getDefaultSettings();
-        setting.debug=True;
+    setting.activationThreshold = 1;
+    setting.minOverlap = 1;
+    setting.desiredLocalActivity = 3;
+    setting.connectedPct=1;
+    setting.connectedPerm=0.01;
+    setting.xInput=W;
+    setting.yInput=H;
+    setting.potentialRadius=4;
+    setting.xDimension=10;
+    setting.yDimension=10;
+    setting.initialInhibitionRadius=1;
 
-        setting.activationThreshold = 1;
-        setting.minOverlap = 1;
-        setting.desiredLocalActivity = 3;
-        setting.connectedPct=1;
-        setting.connectedPerm=0.01;
-        setting.xInput=W;
-        setting.yInput=H;
-        setting.potentialRadius=4;
-        setting.xDimension=10;
-        setting.yDimension=10;
-        setting.initialInhibitionRadius=1;
+    # pw.print(setting.xDimension + " ");
+    # pw.print(setting.yDimension + " ");
+    # pw.print(TOTAL_STEPS);
+    # pw.println();
+    #
+    # pw_in.print(setting.xDimension + " ");
+    # pw_in.print(setting.yDimension + " ");
+    # pw_in.print(TOTAL_STEPS);
+    # pw_in.println();
 
-        # pw.print(setting.xDimension + " ");
-        # pw.print(setting.yDimension + " ");
-        # pw.print(TOTAL_STEPS);
-        # pw.println();
-        #
-        # pw_in.print(setting.xDimension + " ");
-        # pw_in.print(setting.yDimension + " ");
-        # pw_in.print(TOTAL_STEPS);
+    r=Region(setting,verySimpleMapper());
+
+    sp=SpatialPooler(setting);
+    x=begX
+    y=begY
+    for  i in range(x,x+stepSize):
+        for  j in range(y,y+stepSize):
+            map[i][j] = 1;
+
+    for step in range(TOTAL_STEPS):
+        print("DATA:\n");
+        index = 0;
+        for k in range(W):
+            for m in range(H):
+                inp[index] = map[k][m];
+                # pw_in.print(in[index]);
+                index=index+1;
+            # pw_in.println()
         # pw_in.println();
 
-        r=Region(setting,verySimpleMapper());
-
-        sp=SpatialPooler(setting);
-
-
-        x=begX,y=begY
         for  i in range(x,x+stepSize):
             for  j in range(y,y+stepSize):
-                map[i][j] = 1;
+                if i<len(map) and j<len(map[0]):
+                    map[i][j] = 0
 
-        for step in range(TOTAL_STEPS):
-            print("DATA:\n");
-            index = 0;
-            for k in range(W):
-                for m in range(H):
-                    inp[index] = map[k][m];
-                    # pw_in.print(in[index]);
-                    index=index+1;
-                # pw_in.println()
-            # pw_in.println();
+        x=x+STEP_SIZE;
+        y=y+STEP_SIZE;
+        if(x>W):
+            x=0;
+            y=0;
 
-            for  i in range(x,x+stepSize):
-                for  j in range(y,y+stepSize):
-                    if i<len(map) and j<len(map[0]):
-                        map[i][j] = 0
+        for  i in range(x,x+stepSize):
+            for  j in range(y,y+stepSize):
+                if i<len(map) and j<len(map[0]):
+                    map[i][j] = 1
 
-            x=x+STEP_SIZE;
-            y=y+STEP_SIZE;
-            if(x>W):
-                x=0;
-                y=0;
-
-            for  i in range(x,x+stepSize):
-                for  j in range(y,y+stepSize):
-                    if i<len(map) and j<len(map[0]):
-                        map[i][j] = 1
-
-            for c in r.getColumns():
-                c.setIsActive(False);
-            ov=sp.updateOverlaps(r.getColumns(), input);
-            sp.inhibitionPhase(r.getColumns(), ov);
-            sp.learningPhase(r.getColumns(), input, ov);
+        for c in r.getColumns():
+            c.setIsActive(False);
+        ov=sp.updateOverlaps(r.getColumns(), inp);
+        sp.inhibitionPhase(r.getColumns(), ov);
+        sp.learningPhase(r.getColumns(), inp, ov);
 
 
-            cols=r.getColumns();
-            for i in range(settings.xDimension):
-                for j in range(settings.yDimension):
-                    state=findByColXY(cols,i,j).isActive() if 1 else 0;
-                    # pw.print(state);
-                    # pw.print(" ");
-                # pw.println();
+        cols=r.getColumns();
+        for i in range(setting.xDimension):
+            for j in range(setting.yDimension):
+                state=1 if findByColXY(cols,i,j).getIsActive() else 0;
+                print(str(state)+" ")
+                # pw.print(state);
+                # pw.print(" ");
+            print("\n")
+        print("\n")
             # pw.println();
+        # pw.println();
 
-            # /*System.out.println("BOOST:");
-            # cols=r.getColumns();
-            # for(int i=0;i<settings.xDimension;i++)
-            # {
-            #     for(int j=0;j<settings.yDimension;j++) {
-            #         System.out.print(cols.get(i*settings.yDimension+j).getProximalDendrite().getBoostFactor()+" ");
-            #     }
-            #     System.out.println();
-            # }*/
-        # pw.close();
+        # /*System.out.println("BOOST:");
+        # cols=r.getColumns();
+        # for(int i=0;i<settings.xDimension;i++)
+        # {
+        #     for(int j=0;j<settings.yDimension;j++) {
+        #         System.out.print(cols.get(i*settings.yDimension+j).getProximalDendrite().getBoostFactor()+" ");
+        #     }
+        #     System.out.println();
+        # }*/
+    # pw.close();
 
 #     def testLearning()
 #     {
@@ -605,12 +606,14 @@ def testHTMConstructuion():
 
     r = Region(setting,simpleMapper())
 
-    assert r.getColumns().size() == 4
+    assert len(r.getColumns()) == 4
     assert r.getInputH() == 1
     assert r.getInputW() == 5
-    assert r.getColumns().get(0).getNeighbors().size()==2
-    v=r.getColumns().get(r.getColumns().get(0).getNeighbors().get(0)).getCoord();
-    assert v.getX()==1.0 and v.getY()==0.0
+    assert len(r.getColumns()[0].getNeighbors())==2
+    v=r.getColumns()[r.getColumns()[0].getNeighbors()[0]].getCoord();
+    assert v[0]==1.0 and v[1]==0.0
 
 if __name__ == "__main__":
     print(1234)
+    testHTMConstructuion()
+    testLadder()
