@@ -1,6 +1,6 @@
 from input_generators import *
 
-REGION_SIZE_N = 3
+REGION_SIZE_N = 6
 COLUMN_SIZE = 3
 
 STEPS_NUMBER = 5000
