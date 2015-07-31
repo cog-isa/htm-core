@@ -1,3 +1,6 @@
+from random import randrange, shuffle
+
+
 class MakeBubble:
     def __init__(self, inner_generator, square_size, scale):
         self.inner_generator = inner_generator(square_size)
@@ -20,7 +23,7 @@ class MakeBubble:
             for j in range(self.square_size):
                 if a[i][j]:
                     for x in range(i * self.scale, (i + 1) * self.scale):
-                        for y in range(j * self.scale, (j + 1) *self.scale):
+                        for y in range(j * self.scale, (j + 1) * self.scale):
                             result[x][y] = 1
         return result
 
@@ -282,3 +285,114 @@ class ConstantActiveBit:
 
     def get_data(self):
         return self.a
+
+
+class Snake:
+    def __init__(self, square_size):
+        self.SNAKE = 1
+        self.FOOD = 2
+        self.EMPTY = 0
+
+        self.step_number = -5
+
+        self.square_size = square_size
+        self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
+        self.kx = [1, 0, -1, 0]
+        self.ky = [0, 1, 0, -1]
+        self.direction = 0
+        self.snake_size = 4
+
+        self.new_food_x, self.new_food_y = -1, -1
+
+        self.snake_tail = [[self.square_size // 2, self.square_size // 2] for _ in range(self.snake_size)]
+        print(self.snake_tail)
+        for i in self.snake_tail:
+            print(i[0], i[1])
+            self.a[i[0]][i[1]] = self.SNAKE
+
+        self.game_over = False
+
+    @staticmethod
+    def square_dist(x1, y1, x2, y2):
+        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)
+
+    def out(self):
+        for i in self.a:
+            print(i)
+
+    def ok(self, x, y):
+        return 0 <= x < self.square_size and 0 <= y < self.square_size and self.a[x][y] != self.SNAKE
+
+    def move(self):
+        self.step_number += 1
+        directions = [-1, 1, 0]
+        shuffle(directions)
+
+        ok_tx, ok_ty = -1, -1
+        ok_direction = self.direction
+
+
+        # ищем любой ок переход
+        for i in directions:
+            new_direction = (self.direction + i + 4) % 4
+            tx, ty = self.snake_tail[0][0] + self.kx[new_direction], self.snake_tail[0][1] + self.ky[new_direction]
+
+            if self.ok(tx, ty):
+                ok_tx, ok_ty = tx, ty
+                ok_direction = new_direction
+                break
+
+        # если есть пища, то ищем выгодный переход
+        if self.ok(self.new_food_x, self.new_food_y) and self.a[self.new_food_x][self.new_food_y] == self.FOOD:
+            for i in directions:
+                new_direction = (self.direction + i + 4) % 4
+                tx, ty = self.snake_tail[0][0] + self.kx[new_direction], self.snake_tail[0][1] + self.ky[new_direction]
+                if self.ok(tx, ty) and self.square_dist(tx, ty, self.new_food_x, self.new_food_y) < self.square_dist(
+                        self.snake_tail[0][0], self.snake_tail[0][1], self.new_food_x, self.new_food_y):
+                    ok_tx, ok_ty = tx, ty
+                    ok_direction = new_direction
+                    break
+
+        if self.ok(ok_tx, ok_ty):
+            self.direction = ok_direction
+            print(self.snake_tail)
+            if self.a[ok_tx][ok_ty] == self.FOOD:
+                last_index = len(self.snake_tail) - 1
+                self.snake_tail.append([self.snake_tail[last_index][0], self.snake_tail[last_index][1]])
+
+            for j in self.snake_tail:
+                self.a[j[0]][j[1]] = self.EMPTY
+
+            for q in range(1, len(self.snake_tail)):
+                j = len(self.snake_tail) - q
+                self.snake_tail[j] = [self.snake_tail[j - 1][0], self.snake_tail[j - 1][1]]
+            self.snake_tail[0] = [ok_tx, ok_ty]
+
+            for j in self.snake_tail:
+                self.a[j[0]][j[1]] = self.SNAKE
+
+            if self.step_number % 10 == 0:
+                if self.ok(self.new_food_x, self.new_food_y) and self.a[self.new_food_x][self.new_food_y] == self.FOOD:
+                    self.a[self.new_food_x][self.new_food_y] = self.EMPTY
+
+                self.new_food_x, self.new_food_y = randrange(0, self.square_size), randrange(0, self.square_size)
+
+                if self.a[self.new_food_x][self.new_food_y] == self.EMPTY:
+                    self.a[self.new_food_x][self.new_food_y] = self.FOOD
+
+        else:
+            self.game_over = True
+            print("GAME_END")
+
+    def get_data(self):
+        res = [[0 for _ in range(self.square_size)] for _ in range(self.square_size)]
+        for i in range(self.square_size):
+            for j in range(self.square_size):
+                res[i][j] = self.a[i][j]
+                if res[i][j] == self.FOOD:
+                    res[i][j] = 1
+        return res
+
+
+if __name__ == "__main__":
+    s = Snake(5)
