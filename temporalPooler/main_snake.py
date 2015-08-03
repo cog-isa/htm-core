@@ -1,7 +1,8 @@
+import os
+
 from htm__region import Region
 from settings import *
-import os
-from input_generators import MakeBubble
+
 
 # generator = GENERATOR(REGION_SIZE_N)
 SCALE = 1

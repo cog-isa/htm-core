@@ -37,6 +37,8 @@ class SpatialPooler:
 
     # Вычисление колонок, остающихся победителями после применения взаимного подавления.
     def inhibitionPhase(self, cols, overlaps):
+        for c in cols:
+            c.setIsActive(False)
         activeColumns=[]
 
         indexies = [i for i in range(len(cols))]
@@ -132,6 +134,17 @@ class SpatialPooler:
         # теперь обновим activeDutyCycle всех колонок.
         self.updateActiveDutyCycle(cols)
 
+    def outPrediction(self, region):
+        output=[[0 for i in range(0, region.getInputH())] for i in range(0, region.getInputW())]
+        for col in region.columns:
+            if col.getIsActive() == True:
+                for syn in col.getPotentialSynapses():
+                    x = syn.getIndexConnectTo() / region.getInputH()
+                    y = syn.getIndexConnectTo() % region.getInputW()
+                    output[x][y]=min(output[x][y]+syn.getPermanence(),1)
+        return output
+
+
 #######################################################################################################################
 #######################################################################################################################
 #######################################################################################################################
@@ -196,17 +209,17 @@ def testLadder():
     # FileOutputStream fos_in=new FileOutputStream("in.txt")
     # PrintWriter pw_in=new PrintWriter(fos_in)
 
-    W=95
-    H=95
+    W=15
+    H=15
     begX=0
     begY=0
-    stepSize=20
+    stepSize=5
 
     map = [[0 for j in range(H)] for i in range(W)]
     myArray=[[0 for j in range(H)] for i in range(W)]
     inp=[]
     inp=[0 for i in range(H*W)]
-    STEPS=25
+    STEPS=5
     TOTAL_STEPS=1000
     STEP_SIZE=STEPS
 
@@ -215,15 +228,15 @@ def testLadder():
 
     setting.activationThreshold = 1
     setting.minOverlap = 1
-    setting.desiredLocalActivity = 3
+    setting.desiredLocalActivity = 1
     setting.connectedPct=1
-    setting.connectedPerm=0.01
+    # setting.connectedPerm=0.01
     setting.xInput=W
     setting.yInput=H
-    setting.potentialRadius=4
-    setting.xDimension=10
-    setting.yDimension=10
-    setting.initialInhibitionRadius=1
+    setting.potentialRadius=2
+    setting.xDimension=3
+    setting.yDimension=3
+    setting.initialInhibitionRadius=2
 
     # pw.print(setting.xDimension + " ")
     # pw.print(setting.yDimension + " ")

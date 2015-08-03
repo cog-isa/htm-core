@@ -1,4 +1,3 @@
-import os
 from htm__region import Region
 from settings import *
 # generator = GENERATOR(REGION_SIZE_N)

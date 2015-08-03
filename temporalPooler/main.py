@@ -1,6 +1,6 @@
 from htm__region import Region
 from settings import *
-from input_generators import MakeBubble
+from gens.input_generators import MakeBubble
 
 # generator = GENERATOR(REGION_SIZE_N)
 

@@ -1,19 +1,21 @@
-from input_generators import *
+from gens.input_generators import *
 
 # раздувание
-SCALE = 5
+SCALE = 10
 
 REGION_SIZE_N = 3
 
 # количество клеток в колонке
 COLUMN_SIZE = 3
 
-STEPS_NUMBER = 5000
+STEPS_NUMBER = 50000
 
-GENERATOR = HardSteps
+# GENERATOR = HardSteps
 # GENERATOR = ConstantActiveBit
+# GENERATOR = TestSimpleSteps
+GENERATOR = Cross
 
-INITIAL_PERMANENCE = 0.50
+INITIAL_PERMANENCE = 0.30
 SYNAPSE_THRESHOLD = 0.25
 DENDRITE_PERMANENCE_INC_DELTA = 0.02
 DENDRITE_PERMANENCE_DEC_DELTA = -0.1
