@@ -24,3 +24,7 @@ class Region:
         return self.setting.xInput
     def getInputH(self):
         return self.setting.yInput;
+    def getColW(self):
+        return self.setting.xDimension;
+    def getColH(self):
+        return self.setting.yDimension;

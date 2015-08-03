@@ -187,8 +187,8 @@ class Region:
                             cell_for_update = current_cell
                             dendrite_mx = dendrite
 
-                if mx and cell_for_update.new_state == PASSIVE:
-                # if mx:
+                if mx >= DENDRITE_ACTIVATE_THRESHOLD and cell_for_update.new_state == PASSIVE:
+                    # if mx:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
 

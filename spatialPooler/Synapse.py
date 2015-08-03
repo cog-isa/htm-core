@@ -30,20 +30,19 @@ class Synapse:
         self.permanence = self.permanence + self.settings.permanenceInc
         self.permanence = 1 if self.permanence > 1 else self.permanence
 
-
     def decreasePermanence(self):
         self.permanence = self.permanence - self.settings.permanenceDec
         self.permanence = 0 if self.permanence < 0 else self.permanence
 
-
     def isConnected(self):
-        return self.permanence > self.settings.connectedPerm
-
+        if(self.settings.debug==True):
+            return True
+        else:
+            return self.permanence > self.settings.connectedPerm
 
     # /* connectToIndex - это либо номер бита из сигнала снизу, либо номер клетки (аксон) при латеральной связи */
     def getIndexConnectTo(self):
         return self.indexConnectTo
-
 
     # /* Получить степени связанности между аксоном и дендритом. */
     def getPermanence(self):
