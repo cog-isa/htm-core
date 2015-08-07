@@ -16,7 +16,7 @@ O3 - Клетка с номером 3, данной колонки активи�
 
 for i in range(STEPS_NUMBER):
     print('---------------------')
-    #generator.out()
+    # generator.out()
     r.step_forward(generator.get_data())
     r.out_prediction()
     generator.move()

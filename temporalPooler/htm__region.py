@@ -76,11 +76,6 @@ class Region:
 
     def get_columns(self, active=None, prediction=None):
         # в зависимости от параметра возвращает нужные нам колонки
-        print(active, prediction)
-        for i in range(self.region_size):
-            for j in range(self.region_size):
-                if self.column_satisfies(self.columns[i][j], active, prediction):
-                    print(i, j)
 
         return [self.columns[i][j] for i in range(self.region_size) for j in range(self.region_size) if
                 self.column_satisfies(self.columns[i][j], active, prediction)]
@@ -90,21 +85,22 @@ class Region:
 
         # получаем активные на предыдущем шаге клетки
         active_cells = self.get_active_cells()
-        print([q.id for q in active_cells])
+
         for column in self.get_columns(active=True, prediction=True):
             # рассматриваем все колонки,которые были правильно предсказаны
 
             # первым делом проверим может в этой колонке есть клетка,которая очень давно не активировалсь, если она
             # есть тогда мы ее активируем
-            active_from_passive_time = False
+
             for cell in column.cells:
+                active_from_passive_time = False
                 if cell.passive_time > PASSIVE_TIME_TO_ACTIVE_THRESHOLD:
                     # назначаем следующее состояние клетки - активным
                     cell.update_new_state(ACTIVE)
                     active_from_passive_time = True
-                    cell.ololo = True
-            if active_from_passive_time:
-                break
+                    cell.active_from_passive_time = True
+                if active_from_passive_time:
+                    break
 
             # если такой клетки нет - то активируем клетку правильно сделавшую предсказание
 
@@ -163,6 +159,9 @@ class Region:
             # рассматриваем все колонки которые не были предсказаны и не активировались
             pass
 
+
+
+
         # обнуляем актиновность всех дендритов
         for column in self.get_columns():
             for cell in column.cells:
@@ -212,6 +211,21 @@ class Region:
                 for cell in self.columns[i][j].cells:
                     cell.apply_new_state()
 
+    def out_new_state(self):
+        res = [["" for _ in range(self.region_size)] for _ in range(self.region_size)]
+        for i in range(self.region_size):
+            for j in range(self.region_size):
+                cnt = 0
+                for cell in self.columns[i][j].cells:
+                    cnt += 1
+
+                    if cell.new_state == PREDICTION:
+                        res[i][j] += "P" + str(cnt)
+                    if cell.new_state == ACTIVE and not cell.active_from_passive_time:
+                        res[i][j] += "A" + str(cnt)
+        for i in res:
+            print(i)
+
     def out_prediction(self):
         # отображение информации
         res = [["" for _ in range(self.region_size)] for _ in range(self.region_size)]
@@ -223,12 +237,12 @@ class Region:
 
                     if cell.state == PREDICTION:
                         res[i][j] += "P" + str(cnt)
-                    if cell.state == ACTIVE and not cell.ololo:
+                    if cell.state == ACTIVE and not cell.active_from_passive_time:
                         res[i][j] += "A" + str(cnt)
                     # клетка активировалсь из-за долгого простоя
-                    if cell.ololo:
+                    if cell.active_from_passive_time:
                         res[i][j] += "O" + str(cnt)
-                        cell.ololo = False
+                        cell.active_from_passive_time = False
 
         print("Правильно предсказано раз: ", self.very_ok_times)
         print("Максимально правильно предсказано раз: ", self.max_ok_times)
