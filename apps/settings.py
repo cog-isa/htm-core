@@ -1,7 +1,7 @@
 from gens.input_generators import *
 
 # раздувание
-SCALE = 10
+SCALE = 3
 
 REGION_SIZE_N = 3
 
@@ -13,7 +13,7 @@ STEPS_NUMBER = 50000
 # GENERATOR = HardSteps
 # GENERATOR = ConstantActiveBit
 # GENERATOR = TestSimpleSteps
-GENERATOR = Cross
+GENERATOR = TestSimpleSteps
 
 INITIAL_PERMANENCE = 0.30
 SYNAPSE_THRESHOLD = 0.25
