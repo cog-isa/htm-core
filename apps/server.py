@@ -4,34 +4,25 @@ import HTMSettings
 from htm__region import Region
 from mappers.VerySimpleMapper import verySimpleMapper
 from region import Region
+from socketModule import socketModule
 from spatialPooler import SpatialPooler
 import temporalPooler.htm__region as tp
 
 __author__ = 'AVPetrov'
 
 # реализует ответ на запрос - Дай состояние и сделай шаг вперед
-
 from settings import *
 
-SOCKET_PORT = 11101
+def handle(data,answer):
+    if(data.decode('utf-8')):
+        return pickle.dumps(answer, pickle.HIGHEST_PROTOCOL)
+    else:
+        return "UNKNOW REQUEST"
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', SOCKET_PORT)
-sock.bind(server_address)
-sock.listen(1)
+server=socketModule()
+server.openLocalPort(11101)
 
-while True:
-    connection, client_address = sock.accept()
-    data = ""
-    data += connection.recv(512).decode('utf-8')
-    # connection.close()
-    end_message = "[THIS_IS_THE_END_HOLD_YOUR_BREATH_AND_COUNT_TO_TEN]"
-    print(data)
-    if data.find('get:') != -1:
-        data=pickle.dumps(tp.Region(3,3), pickle.HIGHEST_PROTOCOL)
-        connection.sendall(data)
-        connection.sendall(bytes(end_message, 'UTF-8'))
-        connection.close()
+
 
 
 def toVector(m):
@@ -56,9 +47,9 @@ setting.connectedPct = 1
 setting.xInput = REGION_SIZE_N*SCALE
 setting.yInput = REGION_SIZE_N*SCALE
 setting.potentialRadius = 2
-setting.xDimension = 5
-setting.yDimension = 5
-setting.initialInhibitionRadius=2
+setting.xDimension = 1
+setting.yDimension = 1
+setting.initialInhibitionRadius=1
 setting.cellsPerColumn=5
 
 
@@ -82,3 +73,4 @@ for i in range(STEPS_NUMBER):
     r_t.step_forward(inp_t)
     r_t.out_prediction()
     generator.move()
+    server.waitForRqst(lambda data: handle(data,r_t))
