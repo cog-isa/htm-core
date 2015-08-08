@@ -43,6 +43,19 @@ r = Region(setting,verySimpleMapper())
 r_t=tp.Region(setting.xDimension, setting.cellsPerColumn)
 sp=SpatialPooler(setting)
 
+import pickle
+
+with open('r.pickle', 'wb') as f:
+    # Pickle the 'data' dictionary using the highest protocol available.
+    pickle.dump(r, f, pickle.HIGHEST_PROTOCOL)
+
+r=0
+
+with open('r.pickle', 'rb') as f:
+    # The protocol version used is detected automatically, so we do not
+    # have to specify it.
+    r = pickle.load(f)
+
 for i in range(STEPS_NUMBER):
     inp=toVector(generator.get_data())
     # generator.out()
