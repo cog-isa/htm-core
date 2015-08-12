@@ -1,15 +1,8 @@
 import os
 
 from temporalPooler.htm__region import Region
-# пробуем добавить settings, если они не добавлены - добавляем
-# такие грабли нужны для корректного отображения в ide
-try:
-    from apps.settings import *
-except ValueError:
-    pass
+from apps.settings import *
 
-
-# generator = GENERATOR(REGION_SIZE_N)
 SCALE = 1
 generator = Snake(REGION_SIZE_N)
 

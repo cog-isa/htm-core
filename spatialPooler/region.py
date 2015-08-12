@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 import sys
-from Column import Column
+from spatialPooler.Column import Column
 
 __author__ = 'AVPetrov'
 

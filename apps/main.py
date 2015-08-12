@@ -1,13 +1,10 @@
-import HTMSettings
-from htm__region import Region
-from mappers.VerySimpleMapper import verySimpleMapper
-from region import Region
+from spatialPooler import HTMSettings
+from spatialPooler.mappers.VerySimpleMapper import verySimpleMapper
+from spatialPooler.region import Region
 from spatialPooler.spooler import SpatialPooler
 import temporalPooler.htm__region as tp
+from apps.settings import *
 
-__author__ = 'AVPetrov'
-
-from settings import *
 
 def toVector(m):
     output=[]
@@ -15,6 +12,7 @@ def toVector(m):
         for j in i:
             output.append(j)
     return output
+
 
 def toMatrix(region):
     return [[region.getColumns()[j*region.getColH() + i].getIsActive() for i in range(region.getColH())] for j in range(region.getColW())]
@@ -37,8 +35,8 @@ setting.initialInhibitionRadius=2
 setting.cellsPerColumn=5
 
 r = Region(setting,verySimpleMapper())
-r_t=tp.Region(setting.xDimension, setting.cellsPerColumn)
-sp=SpatialPooler(setting)
+r_t = tp.Region(setting.xDimension, setting.cellsPerColumn)
+sp = SpatialPooler(setting)
 
 for i in range(STEPS_NUMBER):
     inp=toVector(generator.get_data())

@@ -1,5 +1,5 @@
-from settings import *
-from htm_synapse import Synapse
+from temporalPooler.htm_synapse import Synapse
+from apps.settings import *
 
 
 class Dendrite:

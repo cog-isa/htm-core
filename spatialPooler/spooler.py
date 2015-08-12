@@ -1,10 +1,10 @@
 # -*- coding: utf8 -*-
-import HTMSettings
+from spatialPooler import HTMSettings
 from spatialPooler.utils import kthScore
+from spatialPooler.region import Region
 
-__author__ = 'AVPetrov'
 import random
-from region import Region
+
 
 class SpatialPooler:
     def __init__(self, settings):
@@ -150,8 +150,8 @@ class SpatialPooler:
 #######################################################################################################################
 #######################################################################################################################
 
-from mappers.VerySimpleMapper import verySimpleMapper
-from mappers.SimpleMapper import simpleMapper
+from spatialPooler.mappers.VerySimpleMapper import verySimpleMapper
+from spatialPooler.mappers.SimpleMapper import simpleMapper
 
 
     # //TODO: переписать, сейчас не верно беруться размеры

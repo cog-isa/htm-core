@@ -1,7 +1,7 @@
-from htm_column import Column
-from htm_dendrite import Dendrite
-from util import ACTIVE, PREDICTION, PASSIVE
-from settings import *
+from temporalPooler.htm_column import Column
+from temporalPooler.util import ACTIVE, PREDICTION, PASSIVE
+from apps.settings import *
+from temporalPooler.htm_dendrite import Dendrite
 from random import randrange
 
 
@@ -59,7 +59,8 @@ class Region:
 
     @staticmethod
     def column_satisfies(column, active, prediction):
-        # возвращает булевское значение, удовлетворяет ли колонка заданным параметрам, если active или prediction является None - то колонка нам подходит точно
+        # возвращает булевское значение, удовлетворяет ли колонка заданным параметрам,
+        # если active или prediction является None - то колонка нам подходит точно
         if active is not None:
             if (column.state == ACTIVE and not active) or (column.state == PASSIVE and active):
                 return False
@@ -109,7 +110,6 @@ class Region:
                     # назначаем следующее состояние клетки - активным
                     cell.update_new_state(ACTIVE)
 
-
                     # увеличиваем перманентность дендритов, который привели к активации данной колонки
                     for dendrite in cell.dendrites:
                         if dendrite.active:
@@ -155,12 +155,9 @@ class Region:
                             cell.dendrites.append(new_den)
             pass
 
-        for column in self.get_columns(active=False, prediction=False):
+        for _ in self.get_columns(active=False, prediction=False):
             # рассматриваем все колонки которые не были предсказаны и не активировались
             pass
-
-
-
 
         # обнуляем актиновность всех дендритов
         for column in self.get_columns():

@@ -1,14 +1,5 @@
-# пробуем добавить settings, если они не добавлены - добавляем
-# такие грабли нужны для корректного отображения в ide
-try:
-    from apps.settings import *
-except ValueError and SystemError:
-    pass
-
 from temporalPooler.htm__region import Region
-from gens.input_generators import MakeBubble
-
-# generator = GENERATOR(REGION_SIZE_N)
+from apps.settings import *
 
 generator = MakeBubble(GENERATOR, REGION_SIZE_N, SCALE)
 
