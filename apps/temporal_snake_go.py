@@ -1,7 +1,12 @@
 import os
 
-from htm__region import Region
-from settings import *
+from temporalPooler.htm__region import Region
+# пробуем добавить settings, если они не добавлены - добавляем
+# такие грабли нужны для корректного отображения в ide
+try:
+    from apps.settings import *
+except ValueError:
+    pass
 
 
 # generator = GENERATOR(REGION_SIZE_N)
@@ -13,7 +18,7 @@ print("""
 **** ЛЕГЕНДА *****
 P1 - Клетка с номером 1, данной колонки находится в состоянии предсказания
 A3 - Клетка с номером 3, данной колонки активировалась
-O3 - Клетка с номером 3, данной колонки активировалась из-за долгого простоя (PassiveTime > PASSIVE_TIME_TO_ACTIVE_THRESHOLD)
+O3 - Клетка с номером 3, данной колонки активировалась из-за  простоя (PassiveTime > PASSIVE_TIME_TO_ACTIVE_THRESHOLD)
 """)
 
 for i in range(STEPS_NUMBER):
