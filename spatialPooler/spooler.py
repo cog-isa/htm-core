@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 import HTMSettings
-from utils import kthScore
+from spatialPooler.utils import kthScore
 
 __author__ = 'AVPetrov'
 import random
