@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
-from spatialPooler import HTMSettings
+from spatialPooler import sp_settings
 from spatialPooler.utils import kthScore
-from spatialPooler.region import Region
+from spatialPooler.sp_region import Region
 
 import random
 
@@ -223,7 +223,7 @@ def testLadder():
     TOTAL_STEPS=1000
     STEP_SIZE=STEPS
 
-    setting=HTMSettings.HTMSettings.getDefaultSettings()
+    setting=sp_settings.HTMSettings.getDefaultSettings()
     setting.debug=True
 
     setting.activationThreshold = 1
@@ -307,7 +307,7 @@ def testLadder():
 def testLearning():
     inp=[1,1,1,1,1,0,1,1, 1,1,1,1, 1,1,1,1]
 
-    settings=HTMSettings.HTMSettings.getDefaultSettings()
+    settings=sp_settings.HTMSettings.getDefaultSettings()
     settings.debug=True
 
     settings.activationThreshold = 1
@@ -340,7 +340,7 @@ def testLearning():
 def testUpdateActiveDutyCycle():
     inp=[1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1]
 
-    settings=HTMSettings.HTMSettings.getDefaultSettings()
+    settings=sp_settings.HTMSettings.getDefaultSettings()
     settings.debug=True
 
     settings.activationThreshold = 1
@@ -395,7 +395,7 @@ def testUpdateActiveDutyCycle():
 def testUpdateSynapses():
     inp=[1,1,1,1,1,0,1,1, 1,1,1,1, 1,1,1,1]
 
-    settings=HTMSettings.HTMSettings.getDefaultSettings()
+    settings=sp_settings.HTMSettings.getDefaultSettings()
     settings.debug=True
 
     settings.activationThreshold = 1
@@ -427,7 +427,7 @@ def testUpdateSynapses():
 def testInhibitionPhase():
     inp=[1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0]
 
-    settings=HTMSettings.HTMSettings.getDefaultSettings()
+    settings=sp_settings.HTMSettings.getDefaultSettings()
     settings.debug=True
 
     settings.activationThreshold = 1
@@ -470,7 +470,7 @@ def testOverlapOnOnes():
     inp=[1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1]
 
 
-    settings=HTMSettings.HTMSettings.getDefaultSettings()
+    settings=sp_settings.HTMSettings.getDefaultSettings()
     settings.debug=True
 
     settings.activationThreshold = 1
@@ -520,7 +520,7 @@ def testOverlapOnOnes():
 def testOverlapOnNotOnes():
     inp=[1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0]
 
-    settings=HTMSettings.HTMSettings.getDefaultSettings()
+    settings=sp_settings.HTMSettings.getDefaultSettings()
     settings.debug=True
 
     settings.activationThreshold = 1
@@ -544,7 +544,7 @@ def testOverlapOnNotOnes():
 
 
 def testHTMConstructuion():
-    setting = HTMSettings.HTMSettings.getDefaultSettings()
+    setting = sp_settings.HTMSettings.getDefaultSettings()
     setting.debug = True
 
     setting.activationThreshold = 1

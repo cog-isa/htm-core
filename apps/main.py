@@ -1,6 +1,6 @@
-from spatialPooler import HTMSettings
+from spatialPooler import sp_settings
 from spatialPooler.mappers.VerySimpleMapper import verySimpleMapper
-from spatialPooler.region import Region
+from spatialPooler.sp_region import Region
 from spatialPooler.spooler import SpatialPooler
 import temporalPooler.htm__region as tp
 from apps.settings import *
@@ -19,7 +19,7 @@ def toMatrix(region):
 
 generator = MakeBubble(GENERATOR, REGION_SIZE_N, SCALE)
 
-setting = HTMSettings.HTMSettings.getDefaultSettings()
+setting = sp_settings.HTMSettings.getDefaultSettings()
 setting.debug = True
 
 setting.activationThreshold = 1

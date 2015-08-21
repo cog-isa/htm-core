@@ -1,8 +1,8 @@
 # -*- coding: utf8 -*-
 import random
 
-from spatialPooler.Cell import Cell
-from spatialPooler.Synapse import Synapse
+from spatialPooler.sp_cell import Cell
+from spatialPooler.sp_synapse import Synapse
 from spatialPooler.utils import getDistance
 
 __author__ = 'AVPetrov'
