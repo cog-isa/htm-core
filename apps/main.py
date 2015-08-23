@@ -1,5 +1,5 @@
 from spatialPooler import sp_settings
-from spatialPooler.mappers.VerySimpleMapper import verySimpleMapper
+from spatialPooler.mappers.sp_very_simple_mapper import verySimpleMapper
 from spatialPooler.sp_region import Region
 from spatialPooler.spooler import SpatialPooler
 import temporalPooler.htm__region as tp
@@ -15,11 +15,11 @@ def toVector(m):
 
 
 def toMatrix(region):
-    return [[region.getColumns()[j*region.getColH() + i].getIsActive() for i in range(region.getColH())] for j in range(region.getColW())]
+    return [[region.get_columns()[j*region.get_col_h() + i].get_is_active() for i in range(region.get_col_h())] for j in range(region.get_col_w())]
 
 generator = MakeBubble(GENERATOR, REGION_SIZE_N, SCALE)
 
-setting = sp_settings.HTMSettings.getDefaultSettings()
+setting = sp_settings.HTMSettings.get_default_settings()
 setting.debug = True
 
 setting.activationThreshold = 1
@@ -42,9 +42,9 @@ for i in range(STEPS_NUMBER):
     inp=toVector(generator.get_data())
     # generator.out()
 
-    ov=sp.updateOverlaps(r.getColumns(), inp)
-    sp.inhibitionPhase(r.getColumns(), ov)
-    # sp.learningPhase(r.getColumns(), inp, ov)
+    ov=sp.update_overlaps(r.get_columns(), inp)
+    sp.inhibition_phase(r.get_columns(), ov)
+    # sp.learning_phase(r.get_columns(), inp, ov)
 
     inp_t=toMatrix(r)
 

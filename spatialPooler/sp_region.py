@@ -1,30 +1,35 @@
 # -*- coding: utf8 -*-
-import sys
 from spatialPooler.sp_column import Column
 
 __author__ = 'AVPetrov'
 
 
 class Region:
-    def __init__(self,setting,mapper):
-        self.mapper=mapper;
-        self.columns=[];
-        self.setting=setting;
-        bottomIndices = mapper.mapAll((self.setting.xInput, self.setting.yInput), (self.setting.xDimension, self.setting.yDimension), self.setting.potentialRadius);
+    def __init__(self, setting, mapper):
+        self.mapper = mapper
+        self.columns = []
+        self.setting = setting
+        bottom_indices = mapper.map_all((self.setting.xinput, self.setting.yinput),
+                                       (self.setting.xdimension, self.setting.ydimension),
+                                       self.setting.potential_radius)
 
-        for i in range(0,self.setting.xDimension):
-            for j in range(0,self.setting.yDimension):
-                self.columns.append((Column((i, j), bottomIndices[i*self.setting.yDimension+j], self)));
+        for i in range(0, self.setting.xdimension):
+            for j in range(0, self.setting.ydimension):
+                self.columns.append((Column((i, j), bottom_indices[i*self.setting.ydimension+j], self)))
 
         return
 
-    def getColumns(self):
-        return self.columns;
-    def getInputW(self):
+    def get_columns(self):
+        return self.columns
+
+    def get_input_w(self):
         return self.setting.xInput
-    def getInputH(self):
-        return self.setting.yInput;
-    def getColW(self):
-        return self.setting.xDimension;
-    def getColH(self):
-        return self.setting.yDimension;
+
+    def get_input_h(self):
+        return self.setting.yInput
+
+    def get_col_w(self):
+        return self.setting.xDimension
+
+    def get_col_h(self):
+        return self.setting.yDimension

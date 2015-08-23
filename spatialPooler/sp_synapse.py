@@ -3,51 +3,51 @@ import random
 
 __author__ = 'AVPetrov'
 
-class Synapse:
-    def __init__(self,settings,indexConnectTo,initPermanence):
-        self.settings = settings;
-        self.indexConnectTo = indexConnectTo;
-        self.permanence = initPermanence;
-        self.rand=random.Random()
-        self.rand.seed=10
 
+class Synapse:
+    def __init__(self, settings, index_connect_to, init_permanence):
+        self.settings = settings
+        self.index_connect_to = index_connect_to
+        self.permanence = init_permanence
+        self.rand = random.Random()
+        self.rand.seed = 10
 
     # /**
     #  * Случайные значения преманентности должны быть из малого диапазона около connectedPerm
     #  */
-    def initPermanence(self,k):
-        if self.settings.debug==True:
-            self.permanence = self.settings.connectedPerm
-            self.permanence=self.permanence*(1/(0.5 if k==0 else k))
+    def init_permanence(self, k):
+        if self.settings.debug:
+            self.permanence = self.settings.connected_perm
+            self.permanence *= (1/(0.5 if k == 0 else k))
         else:
-            if random.nextDouble() <= self.settings.initConnectedPct:
-                self.permanence = self.settings.connectedPerm + self.rand.random() * self.settings.permanenceInc / 4.0
+            if self.rand.nextDouble() <= self.settings.connected_pct:
+                self.permanence = self.settings.connected_perm + self.rand.random() * self.settings.permanence_inc / 4.0
             else:
-                self.permanence = self.settings.connectedPerm - self.random.random() * self.settings.permanenceInc / 4.0
-                self.permanence=self.permanence*(1/(0.5 if k==0 else k))
+                self.permanence = self.settings.connected_perm - self.rand.random() * self.settings.permanence_inc / 4.0
+                self.permanence *= (1/(0.5 if k == 0 else k))
 
-    def increasePermanence(self):
-        self.permanence = self.permanence + self.settings.permanenceInc
+    def increase_permanence(self):
+        self.permanence += self.settings.permanence_inc
         self.permanence = 1 if self.permanence > 1 else self.permanence
 
-    def decreasePermanence(self):
-        self.permanence = self.permanence - self.settings.permanenceDec
+    def decrease_permanence(self):
+        self.permanence -= self.settings.permanence_dec
         self.permanence = 0 if self.permanence < 0 else self.permanence
 
-    def isConnected(self):
-        if(self.settings.debug==True):
+    def is_connected(self):
+        if self.settings.debug:
             return True
         else:
-            return self.permanence > self.settings.connectedPerm
+            return self.permanence > self.settings.connected_perm
 
     # /* connectToIndex - это либо номер бита из сигнала снизу, либо номер клетки (аксон) при латеральной связи */
-    def getIndexConnectTo(self):
-        return self.indexConnectTo
+    def get_index_connect_to(self):
+        return self.index_connect_to
 
     # /* Получить степени связанности между аксоном и дендритом. */
-    def getPermanence(self):
+    def get_permanence(self):
         return self.permanence
 
     # /* Установить степени связанности между аксоном и дендритом. */
-    def setPermanence(self,permanence):
+    def set_permanence(self, permanence):
         self.permanence = permanence

@@ -3,101 +3,94 @@ import random
 
 from spatialPooler.sp_cell import Cell
 from spatialPooler.sp_synapse import Synapse
-from spatialPooler.utils import getDistance
+from spatialPooler.utils import get_distance
 
 __author__ = 'AVPetrov'
 
 
 class Column:
-    def __init__(self,coords, bottomIndices, region):
-        self.setting = region.setting;
-        self.bottomIndices=bottomIndices;
-        self.potentialRadius= self.setting.potentialRadius;
-        self.connectedPct= self.setting.connectedPct;
-        self.r=region;
-        self.isActive=False;
-        self.neighbors=[]
-        self.col_coords=coords;
-        self.cells=[Cell(0) for i in range(0,self.setting.cellsPerColumn+1)]
+    def __init__(self, coords, bottom_indices, region):
+        self.setting = region.setting
+        self.bottom_indices = bottom_indices
+        self.potential_radius = self.setting.potential_radius
+        self.connected_pct = self.setting.connected_pct
+        self.r = region
+        self.is_active = False
+        self.neighbors = []
+        self.col_coords = coords
+        self.cells = [Cell(0) for i in range(0, self.setting.cells_per_column+1)]
         # хэш синапсов: индекс элемента с которым соединение и сам синапс
-        self.potentialSynapses ={}
-        self.boostFactor = 1;
+        self.potential_synapses = {}
+        self.boost_factor = 1
         self.rand = random.Random()
         self.rand.seed = 1
-        self.initSynapses()
-        self.updateNeighbors(self.setting.initialInhibitionRadius)
+        self.init_synapses()
+        self.update_neighbors(self.setting.initial_inhibition_radius)
 
-    def getIndex(self):
-        return self.col_coords[0]*self.setting.yDimension+self.col_coords[1];
+    def get_index(self):
+        return self.col_coords[0]*self.setting.ydimension+self.col_coords[1]
 
     # /**
     #  * Изменение списка соседних колонок, которые отстоят от данной в круге радиусом inhibitionRadius
-    #  * @param inhibitionRadius радиус подавления (в начале назначется из настроек, потом берется как усредненный радиус рецептивного поля)
+    #  * @param inhibitionRadius радиус подавления (в начале назначется из настроек, потом берется как усредненный
+    #  * радиус рецептивного поля)
     #  */
-    def updateNeighbors(self,inhibitionRadius):
-        self.neighbors=[]
-        for k in range(self.col_coords[0] - inhibitionRadius,self.col_coords[0] + inhibitionRadius+1):
-            if k >= 0 and k < self.setting.xDimension:
-                for m in range(self.col_coords[1] - inhibitionRadius,self.col_coords[1] + inhibitionRadius+1):
-                    if m >= 0 and m < self.setting.yDimension:
-                        if k!=self.col_coords[0] or m!=self.col_coords[1]:
-                            self.neighbors.append(k * self.setting.yDimension + m);
+    def update_neighbors(self, inhibition_radius):
+        self.neighbors = []
+        for k in range(self.col_coords[0] - inhibition_radius, self.col_coords[0] + inhibition_radius+1):
+            if 0 <= k < self.setting.xdimension:
+                for m in range(self.col_coords[1] - inhibition_radius, self.col_coords[1] + inhibition_radius+1):
+                    if 0 <= m < self.setting.ydimension:
+                        if k != self.col_coords[0] or m != self.col_coords[1]:
+                            self.neighbors.append(k * self.setting.ydimension + m)
 
-    def getNeighbors(self):
-        return self.neighbors;
+    def get_neighbors(self):
+        return self.neighbors
 
+    def set_is_active(self, is_active):
+        self.is_active = is_active
 
-    def setIsActive(self,isActive):
-        self.isActive=isActive;
+    def get_is_active(self):
+        return self.is_active
 
-    def getIsActive(self):
-        return self.isActive;
+    def get_coord(self):
+        return self.col_coords
 
+    def get_potential_synapses(self):
+        return self.potential_synapses
 
-    def getCoord(self):
-        return self.col_coords;
-
-
-    def getPotentialSynapses(self):
-        return self.potentialSynapses;
-
-
-    def getConnectedSynapses(self):
-        conn_syn=[]
-        for s in self.potentialSynapses.values():
-            if s.isConnected():
+    def get_connected_synapses(self):
+        conn_syn = []
+        for s in self.potential_synapses.values():
+            if s.is_connected():
                 conn_syn.append(s)
         return conn_syn
 
-    def getBoostFactor(self):
-        return self.boostFactor;
+    def get_boost_factor(self):
+        return self.boost_factor
 
-
-    def setBoostFactor(self,boostFactor):
-        self.boostFactor = 1;
-
+    def set_boost_factor(self, boost_factor):
+        self.boost_factor = 1  # boost_factor
 
     def stimulate(self):
-        for synapse in self.potentialSynapses.values():
-            synapse.increasePermanence();
+        for synapse in self.potential_synapses.values():
+            synapse.increase_permanence()
 
+    def init_synapses(self):
+        center = self.bottom_indices[len(self.bottom_indices)//2]
 
-
-    def initSynapses(self):
-        center = self.bottomIndices[len(self.bottomIndices)//2]
-
-        if self.setting.debug==False:
-            self.rand.shuffle(self.bottomIndices)
+        if not self.setting.debug:
+            self.rand.shuffle(self.bottom_indices)
 
         # // выберем только часть синапсов для данной колонки (если set.connectedPct<1)
         # // предполагается, что set.connectedPct<1, в том случае, если рецептивные поля различных колонок пересекаются
-        numPotential = round(len(self.bottomIndices) * self.connectedPct);
-        for i in range(0,numPotential):
-            coord = self.bottomIndices[i]
-            index= coord[0]*self.setting.yInput+coord[1]
+        num_potential = round(len(self.bottom_indices) * self.connected_pct)
+        for i in range(0, num_potential):
+            coord = self.bottom_indices[i]
+            index = coord[0]*self.setting.yinput+coord[1]
             synapse = Synapse(self.setting, index, 0)
             # //радиальное затухание перманентности от центра рецептивного поля колонки
             # //double k = MathUtils.distFromCenter(index, set.potentialRadius, set.xDimension, set.yDimension);
-            k = getDistance (coord,center )
-            synapse.initPermanence(k)
-            self.potentialSynapses[index]=synapse
+            k = get_distance(coord, center)
+            synapse.init_permanence(k)
+            self.potential_synapses[index] = synapse
