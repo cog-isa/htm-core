@@ -1,5 +1,5 @@
 from spatialPooler import sp_settings
-from spatialPooler.mappers.sp_very_simple_mapper import verySimpleMapper
+from spatialPooler.mappers.sp_very_simple_mapper import VerySimpleMapper
 from spatialPooler.sp_region import Region
 from spatialPooler.spooler import SpatialPooler
 import temporalPooler.htm__region as tp
@@ -34,7 +34,7 @@ setting.yDimension = 5
 setting.initialInhibitionRadius=2
 setting.cellsPerColumn=5
 
-r = Region(setting,verySimpleMapper())
+r = Region(setting,VerySimpleMapper())
 r_t = tp.Region(setting.xDimension, setting.cellsPerColumn)
 sp = SpatialPooler(setting)
 

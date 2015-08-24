@@ -50,7 +50,7 @@ class SpatialPooler:
                     # для случая одинаковых оверлапов у выбраныных соседей
                     n = 0
                     for i in column.get_neighbors():
-                        n += (1 if self.find_by_colindex(cols, i).getIsActive() else 0)
+                        n += (1 if self.find_by_colindex(cols, i).get_is_active() else 0)
                     if n <= (self.settings.desired_local_activity-1):  # -1 - считая саму колонку
                         column.set_is_active(True)
                         active_columns.append(column)

@@ -23,13 +23,13 @@ class Region:
         return self.columns
 
     def get_input_w(self):
-        return self.setting.xInput
+        return self.setting.xinput
 
     def get_input_h(self):
-        return self.setting.yInput
+        return self.setting.yinput
 
     def get_col_w(self):
-        return self.setting.xDimension
+        return self.setting.xdimension
 
     def get_col_h(self):
-        return self.setting.yDimension
+        return self.setting.ydimension
