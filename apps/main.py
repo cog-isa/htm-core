@@ -22,20 +22,20 @@ generator = MakeBubble(GENERATOR, REGION_SIZE_N, SCALE)
 setting = sp_settings.HTMSettings.get_default_settings()
 setting.debug = True
 
-setting.activationThreshold = 1
-setting.minOverlap = 1
-setting.desiredLocalActivity = 3
-setting.connectedPct = 1
-setting.xInput = REGION_SIZE_N*SCALE
-setting.yInput = REGION_SIZE_N*SCALE
-setting.potentialRadius = 2
-setting.xDimension = 5
-setting.yDimension = 5
-setting.initialInhibitionRadius=2
-setting.cellsPerColumn=5
+setting.activation_threshold = 1
+setting.min_overlap = 1
+setting.desired_local_activity = 3
+setting.connected_pct= 1
+setting.xinput = REGION_SIZE_N*SCALE
+setting.yinput = REGION_SIZE_N*SCALE
+setting.potential_radius = 1
+setting.xdimension = 3
+setting.ydimension = 3
+setting.initial_inhibition_radius = 2
+setting.cells_per_column = 5
 
 r = Region(setting,VerySimpleMapper())
-r_t = tp.Region(setting.xDimension, setting.cellsPerColumn)
+r_t = tp.Region(setting.xdimension, setting.cells_per_column)
 sp = SpatialPooler(setting)
 
 for i in range(STEPS_NUMBER):
