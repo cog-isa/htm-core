@@ -3,7 +3,7 @@ import random
 
 from Cell import Cell
 from Synapse import Synapse
-from utils import getDistance
+from spatialPooler.utils import getDistance
 
 __author__ = 'AVPetrov'
 

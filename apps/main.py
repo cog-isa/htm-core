@@ -2,7 +2,7 @@ import HTMSettings
 from htm__region import Region
 from mappers.VerySimpleMapper import verySimpleMapper
 from region import Region
-from spatialPooler import SpatialPooler
+from spooler import SpatialPooler
 import temporalPooler.htm__region as tp
 
 __author__ = 'AVPetrov'
