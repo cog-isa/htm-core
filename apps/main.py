@@ -1,13 +1,10 @@
-import HTMSettings
-from htm__region import Region
-from mappers.VerySimpleMapper import verySimpleMapper
-from region import Region
-from spooler import SpatialPooler
+from spatialPooler import sp_settings
+from spatialPooler.mappers.sp_very_simple_mapper import VerySimpleMapper
+from spatialPooler.sp_region import Region
+from spatialPooler.spooler import SpatialPooler
 import temporalPooler.htm__region as tp
+from apps.settings import *
 
-__author__ = 'AVPetrov'
-
-from settings import *
 
 def toVector(m):
     output=[]
@@ -16,12 +13,13 @@ def toVector(m):
             output.append(j)
     return output
 
+
 def toMatrix(region):
-    return [[region.getColumns()[j*region.getColH() + i].getIsActive() for i in range(region.getColH())] for j in range(region.getColW())]
+    return [[region.get_columns()[j*region.get_col_h() + i].get_is_active() for i in range(region.get_col_h())] for j in range(region.get_col_w())]
 
 generator = MakeBubble(GENERATOR, REGION_SIZE_N, SCALE)
 
-setting = HTMSettings.HTMSettings.getDefaultSettings()
+setting = sp_settings.HTMSettings.get_default_settings()
 setting.debug = True
 
 setting.activationThreshold = 1
@@ -36,33 +34,17 @@ setting.yDimension = 5
 setting.initialInhibitionRadius=2
 setting.cellsPerColumn=5
 
-
-
-
-r = Region(setting,verySimpleMapper())
-r_t=tp.Region(setting.xDimension, setting.cellsPerColumn)
-sp=SpatialPooler(setting)
-
-import pickle
-
-with open('r.pickle', 'wb') as f:
-    # Pickle the 'data' dictionary using the highest protocol available.
-    pickle.dump(r, f, pickle.HIGHEST_PROTOCOL)
-
-r=0
-
-with open('r.pickle', 'rb') as f:
-    # The protocol version used is detected automatically, so we do not
-    # have to specify it.
-    r = pickle.load(f)
+r = Region(setting,VerySimpleMapper())
+r_t = tp.Region(setting.xDimension, setting.cellsPerColumn)
+sp = SpatialPooler(setting)
 
 for i in range(STEPS_NUMBER):
     inp=toVector(generator.get_data())
     # generator.out()
 
-    ov=sp.updateOverlaps(r.getColumns(), inp)
-    sp.inhibitionPhase(r.getColumns(), ov)
-    # sp.learningPhase(r.getColumns(), inp, ov)
+    ov=sp.update_overlaps(r.get_columns(), inp)
+    sp.inhibition_phase(r.get_columns(), ov)
+    # sp.learning_phase(r.get_columns(), inp, ov)
 
     inp_t=toMatrix(r)
 

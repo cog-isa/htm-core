@@ -1,5 +1,6 @@
-from util import PASSIVE, ACTIVE
+from temporalPooler.util import PASSIVE, ACTIVE
 from random import randrange
+
 
 class Cell:
     def __init__(self, _id):
@@ -22,5 +23,3 @@ class Cell:
         if self.state == ACTIVE:
             self.passive_time = 0
         self.new_state = PASSIVE
-
-

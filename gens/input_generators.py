@@ -331,7 +331,6 @@ class Snake:
         ok_tx, ok_ty = -1, -1
         ok_direction = self.direction
 
-
         # ищем любой ок переход
         for i in directions:
             new_direction = (self.direction + i + 4) % 4
