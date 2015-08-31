@@ -17,7 +17,7 @@ def toVector(m):
 def toMatrix(region):
     return [[region.get_columns()[j*region.get_col_h() + i].get_is_active() for i in range(region.get_col_h())] for j in range(region.get_col_w())]
 
-generator = MakeBubble(GENERATOR, REGION_SIZE_N, SCALE)
+generator = MakeBubble(temporal_settings.GENERATOR, temporal_settings.REGION_SIZE_N, temporal_settings.SCALE)
 
 setting = sp_settings.HTMSettings.get_default_settings()
 setting.debug = True
@@ -26,8 +26,8 @@ setting.activation_threshold = 1
 setting.min_overlap = 1
 setting.desired_local_activity = 3
 setting.connected_pct= 1
-setting.xinput = REGION_SIZE_N*SCALE
-setting.yinput = REGION_SIZE_N*SCALE
+setting.xinput = temporal_settings.REGION_SIZE_N*temporal_settings.SCALE
+setting.yinput = temporal_settings.REGION_SIZE_N*temporal_settings.SCALE
 setting.potential_radius = 1
 setting.xdimension = 3
 setting.ydimension = 3
@@ -38,7 +38,7 @@ r = Region(setting,VerySimpleMapper())
 r_t = tp.Region(setting.xdimension, setting.cells_per_column)
 sp = SpatialPooler(setting)
 
-for i in range(STEPS_NUMBER):
+for i in range(temporal_settings.STEPS_NUMBER):
     inp=toVector(generator.get_data())
     # generator.out()
 

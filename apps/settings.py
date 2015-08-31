@@ -1,27 +1,34 @@
 from gens.input_generators import *
 
-# раздувание
-SCALE = 3
 
-REGION_SIZE_N = 3
+class TemporalSettings:
 
-# количество клеток в колонке
-COLUMN_SIZE = 3
+    def __init__(self):
+        # раздувание
+        self.SCALE = 3
 
-STEPS_NUMBER = 50000
+        self.REGION_SIZE_N = 3
 
-# GENERATOR = HardSteps
-# GENERATOR = ConstantActiveBit
-# GENERATOR = TestSimpleSteps
-GENERATOR = TestSimpleSteps
+        # количество клеток в колонке
+        self.COLUMN_SIZE = 3
 
-INITIAL_PERMANENCE = 0.30
-SYNAPSE_THRESHOLD = 0.25
-DENDRITE_PERMANENCE_INC_DELTA = 0.02
-DENDRITE_PERMANENCE_DEC_DELTA = -0.1
-DENDRITE_ACTIVATE_THRESHOLD = 1
-PASSIVE_TIME_TO_ACTIVE_THRESHOLD = 2000
+        self.STEPS_NUMBER = 50000
+
+        # GENERATOR = HardSteps
+        # GENERATOR = ConstantActiveBit
+        # GENERATOR = TestSimpleSteps
+        self.GENERATOR = TestSimpleSteps
+
+        self.INITIAL_PERMANENCE = 0.30
+        self.SYNAPSE_THRESHOLD = 0.25
+        self.DENDRITE_PERMANENCE_INC_DELTA = 0.02
+        self.DENDRITE_PERMANENCE_DEC_DELTA = -0.1
+        self.DENDRITE_ACTIVATE_THRESHOLD = 1
+        self.PASSIVE_TIME_TO_ACTIVE_THRESHOLD = 2000
 
 
+class SpatialSettings:
+    pass
 
-
+temporal_settings = TemporalSettings()
+spatial_settings = SpatialSettings()
