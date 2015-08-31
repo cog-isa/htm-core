@@ -1,5 +1,7 @@
-from spatialPooler import sp_settings
+# from spatialPooler import sp_settings
+# from apps.settings import spatial_settings
 from spatialPooler.mappers.sp_very_simple_mapper import VerySimpleMapper
+from spatialPooler.mappers.sp_square_mapper import SquareMapper
 from spatialPooler.sp_region import Region
 from spatialPooler.spooler import SpatialPooler
 import temporalPooler.htm__region as tp
@@ -19,7 +21,7 @@ def toMatrix(region):
 
 generator = MakeBubble(temporal_settings.GENERATOR, temporal_settings.REGION_SIZE_N, temporal_settings.SCALE)
 
-setting = sp_settings.HTMSettings.get_default_settings()
+setting = spatial_settings.get_default_settings()
 setting.debug = True
 
 setting.activation_threshold = 1
@@ -34,7 +36,7 @@ setting.ydimension = 3
 setting.initial_inhibition_radius = 2
 setting.cells_per_column = 5
 
-r = Region(setting,VerySimpleMapper())
+r = Region(setting, SquareMapper)
 r_t = tp.Region(setting.xdimension, setting.cells_per_column)
 sp = SpatialPooler(setting)
 
