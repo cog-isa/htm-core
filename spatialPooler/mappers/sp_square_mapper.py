@@ -1,14 +1,10 @@
-
 class SquareMapper:
     @staticmethod
-    def map_оne(input_wh, colcoord, radius):
-        # адаптер
-        pass
+    def map_all(input_wh, cols_wh, radius):
+        assert (input_wh[0] == input_wh[1])
+        assert (cols_wh[0] == cols_wh[1])
 
-    @staticmethod
-    def map_all(self, input_wh, cols_wh, radius):
-        # адаптер
-        pass
+        return SquareMapper.get_mapped_columns(input_wh[0], cols_wh[0], radius)
 
     @staticmethod
     def get_mapped_columns(input_size, output_size, radius):
@@ -29,6 +25,7 @@ class SquareMapper:
         assert (input_size >= output_size)
         assert (0 <= x < output_size)
         assert (0 <= y < output_size)
+        assert (radius >= 0)
 
         result = []
 
@@ -56,7 +53,9 @@ class SquareMapper:
         for i in a:
             print(i)
 
+
 if __name__ == "__main__":
     # потестим
 
     SquareMapper.out_matrix(input_size=10, x=1, y=1, output_size=3, radius=1.51)
+    print(SquareMapper.map_all([6, 6], [5,5], 2))
