@@ -1,9 +1,11 @@
 from temporalPooler.htm__region import Region
-from apps.settings import *
+from apps.settings import temporal_settings
+from gens.input_generators import MakeBubble
 
-generator = MakeBubble(GENERATOR, REGION_SIZE_N, SCALE)
+generator = MakeBubble(temporal_settings.GENERATOR, temporal_settings.REGION_SIZE_N,
+                                         temporal_settings.SCALE)
 
-r = Region(REGION_SIZE_N * SCALE, COLUMN_SIZE)
+r = Region(temporal_settings.REGION_SIZE_N * temporal_settings.SCALE, temporal_settings.COLUMN_SIZE)
 print("""
 **** ЛЕГЕНДА *****
 P1 - Клетка с номером 1, данной колонки находится в состоянии предсказания
@@ -11,7 +13,7 @@ A3 - Клетка с номером 3, данной колонки активи�
 O3 - Клетка с номером 3, данной колонки активировалась из-за  простоя (PassiveTime > PASSIVE_TIME_TO_ACTIVE_THRESHOLD)
 """)
 
-for i in range(STEPS_NUMBER):
+for i in range(temporal_settings.STEPS_NUMBER):
     print('---------------------')
     # generator.out()
     r.step_forward(generator.get_data())

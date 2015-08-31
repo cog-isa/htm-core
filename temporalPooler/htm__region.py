@@ -1,6 +1,6 @@
 from temporalPooler.htm_column import Column
 from temporalPooler.util import ACTIVE, PREDICTION, PASSIVE
-from apps.settings import *
+from apps.settings import temporal_settings
 from temporalPooler.htm_dendrite import Dendrite
 from random import randrange
 
@@ -16,12 +16,7 @@ class Region:
         self.max_ok_times = 0
         self.very_ok_times = 0
         self.a = None
-        for i in self.columns:
-            for j in i:
-                for k in j.cells:
-                    k.id = cnt
-                    self.ptr_to_cell[k.id] = k
-                    cnt += 1
+
 
     def get_active_cells(self):
         res = []
@@ -82,6 +77,17 @@ class Region:
                 self.column_satisfies(self.columns[i][j], active, prediction)]
 
     def step_forward(self, a):
+
+        # создаем словарь ссылок на клетки по id
+        self.ptr_to_cell = {}
+        cnt = 0
+        for i in self.columns:
+            for j in i:
+                for k in j.cells:
+                    k.id = cnt
+                    self.ptr_to_cell[k.id] = k
+                    cnt += 1
+
         self.update_columns_state(a)
 
         # получаем активные на предыдущем шаге клетки
@@ -95,7 +101,7 @@ class Region:
 
             for cell in column.cells:
                 active_from_passive_time = False
-                if cell.passive_time > PASSIVE_TIME_TO_ACTIVE_THRESHOLD:
+                if cell.passive_time > temporal_settings.PASSIVE_TIME_TO_ACTIVE_THRESHOLD:
                     # назначаем следующее состояние клетки - активным
                     cell.update_new_state(ACTIVE)
                     active_from_passive_time = True
@@ -115,7 +121,7 @@ class Region:
                         if dendrite.active:
                             for syn in dendrite.synapses:
                                 if syn.id_to in [a_cell.id for a_cell in active_cells]:
-                                    syn.change_permanence(DENDRITE_PERMANENCE_INC_DELTA)
+                                    syn.change_permanence(temporal_settings.DENDRITE_PERMANENCE_INC_DELTA)
 
         for column in self.get_columns(active=False, prediction=True):
             # рассматриваем все колонки,который были предсказаны неправильно
@@ -127,7 +133,7 @@ class Region:
                         if dendrite.active:
                             for syn in dendrite.synapses:
                                 if syn.id_to in [a_cell.id for a_cell in active_cells]:
-                                    syn.change_permanence(DENDRITE_PERMANENCE_DEC_DELTA)
+                                    syn.change_permanence(temporal_settings.DENDRITE_PERMANENCE_DEC_DELTA)
             pass
 
         for column in self.get_columns(active=True, prediction=False):
@@ -149,7 +155,7 @@ class Region:
                                 new_den = None
                                 for synapse in dendrite.synapses:
                                     if synapse.id_to in [a_cell.id for a_cell in active_cells]:
-                                        synapse.change_permanence(DENDRITE_PERMANENCE_INC_DELTA * 0.1)
+                                        synapse.change_permanence(temporal_settings.DENDRITE_PERMANENCE_INC_DELTA * 0.1)
                                 break
                         if new_den:
                             cell.dendrites.append(new_den)
@@ -177,15 +183,14 @@ class Region:
                     for dendrite in current_cell.dendrites:
                         q = 0
                         for syn in dendrite.synapses:
-                            if self.ptr_to_cell[syn.id_to].new_state == ACTIVE and syn.permanence > SYNAPSE_THRESHOLD:
+                            if self.ptr_to_cell[syn.id_to].new_state == ACTIVE and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
                                 q += 1
-
                         if q > mx:
                             mx = q
                             cell_for_update = current_cell
                             dendrite_mx = dendrite
 
-                if mx >= DENDRITE_ACTIVATE_THRESHOLD and cell_for_update.new_state == PASSIVE:
+                if mx >= temporal_settings.DENDRITE_ACTIVATE_THRESHOLD and cell_for_update.new_state == PASSIVE:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
 
