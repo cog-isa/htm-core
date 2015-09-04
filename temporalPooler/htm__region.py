@@ -6,6 +6,7 @@ from random import randrange
 
 
 class Region:
+
     def __init__(self, region_size, column_size):
         self.region_size = region_size
         self.columns = [[Column(column_size) for _ in range(region_size)] for _ in range(region_size)]
@@ -16,7 +17,6 @@ class Region:
         self.max_ok_times = 0
         self.very_ok_times = 0
         self.a = None
-
 
     def get_active_cells(self):
         res = []
@@ -169,6 +169,7 @@ class Region:
         for column in self.get_columns():
             for cell in column.cells:
                 for dendrite in cell.dendrites:
+                    dendrite.was_active = dendrite.active
                     dendrite.active = False
 
         # делаем предсказание
@@ -185,12 +186,13 @@ class Region:
                         for syn in dendrite.synapses:
                             if self.ptr_to_cell[syn.id_to].new_state == ACTIVE and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
                                 q += 1
-                        if q > mx:
+                        if q > mx and current_cell.new_state == PASSIVE:
+                            # в состояние предсказание может перейти только пассивная клетка
                             mx = q
                             cell_for_update = current_cell
                             dendrite_mx = dendrite
 
-                if mx >= temporal_settings.DENDRITE_ACTIVATE_THRESHOLD and cell_for_update.new_state == PASSIVE:
+                if mx >= temporal_settings.DENDRITE_ACTIVATE_THRESHOLD:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
 
@@ -199,7 +201,7 @@ class Region:
 
             self.very_ok_times += 1
             self.max_ok_times = max(self.max_ok_times, self.very_ok_times)
-            print('Предсказание было правильным.')
+            # print('Предсказание было правильным.')
         else:
             self.very_ok_times = 0
 

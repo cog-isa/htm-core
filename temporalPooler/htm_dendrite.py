@@ -7,6 +7,7 @@ class Dendrite:
         self.prediction = False
         self.synapses = []
         self.active = False
+        self.was_active = False
 
         if cells:
             self.synapses = [Synapse(id_to=cell.id, permanence=temporal_settings.INITIAL_PERMANENCE) for cell in cells]
