@@ -7,8 +7,6 @@ import random
 class SpatialPooler:
     def __init__(self, settings):
         self.settings = settings
-        self.r = random.Random()
-        self.r.seed(10)
         self.active_duty_cycles = [0 for i in range(self.settings.xdimension*self.settings.ydimension)]
         self.overlap_duty_cycles = [0 for i in range(self.settings.xdimension*self.settings.ydimension)]
 
@@ -36,7 +34,7 @@ class SpatialPooler:
         active_columns = []
 
         indexies = [i for i in range(len(cols))]
-        self.r.shuffle(indexies)
+        random.shuffle(indexies)
         for indx in indexies:
             column = cols[indx]
             if len(column.get_neighbors()) > 0:

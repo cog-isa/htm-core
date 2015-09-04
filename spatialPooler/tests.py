@@ -297,7 +297,6 @@ def test_inhibition_phase():
 
     r = Region(settings,SimpleMapper())
     sp = SpatialPooler(settings)
-    sp.r.seed(10)
     overlaps = sp.update_overlaps( r.get_columns(),inp)
 
     cols = sp.inhibition_phase(r.get_columns(), overlaps)
@@ -305,7 +304,6 @@ def test_inhibition_phase():
 
     r = Region(settings,SimpleMapper())
     sp = SpatialPooler(settings)
-    sp.r.seed(10)
     overlaps = sp.update_overlaps( r.get_columns(),inp)
 
     sp.inhibition_phase(r.get_columns(), overlaps)
