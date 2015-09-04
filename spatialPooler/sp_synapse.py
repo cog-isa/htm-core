@@ -9,8 +9,6 @@ class Synapse:
         self.settings = settings
         self.index_connect_to = index_connect_to
         self.permanence = init_permanence
-        self.rand = random.Random()
-        self.rand.seed = 10
 
     # /**
     #  * Случайные значения преманентности должны быть из малого диапазона около connectedPerm
@@ -20,10 +18,10 @@ class Synapse:
             self.permanence = self.settings.connected_perm
             self.permanence *= (1/(0.5 if k == 0 else k))
         else:
-            if self.rand.nextDouble() <= self.settings.connected_pct:
-                self.permanence = self.settings.connected_perm + self.rand.random() * self.settings.permanence_inc / 4.0
+            if random.randrange(0, 1) <= self.settings.connected_pct:
+                self.permanence = self.settings.connected_perm + random.randrange(0, 1) * self.settings.permanence_inc / 4.0
             else:
-                self.permanence = self.settings.connected_perm - self.rand.random() * self.settings.permanence_inc / 4.0
+                self.permanence = self.settings.connected_perm - random.randrange(0, 1) * self.settings.permanence_inc / 4.0
                 self.permanence *= (1/(0.5 if k == 0 else k))
 
     def increase_permanence(self):
