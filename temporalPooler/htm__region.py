@@ -17,6 +17,7 @@ class Region:
         self.max_ok_times = 0
         self.very_ok_times = 0
         self.a = None
+        self.correctness = 0
 
     def get_active_cells(self):
         res = []
@@ -26,6 +27,33 @@ class Region:
                     if cell.state == ACTIVE:
                         res.append(cell)
         return res
+
+    def update_correctness(self, a):
+        events = 0
+        errors = 0
+        for i in range(self.region_size):
+            for j in range(self.region_size):
+                column_state = PASSIVE
+
+                for cell in self.columns[i][j].cells:
+                    if cell.state == PREDICTION:
+                        column_state = PREDICTION
+                        break
+
+                if column_state == PREDICTION and a[i][j]:
+                    events += 1
+                if column_state != PREDICTION and a[i][j]:
+                    events += 1
+                    errors += 1
+                if column_state == PREDICTION and not a[i][j]:
+                    events += 1
+                    errors += 1
+        print(errors, events)
+        if events > 0:
+            self.correctness = 1.0 * (events - errors) / events
+        else:
+            # на вход поступила пустая матрица и мы ничего не предсказали
+            self.correctness = 1.0
 
     @staticmethod
     def check_column_state(column, a):
@@ -77,6 +105,9 @@ class Region:
                 self.column_satisfies(self.columns[i][j], active, prediction)]
 
     def step_forward(self, a):
+        # считаем ошибку
+        self.update_correctness(a)
+        print(self.correctness)
 
         # создаем словарь ссылок на клетки по id
         self.ptr_to_cell = {}
@@ -204,10 +235,6 @@ class Region:
             # print('Предсказание было правильным.')
         else:
             self.very_ok_times = 0
-
-        # досрочный выход если научились
-        if self.max_ok_times > 50:
-            exit(0)
 
         # применяем новое состояние клеток
         for i in range(self.region_size):
