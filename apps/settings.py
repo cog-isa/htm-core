@@ -45,7 +45,6 @@ class SpatialSettings:
         self.permanence_dec = 0.1
         self.cells_per_column = 2
         self.max_boost = 1
-        self.debug = True
         self.min_duty_cycle_fraction = 2
 
 temporal_settings = TemporalSettings()
