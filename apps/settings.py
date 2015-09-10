@@ -29,7 +29,7 @@ class TemporalSettings:
 class SpatialSettings:
 
     def __init__(self):
-        self.debug = False
+        self.debug = True
         self.activation_threshold = 1
         self.min_overlap = 1
         self.desired_local_activity = 3
