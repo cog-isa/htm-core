@@ -19,20 +19,20 @@ def toVector(m):
 def toMatrix(region):
     return [[region.get_columns()[j*region.get_col_h() + i].get_is_active() for i in range(region.get_col_h())] for j in range(region.get_col_w())]
 
-generator = MakeBubble(temporal_settings.GENERATOR, temporal_settings.REGION_SIZE_N, temporal_settings.SCALE)
+generator = MakeBubble(input_settings.GENERATOR, temporal_settings.REGION_SIZE_N, input_settings.SCALE)
 
 setting = spatial_settings
 
-setting.xinput = temporal_settings.REGION_SIZE_N*temporal_settings.SCALE
-setting.yinput = temporal_settings.REGION_SIZE_N*temporal_settings.SCALE
-setting.xdimension = temporal_settings.REGION_SIZE_N*temporal_settings.SCALE
-setting.ydimension = temporal_settings.REGION_SIZE_N*temporal_settings.SCALE
+setting.xinput = temporal_settings.REGION_SIZE_N * input_settings.SCALE
+setting.yinput = temporal_settings.REGION_SIZE_N * input_settings.SCALE
+setting.xdimension = temporal_settings.REGION_SIZE_N * input_settings.SCALE
+setting.ydimension = temporal_settings.REGION_SIZE_N * input_settings.SCALE
 
 r = Region(setting, SquareMapper)
 r_t = tp.Region(setting.xdimension, setting.cells_per_column)
 sp = SpatialPooler(setting)
 
-for i in range(temporal_settings.STEPS_NUMBER):
+for i in range(input_settings.STEPS_NUMBER):
     inp=toVector(generator.get_data())
     # generator.out()
 

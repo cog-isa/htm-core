@@ -1,23 +1,24 @@
 from gens.input_generators import *
 
-
-class TemporalSettings:
-
+class InputSettings:
     def __init__(self):
         # раздувание
         self.SCALE = 3
-
-        self.REGION_SIZE_N = 3
-
-        # количество клеток в колонке
-        self.COLUMN_SIZE = 3
-
         self.STEPS_NUMBER = 50000
 
         # GENERATOR = HardSteps
         # GENERATOR = ConstantActiveBit
         # GENERATOR = TestSimpleSteps
         self.GENERATOR = TestSimpleSteps
+
+
+class TemporalSettings:
+    def __init__(self):
+        # раздувание
+        self.REGION_SIZE_N = 3
+
+        # количество клеток в колонке
+        self.COLUMN_SIZE = 3
 
         self.INITIAL_PERMANENCE = 0.30
         self.SYNAPSE_THRESHOLD = 0.25
@@ -27,7 +28,6 @@ class TemporalSettings:
         self.PASSIVE_TIME_TO_ACTIVE_THRESHOLD = 2000
 
 class SpatialSettings:
-
     def __init__(self):
         self.debug = True
         self.activation_threshold = 1
@@ -47,5 +47,6 @@ class SpatialSettings:
         self.max_boost = 1
         self.min_duty_cycle_fraction = 2
 
+input_settings = InputSettings()
 temporal_settings = TemporalSettings()
 spatial_settings = SpatialSettings()
