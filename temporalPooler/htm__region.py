@@ -6,19 +6,32 @@ from random import randrange
 
 
 class Region:
+    """
+    Регион htm, реализует основую логику временного группировщика
+    """
+
     def __init__(self, region_size, column_size):
+        """
+        инициализация региона
+        :param region_size: размера стороны квадрата - региона
+        :param column_size: количество клеток в колонке
+        :return:
+        """
         self.region_size = region_size
         self.columns = [[Column(column_size) for _ in range(region_size)] for _ in range(region_size)]
-        cnt = 0
         self.ptr_to_cell = {}
         self.ok_times = 0
         self.ok = 0
         self.max_ok_times = 0
         self.very_ok_times = 0
         self.a = None
-
+        self.correctness = 0
 
     def get_active_cells(self):
+        """
+        получить активные клетки
+        :return: список активных клеток
+        """
         res = []
         for i in range(self.region_size):
             for j in range(self.region_size):
@@ -27,8 +40,46 @@ class Region:
                         res.append(cell)
         return res
 
+    def update_correctness(self, a):
+        """
+        обновить значение правильности предсказания - поле self.correctness
+        :param a: матрица активных колонок на текущем шаге
+        :return:
+        """
+        events = 0
+        errors = 0
+        for i in range(self.region_size):
+            for j in range(self.region_size):
+                column_state = PASSIVE
+
+                for cell in self.columns[i][j].cells:
+                    if cell.state == PREDICTION:
+                        column_state = PREDICTION
+                        break
+
+                if column_state == PREDICTION and a[i][j]:
+                    events += 1
+                if column_state != PREDICTION and a[i][j]:
+                    events += 1
+                    errors += 1
+                if column_state == PREDICTION and not a[i][j]:
+                    events += 1
+                    errors += 1
+        print(errors, events)
+        if events > 0:
+            self.correctness = 1.0 * (events - errors) / events
+        else:
+            # на вход поступила пустая матрица и мы ничего не предсказали
+            self.correctness = 1.0
+
     @staticmethod
     def check_column_state(column, a):
+        """
+        проверить состояние колонки - правильно ли предсказана/не прадсказана
+        :param column: проверяемая колонка
+        :param a: матрица активных колонок на текущем шаге
+        :return: True или False, а в зависимости от результата
+        """
         ok = False
         for cell in column.cells:
             if cell.state == PREDICTION and not a:
@@ -40,6 +91,11 @@ class Region:
         return True
 
     def prediction_was_ok(self, a):
+        """
+        функция проверяет полную правильность предсказания
+        :param a: матрица активных колонок на текущем шаге
+        :return: True или False, а в зависимости от результата
+        """
         for i in range(self.region_size):
             for j in range(self.region_size):
                 if not self.check_column_state(self.columns[i][j], a[i][j]):
@@ -47,6 +103,11 @@ class Region:
         return True
 
     def update_columns_state(self, a):
+        """
+        функция обновляет состояние колонок
+        :param a: матрица активных колонок на текущем шаге
+        :return:
+        """
         # обновляем состояние колонок по поступившим данным от пространственного группировщика
         for i in range(self.region_size):
             for j in range(self.region_size):
@@ -54,8 +115,15 @@ class Region:
 
     @staticmethod
     def column_satisfies(column, active, prediction):
-        # возвращает булевское значение, удовлетворяет ли колонка заданным параметрам,
-        # если active или prediction является None - то колонка нам подходит точно
+        """
+        возвращает булевское значение, удовлетворяет ли колонка заданным параметрам,
+        если active или prediction является None - то колонка нам подходит точно
+        :param column: проверяемая колонка
+        :param active: булевская переменная,активная нам нужна колонка или нет ИЛИ None - этот параметр на не важен
+        :param prediction: булевская переменная или None - этот параметр не важен
+        :return: возвращает булевскую переменную - удовлетворяет ли требованиям данная колонка
+        """
+
         if active is not None:
             if (column.state == ACTIVE and not active) or (column.state == PASSIVE and active):
                 return False
@@ -71,12 +139,35 @@ class Region:
         return True
 
     def get_columns(self, active=None, prediction=None):
-        # в зависимости от параметра возвращает нужные нам колонки
+        """
+        проверяет каждую из колонок региона на соответвие требованиям,возвращает список подходящих колонок
+        :param active: фильтр:
+            True - нам подходят только активные колонки
+            False - нам НЕ подходят активные колонки
+            None - подходят и активные и неактивные
+        :param prediction: фильтр:
+            True - нам подходят только колонки находящиеся в состоянии предсказания
+            False - нам НЕ подходят только колонки находящиеся в состоянии предсказания
+            None - подходят любые
+        :return: список подходящих колонок
+        """
 
         return [self.columns[i][j] for i in range(self.region_size) for j in range(self.region_size) if
                 self.column_satisfies(self.columns[i][j], active, prediction)]
 
     def step_forward(self, a):
+        """
+        основная функция пересчета региона, выполняются такие функции как:
+            - подсчет ошибки (проверка правильности предсказания)
+            - вычисление слудющего состояния каждой из колонок
+            - обновление перманетностей синапсов в дендритах и создание новых дендритов
+
+        :param a: матрица активных колонок на текущем шаге
+        :return:
+        """
+        # считаем ошибку
+        self.update_correctness(a)
+        print(self.correctness)
 
         # создаем словарь ссылок на клетки по id
         self.ptr_to_cell = {}
@@ -169,6 +260,7 @@ class Region:
         for column in self.get_columns():
             for cell in column.cells:
                 for dendrite in cell.dendrites:
+                    dendrite.was_active = dendrite.active
                     dendrite.active = False
 
         # делаем предсказание
@@ -185,12 +277,13 @@ class Region:
                         for syn in dendrite.synapses:
                             if self.ptr_to_cell[syn.id_to].new_state == ACTIVE and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
                                 q += 1
-                        if q > mx:
+                        if q > mx and current_cell.new_state == PASSIVE:
+                            # в состояние предсказание может перейти только пассивная клетка
                             mx = q
                             cell_for_update = current_cell
                             dendrite_mx = dendrite
 
-                if mx >= temporal_settings.DENDRITE_ACTIVATE_THRESHOLD and cell_for_update.new_state == PASSIVE:
+                if mx >= temporal_settings.DENDRITE_ACTIVATE_THRESHOLD:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
 
@@ -199,13 +292,9 @@ class Region:
 
             self.very_ok_times += 1
             self.max_ok_times = max(self.max_ok_times, self.very_ok_times)
-            print('Предсказание было правильным.')
+            # print('Предсказание было правильным.')
         else:
             self.very_ok_times = 0
-
-        # досрочный выход если научились
-        if self.max_ok_times > 50:
-            exit(0)
 
         # применяем новое состояние клеток
         for i in range(self.region_size):
@@ -213,23 +302,11 @@ class Region:
                 for cell in self.columns[i][j].cells:
                     cell.apply_new_state()
 
-    def out_new_state(self):
-        res = [["" for _ in range(self.region_size)] for _ in range(self.region_size)]
-        for i in range(self.region_size):
-            for j in range(self.region_size):
-                cnt = 0
-                for cell in self.columns[i][j].cells:
-                    cnt += 1
-
-                    if cell.new_state == PREDICTION:
-                        res[i][j] += "P" + str(cnt)
-                    if cell.new_state == ACTIVE and not cell.active_from_passive_time:
-                        res[i][j] += "A" + str(cnt)
-        for i in res:
-            print(i)
-
     def out_prediction(self):
-        # отображение информации
+        """
+        вывод текстовой информации состояния региона
+        :return:
+        """
         res = [["" for _ in range(self.region_size)] for _ in range(self.region_size)]
         for i in range(self.region_size):
             for j in range(self.region_size):

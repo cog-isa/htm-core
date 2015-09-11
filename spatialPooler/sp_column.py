@@ -22,8 +22,6 @@ class Column:
         # хэш синапсов: индекс элемента с которым соединение и сам синапс
         self.potential_synapses = {}
         self.boost_factor = 1
-        self.rand = random.Random()
-        self.rand.seed = 1
         self.init_synapses()
         self.update_neighbors(self.setting.initial_inhibition_radius)
 
@@ -80,7 +78,7 @@ class Column:
         center = self.bottom_indices[len(self.bottom_indices)//2]
 
         if not self.setting.debug:
-            self.rand.shuffle(self.bottom_indices)
+            random.shuffle(self.bottom_indices)
 
         # // выберем только часть синапсов для данной колонки (если set.connectedPct<1)
         # // предполагается, что set.connectedPct<1, в том случае, если рецептивные поля различных колонок пересекаются

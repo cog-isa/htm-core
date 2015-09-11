@@ -3,7 +3,7 @@ class SquareMapper:
     def map_all(input_wh, cols_wh, radius):
         assert (input_wh[0] == input_wh[1])
         assert (cols_wh[0] == cols_wh[1])
-
+        print("radius="+ str(radius))
         return SquareMapper.get_mapped_columns(input_wh[0], cols_wh[0], radius)
 
     @staticmethod
