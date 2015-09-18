@@ -10,7 +10,7 @@ __author__ = 'AVPetrov'
 
 class Column:
     def __init__(self, coords, bottom_indices, region):
-        self.setting = region.setting
+        self.setting = region.settings
         self.bottom_indices = bottom_indices
         self.potential_radius = self.setting.potential_radius
         self.connected_pct = self.setting.connected_pct
