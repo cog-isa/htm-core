@@ -1,8 +1,8 @@
 # -*- coding: utf8 -*-
+from apps.settings import spatial_settings
+
 __author__ = 'gmdidro'
 
-from spatialPooler.spooler import SpatialPooler
-from spatialPooler import sp_settings
 from spatialPooler.sp_region import Region
 from spatialPooler.mappers.sp_very_simple_mapper import VerySimpleMapper
 from spatialPooler.mappers.sp_simple_mapper import SimpleMapper
@@ -76,7 +76,7 @@ def test_ladder():
     TOTAL_STEPS = 1000
     STEP_SIZE = STEPS
 
-    setting = sp_settings.HTMSettings.get_default_settings()
+    setting = spatial_settings
     setting.debug = True
 
     setting.activation_threshold = 1
@@ -103,7 +103,6 @@ def test_ladder():
 
     r = Region(setting,VerySimpleMapper())
 
-    sp = SpatialPooler(setting)
     x = begx
     y = begy
     for i in range(x, x+step_size):
@@ -144,9 +143,9 @@ def test_ladder():
             c.set_is_active(False)
 
 
-        ov = sp.update_overlaps(r.get_columns(), inp)
-        sp.inhibition_phase(r.get_columns(), ov)
-        sp.learning_phase(r.get_columns(), inp, ov)
+        ov = r.update_overlaps(r.get_columns(), inp)
+        r.inhibition_phase(r.get_columns(), ov)
+        r.learning_phase(r.get_columns(), inp, ov)
         cols = r.get_columns()
 
         for i in range(setting.xdimension):
@@ -161,7 +160,7 @@ def test_ladder():
 def test_learning():
     inp = [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
-    settings=sp_settings.HTMSettings.get_default_settings()
+    settings=spatial_settings
     settings.debug=True
 
     settings.activation_threshold = 1
@@ -178,12 +177,12 @@ def test_learning():
     settings.permanence_dec = 0.2
 
     r = Region(settings,SimpleMapper())
-    sp = SpatialPooler(settings)
+
     r.get_columns()[0].get_potential_synapses().get(4).set_permanence(0.5)
     r.get_columns()[0].get_potential_synapses().get(5).set_permanence(0.5)
-    ov = sp.update_overlaps(r.get_columns(), inp)
-    sp.inhibition_phase(r.get_columns(), ov)
-    sp.learning_phase(r.get_columns(), inp, ov)
+    ov = r.update_overlaps(r.get_columns(), inp)
+    r.inhibition_phase(r.get_columns(), ov)
+    r.learning_phase(r.get_columns(), inp, ov)
 
     v = r.get_columns()[0].get_potential_synapses().get(4).get_permanence()
     assert v == 0.7
@@ -194,7 +193,7 @@ def test_learning():
 def test_update_active_duty_cycle():
     inp = [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1]
 
-    settings = sp_settings.HTMSettings.get_default_settings()
+    settings = spatial_settings
     settings.debug = True
 
     settings.activation_threshold = 1
@@ -210,46 +209,44 @@ def test_update_active_duty_cycle():
 
     r = Region(settings,SimpleMapper())
 
-    sp = SpatialPooler(settings)
-    overlaps = sp.update_overlaps(r.get_columns(), inp)
-    sp.inhibition_phase(r.get_columns(), overlaps)
-    sp.update_active_duty_cycle(r.get_columns())
-    sp.inhibition_phase(r.get_columns(), overlaps)
-    sp.update_active_duty_cycle(r.get_columns())
-    sp.inhibition_phase(r.get_columns(), overlaps)
-    sp.update_active_duty_cycle(r.get_columns())
-    sp.inhibition_phase(r.get_columns(), overlaps)
-    sp.update_active_duty_cycle(r.get_columns())
+    overlaps = r.update_overlaps(r.get_columns(), inp)
+    r.inhibition_phase(r.get_columns(), overlaps)
+    r.update_active_duty_cycle(r.get_columns())
+    r.inhibition_phase(r.get_columns(), overlaps)
+    r.update_active_duty_cycle(r.get_columns())
+    r.inhibition_phase(r.get_columns(), overlaps)
+    r.update_active_duty_cycle(r.get_columns())
+    r.inhibition_phase(r.get_columns(), overlaps)
+    r.update_active_duty_cycle(r.get_columns())
 
-    assert len(sp.get_active_duty_cycles()) == len(r.get_columns())
-    assert sp.get_active_duty_cycles()[0] == 4
+    assert len(r.get_active_duty_cycles()) == len(r.get_columns())
+    assert r.get_active_duty_cycles()[0] == 4
 
 
     inp = [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0]
 
     r = Region(settings, SimpleMapper())
-    sp = SpatialPooler(settings)
-    overlaps = sp.update_overlaps(r.get_columns(), inp)
-    sp.inhibition_phase(r.get_columns(), overlaps)
-    sp.update_active_duty_cycle(r.get_columns())
-    sp.inhibition_phase(r.get_columns(), overlaps)
-    sp.update_active_duty_cycle(r.get_columns())
-    sp.inhibition_phase(r.get_columns(), overlaps)
-    sp.update_active_duty_cycle(r.get_columns())
-    sp.inhibition_phase(r.get_columns(), overlaps)
-    sp.update_active_duty_cycle(r.get_columns())
+    overlaps = r.update_overlaps(r.get_columns(), inp)
+    r.inhibition_phase(r.get_columns(), overlaps)
+    r.update_active_duty_cycle(r.get_columns())
+    r.inhibition_phase(r.get_columns(), overlaps)
+    r.update_active_duty_cycle(r.get_columns())
+    r.inhibition_phase(r.get_columns(), overlaps)
+    r.update_active_duty_cycle(r.get_columns())
+    r.inhibition_phase(r.get_columns(), overlaps)
+    r.update_active_duty_cycle(r.get_columns())
 
-    assert len(sp.get_active_duty_cycles()) == len(r.get_columns())
-    assert sp.get_active_duty_cycles()[0] == 0
-    assert sp.get_active_duty_cycles()[1] == 3
-    assert sp.get_active_duty_cycles()[2] == 3
-    assert sp.get_active_duty_cycles()[3] == 2
+    assert len(r.get_active_duty_cycles()) == len(r.get_columns())
+    assert r.get_active_duty_cycles()[0] == 0
+    assert r.get_active_duty_cycles()[1] == 3
+    assert r.get_active_duty_cycles()[2] == 3
+    assert r.get_active_duty_cycles()[3] == 2
 
 
 def testUpdateSynapses():
     inp=[1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
-    settings = sp_settings.HTMSettings.get_default_settings()
+    settings = spatial_settings
     settings.debug = True
 
     settings.activation_threshold = 1
@@ -266,14 +263,13 @@ def testUpdateSynapses():
     settings.permanence_dec = 0.2
     r = Region(settings, SimpleMapper())
 
-    sp = SpatialPooler(settings)
     r.get_columns()[0].get_potential_synapses().get(4).set_permanence(0.5)
-    sp.update_synapses(r.get_columns(),inp)
+    r.update_synapses(r.get_columns(),inp)
     v = r.get_columns()[0].get_potential_synapses().get(4).get_permanence()
     assert v == 0.7
 
     r.get_columns()[0].get_potential_synapses().get(5).set_permanence(0.5)
-    sp.update_synapses(r.get_columns(),inp)
+    r.update_synapses(r.get_columns(),inp)
     v=r.get_columns()[0].get_potential_synapses().get(5).get_permanence()
     assert v == 0.3
 
@@ -281,7 +277,7 @@ def testUpdateSynapses():
 def test_inhibition_phase():
     inp = [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0]
 
-    settings = sp_settings.HTMSettings.get_default_settings()
+    settings = spatial_settings
     settings.debug = True
 
     settings.activation_threshold= 1
@@ -296,25 +292,23 @@ def test_inhibition_phase():
     settings.initial_inhibition_radius = 1
 
     r = Region(settings,SimpleMapper())
-    sp = SpatialPooler(settings)
-    overlaps = sp.update_overlaps( r.get_columns(),inp)
+    overlaps = r.update_overlaps( r.get_columns(),inp)
 
-    cols = sp.inhibition_phase(r.get_columns(), overlaps)
+    cols = r.inhibition_phase(r.get_columns(), overlaps)
     assert len(cols) == 2
 
     r = Region(settings,SimpleMapper())
-    sp = SpatialPooler(settings)
-    overlaps = sp.update_overlaps( r.get_columns(),inp)
+    overlaps = r.update_overlaps( r.get_columns(),inp)
 
-    sp.inhibition_phase(r.get_columns(), overlaps)
+    r.inhibition_phase(r.get_columns(), overlaps)
     # ожидаем разные результаты теста из-за рандомного шафла
-    cols = sp.inhibition_phase(r.get_columns(), overlaps)
+    cols = r.inhibition_phase(r.get_columns(), overlaps)
     assert len(cols)==2
-    cols = sp.inhibition_phase(r.get_columns(), overlaps)
+    cols = r.inhibition_phase(r.get_columns(), overlaps)
     assert len(cols)==2
-    cols = sp.inhibition_phase(r.get_columns(), overlaps)
+    cols = r.inhibition_phase(r.get_columns(), overlaps)
     assert len(cols)==2
-    cols = sp.inhibition_phase(r.get_columns(), overlaps)
+    cols = r.inhibition_phase(r.get_columns(), overlaps)
     assert len(cols)==2
 
 
@@ -322,7 +316,7 @@ def test_overlap_on_ones():
     inp=[1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1]
 
 
-    settings=sp_settings.HTMSettings.get_default_settings()
+    settings=spatial_settings
     settings.debug=True
 
     settings.activation_threshold = 1
@@ -336,8 +330,7 @@ def test_overlap_on_ones():
     settings.ydimension = 1
 
     r = Region(settings, SimpleMapper())
-    sp = SpatialPooler(settings)
-    overlaps = sp.update_overlaps(r.get_columns(), inp)
+    overlaps = r.update_overlaps(r.get_columns(), inp)
 
     groundtruth = [5,5,5,5]
     for i in range(len(groundtruth)):
@@ -348,8 +341,7 @@ def test_overlap_on_ones():
     settings.ydimension = 1
 
     r = Region(settings, SimpleMapper())
-    sp = SpatialPooler(settings)
-    overlaps = sp.update_overlaps( r.get_columns(),inp)
+    overlaps = r.update_overlaps( r.get_columns(),inp)
 
     groundtruth = [5]
     for i in range(len(groundtruth)):
@@ -361,8 +353,7 @@ def test_overlap_on_ones():
     settings.ydimension = 1
 
     r = Region(settings, SimpleMapper())
-    sp = SpatialPooler(settings)
-    overlaps = sp.update_overlaps( r.get_columns(),inp)
+    overlaps = r.update_overlaps( r.get_columns(),inp)
 
     groundtruth = [3,4,5,5, 5,5,5,5, 5,5,5,5, 5,5,4,3]
     for i in range(len(groundtruth)):
@@ -372,7 +363,7 @@ def test_overlap_on_ones():
 def test_overlap_on_not_ones():
     inp = [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0]
 
-    settings = sp_settings.HTMSettings.get_default_settings()
+    settings = spatial_settings
     settings.debug = True
 
     settings.activation_threshold = 1
@@ -386,9 +377,7 @@ def test_overlap_on_not_ones():
     settings.ydimension = 1
 
     r = Region(settings,SimpleMapper())
-
-    sp = SpatialPooler(settings)
-    overlaps = sp.update_overlaps(r.get_columns(), inp)
+    overlaps = r.update_overlaps(r.get_columns(), inp)
 
     groundtruth = [3, 2, 3, 2]
     for i in range(len(groundtruth)):
@@ -396,7 +385,7 @@ def test_overlap_on_not_ones():
 
 
 def test_htm_constructuion():
-    setting = sp_settings.HTMSettings.get_default_settings()
+    setting = spatial_settings
     setting.debug = True
 
     setting.activation_threshold = 1

@@ -3,7 +3,6 @@
 from spatialPooler.mappers.sp_very_simple_mapper import VerySimpleMapper
 from spatialPooler.mappers.sp_square_mapper import SquareMapper
 from spatialPooler.sp_region import Region
-from spatialPooler.spooler import SpatialPooler
 import temporalPooler.htm__region as tp
 from apps.settings import *
 
