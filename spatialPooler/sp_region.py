@@ -8,6 +8,12 @@ __author__ = 'AVPetrov'
 
 class Region:
     def __init__(self, settings, mapper):
+        """
+        конструктор класса
+        :param settings: настройки региона
+        :param mapper: объект, реализующий отображение индексов колонок на индексы элементов нижнего слоя
+        :return:
+        """
         self.mapper = mapper
         self.columns = []
         self.settings = settings
@@ -41,12 +47,14 @@ class Region:
     def get_active_duty_cycles(self):
         return self.active_duty_cycles
 
-    # Вычисление значения перекрытия каждой колонки с заданным входным вектором.
-    # @param input - входной сигнал
-    # @param cols - колонки
-    # @return значения переключения для каждой колонки
     @staticmethod
     def update_overlaps(cols, inp):
+        """
+        Вычисление значения перекрытия каждой колонки с заданным входным вектором.
+        :param cols: колонки
+        :param input: входной сигнал
+        :return: значения перекрытия для каждой колонки
+        """
         overlaps = [0 for i in range(len(cols))]
         i = 0
         for c in cols:
@@ -55,8 +63,14 @@ class Region:
             i += 1
         return overlaps
 
-    # Вычисление колонок, остающихся победителями после применения взаимного подавления.
+    # .
     def inhibition_phase(self, cols, overlaps):
+        """
+        Вычисление колонок, остающихся победителями после применения взаимного подавления
+        :param cols: колонки
+        :param overlaps: значения перекрытий для cols
+        :return: Список активных колонок
+        """
         for c in cols:
             c.set_is_active(False)
         active_columns = []
@@ -91,11 +105,16 @@ class Region:
                 return c
         return None
 
-    # Если синапс был активен (через него шел сигнал от входного вектора), его значение преманентности увеличивается,
-    # а иначе - уменьшается.
-    # @param inp - входной сигнал
     @staticmethod
     def update_synapses(cols, inp):
+        """
+        Обновление перманентностей синапсов всех колонок
+        Если синапс был активен (через него шел сигнал от входного вектора), его значение преманентности увеличивается,
+        а иначе - уменьшается.
+        :param cols: колонки
+        :param inp: входной сигнал
+        :return:
+        """
         for col in cols:
             for synapse in col.get_potential_synapses().values():
                 if inp[synapse.get_index_connect_to()]:
@@ -110,22 +129,32 @@ class Region:
     def update_overlap_duty_cycle(self, col, overlaps):
         self.overlap_duty_cycles[col.get_index()] += 1 if overlaps[col.get_index()] > self.settings.min_overlap else 0
 
-    # Если activeDutyCycle больше minValue, то значение ускорения равно 1. Ускорение начинает линейно увеличиваться
-    # как только activeDutyCycle колонки падает ниже minDutyCycle.
-    #
-    # @param minValue - минимальнео число активных циклов
     def update_boost_factor(self, col, min_value):
+        """
+        Обновление фактора ускорения (Boost)
+        Если activeDutyCycle больше minValue, то значение ускорения равно 1. Ускорение начинает линейно увеличиваться
+        как только activeDutyCycle колонки падает ниже minDutyCycle
+        :param cols: колонки
+        :param minValue: минимальное число активных циклов
+        :return:
+        """
         value = 1
 
         if self.active_duty_cycles[col.get_index()] < min_value :
                 value = 1 + (min_value - self.active_duty_cycles[col.get_index()]) * (self.settings.max_boost - 1)
         col.set_boost_factor(value)
 
-    # Обновление значений перманентности, фактора ускорения и радиуса подавления колонок.
-    # Механизм ускорения работает в том случае, если колонка не побеждает достаточно долго (activeDutyCycle).
-    # Если колонка плохо перекрывается с входным сигналом достоачно долго (overlapDutyCycle), то увеличиваются
-    # перманентности.
     def learning_phase(self, cols, inp, overlaps):
+        """
+        Обновление значений перманентности, фактора ускорения и радиуса подавления колонок.
+        Механизм ускорения работает в том случае, если колонка не побеждает достаточно долго (activeDutyCycle).
+        Если колонка плохо перекрывается с входным сигналом достоачно долго (overlapDutyCycle), то увеличиваются
+        перманентности.
+        :param cols: колонки
+        :param inp: входной сигнал
+        :param overlaps: значения перекрытий для cols
+        :return:
+        """
 
         # 1. изменить значения перманентности всех синапсов проксимальных сегментов *активных* колонок
         self.update_synapses(cols, inp)
