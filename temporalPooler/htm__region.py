@@ -275,8 +275,8 @@ class Region:
                     for dendrite in current_cell.dendrites:
                         q = 0
                         for syn in dendrite.synapses:
-                            if self.ptr_to_cell[
-                                syn.id_to].new_state == ACTIVE and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
+                            if self.ptr_to_cell[syn.id_to].new_state == ACTIVE \
+                                    and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
                                 q += 1
                         if q > mx and current_cell.new_state == PASSIVE:
                             # в состояние предсказание может перейти только пассивная клетка
