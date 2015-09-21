@@ -25,7 +25,16 @@ class Region:
         self.max_ok_times = 0
         self.very_ok_times = 0
         self.a = None
+
         self.correctness = 0
+        self.correctness_sum = 0
+        self.correctness_steps = 0
+
+        self.memorized_max_size = 500
+        self.memorized_correctness = []
+
+        self.average_correctness_max_size = 500
+        self.average_correctness = []
 
     def get_active_cells(self):
         """
@@ -65,12 +74,24 @@ class Region:
                 if column_state == PREDICTION and not a[i][j]:
                     events += 1
                     errors += 1
-        print(errors, events)
         if events > 0:
             self.correctness = 1.0 * (events - errors) / events
         else:
             # на вход поступила пустая матрица и мы ничего не предсказали
             self.correctness = 1.0
+
+        self.correctness_steps += 1
+        self.correctness_sum += self.correctness
+
+        # храним срез среднего ариф. интегральных сумм
+        self.average_correctness.append(self.correctness_sum / self.correctness_steps)
+        while len(self.average_correctness) > self.average_correctness_max_size:
+            self.average_correctness = self.average_correctness[1:]
+
+        # сохраняем значение correctness, храним не больше memorized_size последних значений
+        self.memorized_correctness.append(self.correctness)
+        while len(self.memorized_correctness) > self.memorized_max_size:
+            self.memorized_correctness = self.memorized_correctness[1:]
 
     @staticmethod
     def check_column_state(column, a):
@@ -167,7 +188,6 @@ class Region:
         """
         # считаем ошибку
         self.update_correctness(a)
-        print(self.correctness)
 
         # создаем словарь ссылок на клетки по id
         self.ptr_to_cell = {}
@@ -275,7 +295,8 @@ class Region:
                     for dendrite in current_cell.dendrites:
                         q = 0
                         for syn in dendrite.synapses:
-                            if self.ptr_to_cell[syn.id_to].new_state == ACTIVE and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
+                            if self.ptr_to_cell[syn.id_to].new_state == ACTIVE \
+                                    and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
                                 q += 1
                         if q > mx and current_cell.new_state == PASSIVE:
                             # в состояние предсказание может перейти только пассивная клетка
@@ -328,3 +349,18 @@ class Region:
         for i in res:
             print(i)
         print()
+
+    def out_binary_prediction(self):
+        """
+        вывод информации о колонках в состоянии предсказания
+        :return:матрица состояния состояния колонок 1 если колонка в состоянии предсказания
+        """
+
+        res = [[0 for _ in range(self.region_size)] for _ in range(self.region_size)]
+
+        for i in range(self.region_size):
+            for j in range(self.region_size):
+                for cell in self.columns[i][j].cells:
+                    if cell.state == PREDICTION:
+                        res[i][j] = 1
+        return res
