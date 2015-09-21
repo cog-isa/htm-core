@@ -25,8 +25,12 @@ class Region:
         self.max_ok_times = 0
         self.very_ok_times = 0
         self.a = None
+
         self.correctness = 0
+        self.correctness_sum = 0
+        self.correctness_steps = 0
         self.memorized_correctness = []
+        self.average_correctness = []
 
     def get_active_cells(self):
         """
@@ -73,9 +77,18 @@ class Region:
             # на вход поступила пустая матрица и мы ничего не предсказали
             self.correctness = 1.0
 
+        self.correctness_steps += 1
+        self.correctness_sum += self.correctness
+
+        # храним срез среднего ариф. интегральных сумм
+        self.average_correctness.append(self.correctness_sum / self.correctness_steps)
+        average_correctness_size = 500
+        while len(self.average_correctness) > average_correctness_size:
+            self.average_correctness = self.average_correctness[1:]
+
         # сохраняем значение correctness, храним не больше memorized_size последних значений
         self.memorized_correctness.append(self.correctness)
-        memorized_size = 100
+        memorized_size = 500
         while len(self.memorized_correctness) > memorized_size:
             self.memorized_correctness = self.memorized_correctness[1:]
 
