@@ -26,6 +26,7 @@ class Region:
         self.very_ok_times = 0
         self.a = None
         self.correctness = 0
+        self.memorized_correctness = []
 
     def get_active_cells(self):
         """
@@ -71,6 +72,13 @@ class Region:
         else:
             # на вход поступила пустая матрица и мы ничего не предсказали
             self.correctness = 1.0
+
+        # сохраняем значение correctness, храним не больше memorized_size последних значений
+        self.memorized_correctness.append(self.correctness)
+        memorized_size = 100
+        while len(self.memorized_correctness) > memorized_size:
+            self.memorized_correctness = self.memorized_correctness[1:]
+        print(self.memorized_correctness)
 
     @staticmethod
     def check_column_state(column, a):
