@@ -275,7 +275,8 @@ class Region:
                     for dendrite in current_cell.dendrites:
                         q = 0
                         for syn in dendrite.synapses:
-                            if self.ptr_to_cell[syn.id_to].new_state == ACTIVE and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
+                            if self.ptr_to_cell[
+                                syn.id_to].new_state == ACTIVE and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
                                 q += 1
                         if q > mx and current_cell.new_state == PASSIVE:
                             # в состояние предсказание может перейти только пассивная клетка
@@ -328,3 +329,18 @@ class Region:
         for i in res:
             print(i)
         print()
+
+    def out_binary_prediction(self):
+        """
+        вывод информации о колонках в состоянии предсказания
+        :return:матрица состояния состояния колонок 1 если колонка в состоянии предсказания
+        """
+
+        res = [[0 for _ in range(self.region_size)] for _ in range(self.region_size)]
+
+        for i in range(self.region_size):
+            for j in range(self.region_size):
+                for cell in self.columns[i][j].cells:
+                    if cell.state == PREDICTION:
+                        res[i][j] = 1
+        return res
