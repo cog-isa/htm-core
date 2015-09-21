@@ -432,9 +432,30 @@ def test_out_prediction():
                 assert res[i][j] > 0
 
 
+def test_debug_false():
+    setting = spatial_settings
+    setting.debug = False
+
+    setting.activation_threshold = 1
+    setting.min_overlap = 1
+    setting.desired_local_activity = 1
+    setting.connected_pct = 1
+    setting.xinput = 4
+    setting.yinput = 4
+    setting.potential_radius = 2
+    setting.xdimension = 4
+    setting.ydimension = 1
+    setting.initial_inhibition_radius = 2
+
+    r = Region(setting, SimpleMapper())
+    inp = [[1, 0, 1, 0], [1, 0, 1, 0], [1, 0, 1, 0], [1, 0, 1, 0]]
+    res = r.step_forward(inp)
+    assert len(list(filter(lambda x: x[0] == True, res)))>0
+
 if __name__ == "__main__":
     print("Testing")
-    test_out_prediction()
+    test_debug_false()
+    # test_out_prediction()
     # test_htm_constructuion()
     # test_overlap_on_ones()
     # test_inhibition_phase()

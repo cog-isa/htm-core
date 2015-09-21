@@ -43,7 +43,6 @@ class SpatialSettings:
         self.initial_inhibition_radius = 1
         self.permanence_inc = 0.1
         self.permanence_dec = 0.1
-        self.cells_per_column = 2
         self.max_boost = 1
         self.min_duty_cycle_fraction = 2
 
