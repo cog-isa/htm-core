@@ -6,18 +6,23 @@ __author__ = 'AVPetrov'
 
 class Synapse:
     def __init__(self, settings, index_connect_to, init_permanence):
+        """
+        конструктор класса
+        :param settings: настройки региона
+        :param index_connect_to: индекс элемента нижнего слоя, к которому подключен данный синапс
+        :param init_permanence: начальная перманентность
+        :return:
+        """
         self.settings = settings
         self.index_connect_to = index_connect_to
         self.permanence = init_permanence
 
-    # /**
-    #  * Случайные значения преманентности должны быть из малого диапазона около connectedPerm
-    #  */
     def init_permanence(self, k):
         if self.settings.debug:
             self.permanence = self.settings.connected_perm
             self.permanence *= (1/(0.5 if k == 0 else k))
         else:
+            # Случайные значения преманентности должны быть из малого диапазона около connectedPerm
             if random.randrange(0, 1) <= self.settings.connected_pct:
                 self.permanence = self.settings.connected_perm + random.randrange(0, 1) * self.settings.permanence_inc / 4.0
             else:
@@ -38,14 +43,20 @@ class Synapse:
         else:
             return self.permanence > self.settings.connected_perm
 
-    # /* connectToIndex - это либо номер бита из сигнала снизу, либо номер клетки (аксон) при латеральной связи */
     def get_index_connect_to(self):
+        """
+        Возвращает индекс элемента нижнего слоя, к которому подключен данный синапс
+        :param settings: настройки региона
+        :param index_connect_to: индекс элемента нижнего слоя, к которому подключен данный синапс
+        :param init_permanence: начальная перманентность
+        :return: индекс элемента нижнего слоя, к которому подключен данный синапс
+        """
         return self.index_connect_to
 
-    # /* Получить степени связанности между аксоном и дендритом. */
+    # Получить степени связанности между аксоном и дендритом.
     def get_permanence(self):
         return self.permanence
 
-    # /* Установить степени связанности между аксоном и дендритом. */
+    # Установить степени связанности между аксоном и дендритом.
     def set_permanence(self, permanence):
         self.permanence = permanence
