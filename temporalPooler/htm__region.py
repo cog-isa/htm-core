@@ -78,7 +78,6 @@ class Region:
         memorized_size = 100
         while len(self.memorized_correctness) > memorized_size:
             self.memorized_correctness = self.memorized_correctness[1:]
-        print(self.memorized_correctness)
 
     @staticmethod
     def check_column_state(column, a):
