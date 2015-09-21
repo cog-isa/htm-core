@@ -16,8 +16,7 @@ r_s = sp.Region(setting, SquareMapper)
 r_t = tp.Region(setting.xdimension, setting.cells_per_column)
 
 for i in range(input_settings.STEPS_NUMBER):
-
-    inp_t=r_s.step_forward(generator.get_data())
+    inp_t = r_s.step_forward(generator.get_data())
     for j in inp_t:
         print(j)
     r_t.step_forward(inp_t)

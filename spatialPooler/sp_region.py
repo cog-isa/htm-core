@@ -17,15 +17,15 @@ class Region:
         self.mapper = mapper
         self.columns = []
         self.settings = settings
-        self.active_duty_cycles = [0 for i in range(self.settings.xdimension*self.settings.ydimension)]
-        self.overlap_duty_cycles = [0 for i in range(self.settings.xdimension*self.settings.ydimension)]
+        self.active_duty_cycles = [0 for i in range(self.settings.xdimension * self.settings.ydimension)]
+        self.overlap_duty_cycles = [0 for i in range(self.settings.xdimension * self.settings.ydimension)]
         bottom_indices = mapper.map_all((self.settings.xinput, self.settings.yinput),
-                                       (self.settings.xdimension, self.settings.ydimension),
-                                       self.settings.potential_radius)
+                                        (self.settings.xdimension, self.settings.ydimension),
+                                        self.settings.potential_radius)
 
         for i in range(0, self.settings.xdimension):
             for j in range(0, self.settings.ydimension):
-                self.columns.append((Column((i, j), bottom_indices[i*self.settings.ydimension+j], self)))
+                self.columns.append((Column((i, j), bottom_indices[i * self.settings.ydimension + j], self)))
 
         return
 
@@ -91,7 +91,7 @@ class Region:
                     n = 0
                     for i in column.get_neighbors():
                         n += (1 if self.find_by_colindex(cols, i).get_is_active() else 0)
-                    if n <= (self.settings.desired_local_activity-1):  # -1 - считая саму колонку
+                    if n <= (self.settings.desired_local_activity - 1):  # -1 - считая саму колонку
                         column.set_is_active(True)
                         active_columns.append(column)
                 else:
@@ -140,8 +140,8 @@ class Region:
         """
         value = 1
 
-        if self.active_duty_cycles[col.get_index()] < min_value :
-                value = 1 + (min_value - self.active_duty_cycles[col.get_index()]) * (self.settings.max_boost - 1)
+        if self.active_duty_cycles[col.get_index()] < min_value:
+            value = 1 + (min_value - self.active_duty_cycles[col.get_index()]) * (self.settings.max_boost - 1)
         col.set_boost_factor(value)
 
     def learning_phase(self, cols, inp, overlaps):
@@ -163,20 +163,21 @@ class Region:
             # определить максимальное число срабатываний колонки среди соседей колонки и её самой колонку
             max_active_duty = 0
             for index in column.get_neighbors():
-                max_active_duty = max_active_duty  if max_active_duty > self.active_duty_cycles[index] else self.active_duty_cycles[index]
+                max_active_duty = max_active_duty if max_active_duty > self.active_duty_cycles[index] else \
+                    self.active_duty_cycles[index]
 
             # определить минимальное число срабатываний (% от maxActiveDuty)
             min_duty_cycle = self.settings.min_duty_cycle_fraction * max_active_duty
 
-            self.update_boost_factor(column,min_duty_cycle)
+            self.update_boost_factor(column, min_duty_cycle)
 
-            self.update_overlap_duty_cycle(column,overlaps)
+            self.update_overlap_duty_cycle(column, overlaps)
             # если колонка редко срабатывает стимулировать её
             if self.overlap_duty_cycles[column.get_index()] < min_duty_cycle:
                 column.stimulate()
 
-            # TODO: в оригинальной реализиации радиус менялся и соседи тоже...
-            # column.update_neighbors(averageReceptiveFieldSize())
+                # TODO: в оригинальной реализиации радиус менялся и соседи тоже...
+                # column.update_neighbors(averageReceptiveFieldSize())
 
         # теперь обновим activeDutyCycle всех колонок.
         self.update_active_duty_cycle(cols)
@@ -185,15 +186,23 @@ class Region:
         inp = to_vector(input)
         ov = self.update_overlaps(self.get_columns(), inp)
         self.inhibition_phase(self.get_columns(), ov)
-        self.learning_phase(self.get_columns(),inp,ov)
+        self.learning_phase(self.get_columns(), inp, ov)
         return to_matrix(self)
 
-    def out_prediction(self):
-        output=[[0 for i in range(0, self.get_input_h())] for i in range(0, self.get_input_w())]
-        for col in self.columns:
-            if col.get_is_active():
-                for syn in col.get_potential_synapses():
-                    x = syn.get_index_connect_to() / self.get_input_h()
-                    y = syn.get_index_connect_to() % self.get_input_w()
-                    output[x][y]=min(output[x][y]+syn.get_permanence(),1)
+    def out_prediction(self, colindexies):
+        """
+        Спуск предсказаний Temporal Pooler на уровень ниже
+        :param colindexies: матрица состояний колонок Temporal Pooler
+        :return: возвращает матрицу предсказаний (дробные числа от 0 до 1) активности элементов нижнего слоя на следующем шаге
+        """
+        output = [[0 for i in range(0, self.get_input_h())] for i in range(0, self.get_input_w())]
+        tp_cols = to_vector(colindexies)
+        for colindx in range(len(tp_cols)):
+            if tp_cols[colindx] == 1:
+                col = self.columns[colindx]
+                for syn in col.get_potential_synapses().values():
+                    x = (int)(syn.get_index_connect_to() / self.get_input_h())
+                    y = (int)(syn.get_index_connect_to() % self.get_input_w())
+                    # один элемент может быть связан с несколькими синапсами
+                    output[x][y] = min(output[x][y] + syn.get_permanence(), 1)
         return output
