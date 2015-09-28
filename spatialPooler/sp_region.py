@@ -109,7 +109,7 @@ class Region:
     @staticmethod
     def update_synapses(cols, inp):
         """
-        Обновление перманентностей синапсов всех колонок
+        Обновление перманентностей синапсов активных колонок
         Если синапс был активен (через него шел сигнал от входного вектора), его значение преманентности увеличивается,
         а иначе - уменьшается.
         :param cols: колонки
@@ -117,11 +117,12 @@ class Region:
         :return:
         """
         for col in cols:
-            for synapse in col.get_potential_synapses().values():
-                if inp[synapse.get_index_connect_to()]:
-                    synapse.increase_permanence()
-                else:
-                    synapse.decrease_permanence()
+            if col.get_is_active():
+                for synapse in col.get_potential_synapses().values():
+                    if inp[synapse.get_index_connect_to()]:
+                        synapse.increase_permanence()
+                    else:
+                        synapse.decrease_permanence()
 
     def update_active_duty_cycle(self, cols):
         for i in range(len(cols)):
@@ -189,7 +190,7 @@ class Region:
         inp = to_vector(input)
         ov = self.update_overlaps(self.get_columns(), inp)
         self.inhibition_phase(self.get_columns(), ov)
-        # self.learning_phase(self.get_columns(), inp, ov)
+        self.learning_phase(self.get_columns(), inp, ov)
         return to_matrix(self)
 
     def out_prediction(self, colindexies):
