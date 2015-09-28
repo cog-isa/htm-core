@@ -1,5 +1,5 @@
-from mappers.sp_square_mapper import SquareMapper
-
+# from mappers.sp_square_mapper import SquareMapper
+from spatialPooler.mappers.sp_square_mapper import SquareMapper
 
 class SquareMapperAutoRadius:
     """

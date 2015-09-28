@@ -60,6 +60,7 @@ class Region:
         for c in cols:
             for s in c.get_connected_synapses():
                 overlaps[i] += (1 if inp[s.get_index_connect_to()] == 1 else 0)
+            overlaps[i] = overlaps[i] * c.get_boost_factor()
             i += 1
         return overlaps
 
@@ -141,7 +142,9 @@ class Region:
         value = 1
 
         if self.active_duty_cycles[col.get_index()] < min_value:
-            value = 1 + (min_value - self.active_duty_cycles[col.get_index()]) * (self.settings.max_boost - 1)
+            value = (min_value - self.active_duty_cycles[col.get_index()]) + 1
+        if value > self.settings.max_boost:
+            value = self.settings.max_boost
         col.set_boost_factor(value)
 
     def learning_phase(self, cols, inp, overlaps):
@@ -176,8 +179,8 @@ class Region:
             if self.overlap_duty_cycles[column.get_index()] < min_duty_cycle:
                 column.stimulate()
 
-                # TODO: в оригинальной реализиации радиус менялся и соседи тоже...
-                # column.update_neighbors(averageReceptiveFieldSize())
+            # TODO: в оригинальной реализиации радиус менялся и соседи тоже...
+            # column.update_neighbors(averageReceptiveFieldSize())
 
         # теперь обновим activeDutyCycle всех колонок.
         self.update_active_duty_cycle(cols)
@@ -186,7 +189,7 @@ class Region:
         inp = to_vector(input)
         ov = self.update_overlaps(self.get_columns(), inp)
         self.inhibition_phase(self.get_columns(), ov)
-        self.learning_phase(self.get_columns(), inp, ov)
+        # self.learning_phase(self.get_columns(), inp, ov)
         return to_matrix(self)
 
     def out_prediction(self, colindexies):

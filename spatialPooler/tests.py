@@ -450,16 +450,17 @@ def test_debug_false():
     r = Region(setting, SimpleMapper())
     inp = [[1, 0, 1, 0], [1, 0, 1, 0], [1, 0, 1, 0], [1, 0, 1, 0]]
     res = r.step_forward(inp)
+    print(res)
     assert len(list(filter(lambda x: x[0] == True, res)))>0
 
 if __name__ == "__main__":
     print("Testing")
     test_debug_false()
-    # test_out_prediction()
-    # test_htm_constructuion()
-    # test_overlap_on_ones()
-    # test_inhibition_phase()
-    # testUpdateSynapses()
-    # test_learning()
-    # test_overlap_on_not_ones()
-    # test_ladder()
+    test_out_prediction()
+    test_htm_constructuion()
+    test_overlap_on_ones()
+    test_inhibition_phase()
+    testUpdateSynapses()
+    test_learning()
+    test_overlap_on_not_ones()
+    test_ladder()

@@ -23,11 +23,11 @@ class Synapse:
             self.permanence *= (1/(0.5 if k == 0 else k))
         else:
             # Случайные значения преманентности должны быть из малого диапазона около connectedPerm
-            if random.randrange(0, 1) <= self.settings.connected_pct:
+            if random.randrange(0, 1) >= 0.5:
                 self.permanence = self.settings.connected_perm + random.randrange(0, 1) * self.settings.permanence_inc / 4.0
             else:
                 self.permanence = self.settings.connected_perm - random.randrange(0, 1) * self.settings.permanence_inc / 4.0
-                self.permanence *= (1/(0.5 if k == 0 else k))
+            self.permanence *= (1/(0.5 if k == 0 else k))
 
     def increase_permanence(self):
         self.permanence += self.settings.permanence_inc

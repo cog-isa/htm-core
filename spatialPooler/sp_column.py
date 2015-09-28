@@ -91,7 +91,8 @@ class Column:
         return self.boost_factor
 
     def set_boost_factor(self, boost_factor):
-        self.boost_factor = 1  # boost_factor
+        self.boost_factor = boost_factor
+        # self.boost_factor = 1
 
     def stimulate(self):
         """

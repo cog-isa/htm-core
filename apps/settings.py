@@ -1,4 +1,6 @@
 from gens.input_generators import *
+from mappers.sp_square_mapper_auto_radius import SquareMapperAutoRadius
+
 
 class InputSettings:
     def __init__(self):
@@ -10,6 +12,7 @@ class InputSettings:
         # GENERATOR = ConstantActiveBit
         # GENERATOR = TestSimpleSteps
         self.GENERATOR = TestSimpleSteps
+        self.MAPPER = SquareMapperAutoRadius
 
 
 class TemporalSettings:
@@ -43,8 +46,8 @@ class SpatialSettings:
         self.initial_inhibition_radius = 1
         self.permanence_inc = 0.1
         self.permanence_dec = 0.1
-        self.max_boost = 1
-        self.min_duty_cycle_fraction = 2
+        self.max_boost = 2
+        self.min_duty_cycle_fraction = 0.2
 
 input_settings = InputSettings()
 temporal_settings = TemporalSettings()
