@@ -9,7 +9,10 @@ def get_distance(p1,p2):
 
 
 def kth_score(overlaps, k):
-    return sorted(overlaps)[len(overlaps) - k]
+    if len(overlaps)>=k:
+        return sorted(overlaps)[len(overlaps) - k]
+    else:
+        return sorted(overlaps)[len(overlaps)-1]
 
 def to_vector(m):
     output = []

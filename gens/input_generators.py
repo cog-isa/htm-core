@@ -130,35 +130,122 @@ class Too2TestSimpleSteps:
         return self.a
 
 
+# class HardSteps:
+#     def __init__(self, square_size):
+#         self.square_size = square_size
+#         self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
+#         self.current_step = 0
+#         self.state = "MOVE_FORWARD"
+#         self.a[self.current_step][self.current_step] = 1
+#
+#         self.moves = []
+#         self.moves.append([0, 0])
+#         self.moves.append([1, 1])
+#         self.moves.append([2, 2])
+#         self.moves.append([1, 1])
+#         self.moves.append([0, 0])
+#         self.moves.append([0, 1])
+#         self.moves.append([0, 2])
+#         self.moves.append([1, 1])
+#         self.moves.append([2, 0])
+#         self.moves.append([1, 1])
+#         self.moves.append([0, 2])
+#         self.moves.append([0, 1])
+#         self.size = len(self.moves)
+#
+#     def move(self):
+#         x, y = self.moves[self.current_step]
+#         self.a[x][y] = 0
+#         self.current_step = (self.current_step + 1) % self.size
+#         x, y = self.moves[self.current_step]
+#         self.a[x][y] = 1
+#
+#     def out(self):
+#         for i in self.a:
+#             print(i)
+#         print()
+#
+#     def get_data(self):
+#         return self.a
+
+
 class HardSteps:
     def __init__(self, square_size):
         self.square_size = square_size
         self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
-        self.current_step = 0
-        self.state = "MOVE_FORWARD"
-        self.a[self.current_step][self.current_step] = 1
-
-        self.moves = []
-        self.moves.append([0, 0])
-        self.moves.append([1, 1])
-        self.moves.append([2, 2])
-        self.moves.append([1, 1])
-        self.moves.append([0, 0])
-        self.moves.append([0, 1])
-        self.moves.append([0, 2])
-        self.moves.append([1, 1])
-        self.moves.append([2, 0])
-        self.moves.append([1, 1])
-        self.moves.append([0, 2])
-        self.moves.append([0, 1])
-        self.size = len(self.moves)
+        self.state = 0
+        self.x = 0
+        self.y = 0
+        self.a[self.x][self.y] = 1
 
     def move(self):
-        x, y = self.moves[self.current_step]
-        self.a[x][y] = 0
-        self.current_step = (self.current_step + 1) % self.size
-        x, y = self.moves[self.current_step]
-        self.a[x][y] = 1
+
+        if self.square_size == 1: return
+
+        if self.state == 0:
+            if (self.x < self.square_size - 1) and (self.y < self.square_size - 1):
+                self.a[self.x][self.y] = 0
+                self.x += 1
+                self.y += 1
+                self.a[self.x][self.y] = 1
+            else:
+                self.state += 1
+                self.move()
+                return
+
+        if self.state == 1:
+            if (self.x != 0) and (self.y !=0 ):
+                self.a[self.x][self.y] = 0
+                self.x -= 1
+                self.y -= 1
+                self.a[self.x][self.y] = 1
+            else:
+                self.state += 1
+                self.move()
+                return
+
+        if self.state == 2:
+            if (self.x < self.square_size - 1):
+                self.a[self.x][self.y] = 0
+                self.x += 1
+                self.a[self.x][self.y] = 1
+            else:
+                self.state += 1
+                self.move()
+                return
+
+        if self.state == 3:
+            if (self.x != 0) and (self.y < self.square_size-1):
+                self.a[self.x][self.y] = 0
+                self.x -= 1
+                self.y += 1
+                self.a[self.x][self.y] = 1
+            else:
+                self.state += 1
+                self.move()
+                return
+
+        if self.state == 4:
+            if (self.x < self.square_size-1) and (self.y != 0 ):
+                self.a[self.x][self.y] = 0
+                self.x += 1
+                self.y -= 1
+                self.a[self.x][self.y] = 1
+            else:
+                self.state += 1
+                self.move()
+                return
+
+        if self.state == 5:
+            if (self.x != 0):
+                self.a[self.x][self.y] = 0
+                self.x -= 1
+                self.a[self.x][self.y] = 1
+            else:
+                self.state = 0
+                self.move()
+                return
+
 
     def out(self):
         for i in self.a:
@@ -355,9 +442,9 @@ class Snake:
         if self.ok(ok_tx, ok_ty):
             self.direction = ok_direction
             print(self.snake_tail)
-            if self.a[ok_tx][ok_ty] == self.FOOD:
-                last_index = len(self.snake_tail) - 1
-                self.snake_tail.append([self.snake_tail[last_index][0], self.snake_tail[last_index][1]])
+            # if self.a[ok_tx][ok_ty] == self.FOOD:
+            #     last_index = len(self.snake_tail) - 1
+            #     self.snake_tail.append([self.snake_tail[last_index][0], self.snake_tail[last_index][1]])
 
             for j in self.snake_tail:
                 self.a[j[0]][j[1]] = self.EMPTY
@@ -380,8 +467,7 @@ class Snake:
                     self.a[self.new_food_x][self.new_food_y] = self.FOOD
 
         else:
-            self.game_over = True
-            print("GAME_END")
+            self.__init__(self.square_size)
 
     def get_data(self):
         res = [[0 for _ in range(self.square_size)] for _ in range(self.square_size)]
