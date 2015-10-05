@@ -80,7 +80,6 @@ def test_ladder():
     setting = spatial_settings
     setting.debug = True
 
-    setting.activation_threshold = 1
     setting.min_overlap = 1
     setting.desired_local_activity = 1
     setting.connected_pct = 1
@@ -163,7 +162,6 @@ def test_learning():
     settings = spatial_settings
     settings.debug = True
 
-    settings.activation_threshold = 1
     settings.min_overlap = 1
     settings.desired_local_activity = 1
     settings.connected_pct = 1
@@ -196,7 +194,6 @@ def test_update_active_duty_cycle():
     settings = spatial_settings
     settings.debug = True
 
-    settings.activation_threshold = 1
     settings.min_overlap = 1
     settings.desired_local_activity = 1
     settings.connected_pct = 1
@@ -248,7 +245,6 @@ def testUpdateSynapses():
     settings = spatial_settings
     settings.debug = True
 
-    settings.activation_threshold = 1
     settings.min_overlap = 1
     settings.desired_local_activity = 1
     settings.connected_pct = 1
@@ -279,7 +275,6 @@ def test_inhibition_phase():
     settings = spatial_settings
     settings.debug = True
 
-    settings.activation_threshold = 1
     settings.min_overlap = 1
     settings.desired_local_activity = 1
     settings.connected_pct = 1
@@ -317,7 +312,6 @@ def test_overlap_on_ones():
     settings = spatial_settings
     settings.debug = True
 
-    settings.activation_threshold = 1
     settings.min_overlap = 1
     settings.desired_local_activity = 1
     settings.connected_pct = 1
@@ -363,7 +357,6 @@ def test_overlap_on_not_ones():
     settings = spatial_settings
     settings.debug = True
 
-    settings.activation_threshold = 1
     settings.min_overlap = 1
     settings.desired_local_activity = 1
     settings.connected_pct = 1
@@ -385,7 +378,6 @@ def test_htm_constructuion():
     setting = spatial_settings
     setting.debug = True
 
-    setting.activation_threshold = 1
     setting.min_overlap = 1
     setting.desired_local_activity = 1
     setting.connected_pct = 1
@@ -410,7 +402,6 @@ def test_out_prediction():
     setting = spatial_settings
     setting.debug = True
 
-    setting.activation_threshold = 1
     setting.min_overlap = 1
     setting.desired_local_activity = 1
     setting.connected_pct = 1
@@ -436,7 +427,6 @@ def test_debug_false():
     setting = spatial_settings
     setting.debug = False
 
-    setting.activation_threshold = 1
     setting.min_overlap = 1
     setting.desired_local_activity = 1
     setting.connected_pct = 1
