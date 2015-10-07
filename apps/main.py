@@ -10,11 +10,13 @@ spatial_settings.yinput=spatial_settings.xinput*input_settings.SCALE
 spatial_settings.xinput=spatial_settings.xinput*input_settings.SCALE
 spatial_settings.ydimension=spatial_settings.xdimension
 
-r_s = sp.Region(spatial_settings, SquareMapper)
+r_s = sp.Region(spatial_settings, input_settings.MAPPER)
 r_t = tp.Region(spatial_settings.xdimension, temporal_settings.COLUMN_SIZE)
 
 for i in range(input_settings.STEPS_NUMBER):
-    inp_t = r_s.step_forward(generator.get_data())
+    data=generator.get_data()
+    generator.out()
+    inp_t = r_s.step_forward(data)
     for j in inp_t:
         print(j)
     r_t.step_forward(inp_t)
