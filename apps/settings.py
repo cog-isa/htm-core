@@ -1,5 +1,5 @@
 from gens.input_generators import *
-from mappers.sp_square_mapper_auto_radius import SquareMapperAutoRadius
+from spatialPooler.mappers.sp_square_mapper_auto_radius import SquareMapperAutoRadius
 
 
 class InputSettings:
@@ -37,11 +37,11 @@ class SpatialSettings:
         self.desired_local_activity = 3
         self.connected_pct = 1
         self.connected_perm = 0.01
-        self.xinput = 0
-        self.yinput = 0
-        self.potential_radius = 4
-        self.xdimension = 10
-        self.ydimension = 10
+        self.xinput = 3
+        self.yinput = 3
+        self.potential_radius = 2
+        self.xdimension = 9
+        self.ydimension = 9
         self.initial_inhibition_radius = 1
         self.permanence_inc = 0.1
         self.permanence_dec = 0.1

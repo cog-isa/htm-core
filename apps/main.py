@@ -11,7 +11,7 @@ spatial_settings.xinput=spatial_settings.xinput*input_settings.SCALE
 spatial_settings.ydimension=spatial_settings.xdimension
 
 r_s = sp.Region(spatial_settings, SquareMapper)
-r_t = tp.Region(spatial_settings.xdimension, temporal_settings.cells_per_column)
+r_t = tp.Region(spatial_settings.xdimension, temporal_settings.COLUMN_SIZE)
 
 for i in range(input_settings.STEPS_NUMBER):
     inp_t = r_s.step_forward(generator.get_data())
