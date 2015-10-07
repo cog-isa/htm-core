@@ -1,5 +1,5 @@
 from htm__region import Region
-from settings import temporal_settings as ts
+from apps.settings import temporal_settings as ts
 from gens.input_generators import Cross
 
 
