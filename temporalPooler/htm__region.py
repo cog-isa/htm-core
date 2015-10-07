@@ -10,11 +10,12 @@ class Region:
     Регион htm, реализует основую логику временного группировщика
     """
 
-    def __init__(self, region_size, column_size):
+    def __init__(self, region_size, column_size, start_cells_id=0):
         """
         инициализация региона
         :param region_size: размера стороны квадрата - региона
         :param column_size: количество клеток в колонке
+        :param start_cells_id: начальный индекс клеток, нужно для объединения нескольких регионов
         :return:
         """
         self.region_size = region_size
@@ -35,6 +36,7 @@ class Region:
 
         self.average_correctness_max_size = 500
         self.average_correctness = []
+        self.start_cells_id = start_cells_id
 
     def get_active_cells(self):
         """
@@ -176,6 +178,17 @@ class Region:
         return [self.columns[i][j] for i in range(self.region_size) for j in range(self.region_size) if
                 self.column_satisfies(self.columns[i][j], active, prediction)]
 
+    def get_ptr_to_cells(self):
+        res = {}
+        cnt = self.start_cells_id
+        for i in self.columns:
+            for j in i:
+                for k in j.cells:
+                    k.id = cnt
+                    res[k.id] = k
+                    cnt += 1
+        return res
+
     def step_forward(self, a):
         """
         основная функция пересчета региона, выполняются такие функции как:
@@ -190,14 +203,7 @@ class Region:
         self.update_correctness(a)
 
         # создаем словарь ссылок на клетки по id
-        self.ptr_to_cell = {}
-        cnt = 0
-        for i in self.columns:
-            for j in i:
-                for k in j.cells:
-                    k.id = cnt
-                    self.ptr_to_cell[k.id] = k
-                    cnt += 1
+        self.ptr_to_cell = self.get_ptr_to_cells()
 
         self.update_columns_state(a)
 
