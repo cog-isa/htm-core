@@ -1,28 +1,44 @@
-__author__ = 'tv'
-
-from spatialPooler.mappers.sp_square_mapper_auto_radius import SquareMapperAutoRadius
-from gens.input_generators import Cross
+from gens.input_generators import Cross, MakeBubble
 
 
-def map_to_matrix(mapped, input, output_size):
+def point_in(x, y, x1, y1, x2, y2):
+    return x1 <= x <= x2 and y1 <= y <= y2
+
+
+def hello(generator_data, to_map_data):
+    h = len(generator_data) * 1.0 / len(to_map_data)
+    print(h)
+
+    x, y = -1, -1
+    for i, elem in enumerate(to_map_data):
+        for j, _ in enumerate(elem):
+            if to_map_data[i][j]:
+                x, y = i, j
+    assert (x != -1 and y != -1)
+    print(x, y)
     res = []
-    p =  []
-    cnt = 0
-    # здесь были костыли
-    return res
 
-
-def get_slices(input, output_size, getter_matrix):
-    input_size = len(input)
-    for i, e in enumerate(getter_matrix):
-        for j, elem in enumerate(e):
-            if elem:
-                print(
-                    map_to_matrix(SquareMapperAutoRadius.get_columns_cells_by_coord(i, j, input_size, output_size, 1),
-                    input))
+    for i, elem in enumerate(generator_data):
+        q = []
+        for j, _ in enumerate(elem):
+            ok = False
+            for tx in range(2):
+                for ty in range(2):
+                    if ok:
+                        break
+                    if point_in(i + tx, j + ty, x * h, y * h, x * h + h, y * h + h):
+                        q.append(generator_data[i][j])
+                        ok = True
+        if q:
+            res.append(q)
+    for i in res:
+        print(i)
 
 
 if __name__ == "__main__":
-    generator = Cross(10)
-    vision = [[1, 0], [0, 1]]
-    get_slices(generator.get_data(), len(vision), vision)
+    # потестим
+    generator = MakeBubble(Cross, 5, 1)
+    generator.out()
+    hello(generator.get_data(),
+          [[0, 1],
+           [0, 0]])
