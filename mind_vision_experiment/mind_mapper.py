@@ -35,10 +35,14 @@ def hello(generator_data, to_map_data):
         print(i)
 
 
-if __name__ == "__main__":
+def main():
     # потестим
     generator = MakeBubble(Cross, 5, 1)
     generator.out()
     hello(generator.get_data(),
           [[0, 1],
            [0, 0]])
+
+
+if __name__ == "__main__":
+    main()
