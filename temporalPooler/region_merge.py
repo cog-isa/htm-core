@@ -1,4 +1,4 @@
-from htm__region import Region
+from temporalPooler.htm__region import Region
 from apps.settings import temporal_settings as ts
 from gens.input_generators import Cross
 
@@ -21,6 +21,29 @@ def merged_move(regions):
     for i in regions:
         i.step_forward(Cross(ts.REGION_SIZE_N).get_data())
         i.out_prediction()
+
+    for index, elem in enumerate(regions):
+        elem.get_ptr_to_cells = methods_get_ptr_to_cell[index]
+        elem.get_active_cells = methods_get_active_cells[index]
+
+
+def merged_move2(regions, inputs):
+    methods_get_ptr_to_cell = []
+    methods_get_active_cells = []
+    cells = {}
+    active_cells = []
+    for i in regions:
+        active_cells = active_cells + i.get_active_cells()
+        cells.update(i.get_ptr_to_cells())
+        methods_get_active_cells.append(i.get_active_cells)
+        methods_get_ptr_to_cell.append(i.get_ptr_to_cells)
+
+    for i in regions:
+        i.get_ptr_to_cells = lambda: cells
+        i.get_active_cells = lambda: active_cells
+
+    for i, I in enumerate(regions):
+        I.step_forward(inputs[i])
 
     for index, elem in enumerate(regions):
         elem.get_ptr_to_cells = methods_get_ptr_to_cell[index]

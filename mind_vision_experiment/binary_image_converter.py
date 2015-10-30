@@ -2,7 +2,7 @@ def read_number(data):
     q = []
     x = []
     for i, e in enumerate(data):
-        if i % 28 == 0:
+        if i % 28 == 0 and i > 0:
             q.append(x)
             x = []
         x.append(1 if int(e) > 70 else 0)
