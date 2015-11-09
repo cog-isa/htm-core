@@ -27,8 +27,9 @@ class TemporalSettings:
         self.SYNAPSE_THRESHOLD = 0.25
         self.DENDRITE_PERMANENCE_INC_DELTA = 0.02
         self.DENDRITE_PERMANENCE_DEC_DELTA = -0.1
-        self.DENDRITE_ACTIVATE_THRESHOLD = 3
+        self.DENDRITE_ACTIVATE_THRESHOLD = 45
         self.PASSIVE_TIME_TO_ACTIVE_THRESHOLD = 2000
+
 
 class SpatialSettings:
     def __init__(self):
@@ -47,6 +48,7 @@ class SpatialSettings:
         self.permanence_dec = 0.1
         self.max_boost = 2
         self.min_duty_cycle_fraction = 0.2
+
 
 input_settings = InputSettings()
 temporal_settings = TemporalSettings()
