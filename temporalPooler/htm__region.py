@@ -1,8 +1,9 @@
+from random import randrange
+
 from temporalPooler.htm_column import Column
 from temporalPooler.util import ACTIVE, PREDICTION, PASSIVE
 from apps.settings import temporal_settings
 from temporalPooler.htm_dendrite import Dendrite
-from random import randrange
 
 
 class Region:
@@ -49,6 +50,7 @@ class Region:
                 for cell in self.columns[i][j].cells:
                     if cell.state == ACTIVE:
                         res.append(cell)
+
         return res
 
     def update_correctness(self, a):
@@ -189,7 +191,7 @@ class Region:
                     cnt += 1
         return res
 
-    def step_forward(self, a):
+    def step_forward(self, a, ololo=None):
         """
         основная функция пересчета региона, выполняются такие функции как:
             - подсчет ошибки (проверка правильности предсказания)
@@ -276,6 +278,9 @@ class Region:
                                 break
                         if new_den:
                             cell.dendrites.append(new_den)
+                            if len(a) < 15:
+                                print("New_den_active_synapses", len(new_den.synapses))
+
             pass
 
         for _ in self.get_columns(active=False, prediction=False):
@@ -289,6 +294,22 @@ class Region:
                     dendrite.was_active = dendrite.active
                     dendrite.active = False
 
+        if not ololo:
+            self.make_prediction()
+
+        # проверяем предыдущее предсказание
+        if self.prediction_was_ok(a):
+
+            self.very_ok_times += 1
+            self.max_ok_times = max(self.max_ok_times, self.very_ok_times)
+            # print('Предсказание было правильным.')
+        else:
+            self.very_ok_times = 0
+        if not ololo:
+            self.apply_new_cell_state()
+            # применяем новое состояние клеток
+
+    def make_prediction(self):
         # делаем предсказание
         for i in range(self.region_size):
             for j in range(self.region_size):
@@ -309,21 +330,12 @@ class Region:
                             mx = q
                             cell_for_update = current_cell
                             dendrite_mx = dendrite
-
                 if mx >= temporal_settings.DENDRITE_ACTIVATE_THRESHOLD:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
 
-        # проверяем предыдущее предсказание
-        if self.prediction_was_ok(a):
 
-            self.very_ok_times += 1
-            self.max_ok_times = max(self.max_ok_times, self.very_ok_times)
-            # print('Предсказание было правильным.')
-        else:
-            self.very_ok_times = 0
-
-        # применяем новое состояние клеток
+    def apply_new_cell_state(self):
         for i in range(self.region_size):
             for j in range(self.region_size):
                 for cell in self.columns[i][j].cells:
