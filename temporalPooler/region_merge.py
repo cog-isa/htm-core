@@ -43,7 +43,7 @@ def merged_move2(regions, inputs):
         i.get_active_cells = lambda: active_cells
 
     for i, I in enumerate(regions):
-        I.step_forward(inputs[i], ololo=True)
+        I.step_forward(inputs[i], do_not_make_prediction_and_apply_cell_states=True)
 
     for i, I in enumerate(regions):
         I.make_prediction()

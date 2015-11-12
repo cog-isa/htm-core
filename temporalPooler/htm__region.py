@@ -191,7 +191,7 @@ class Region:
                     cnt += 1
         return res
 
-    def step_forward(self, a, ololo=None):
+    def step_forward(self, a, do_not_make_prediction_and_apply_cell_states=None):
         """
         основная функция пересчета региона, выполняются такие функции как:
             - подсчет ошибки (проверка правильности предсказания)
@@ -294,7 +294,7 @@ class Region:
                     dendrite.was_active = dendrite.active
                     dendrite.active = False
 
-        if not ololo:
+        if not do_not_make_prediction_and_apply_cell_states:
             self.make_prediction()
 
         # проверяем предыдущее предсказание
@@ -305,7 +305,7 @@ class Region:
             # print('Предсказание было правильным.')
         else:
             self.very_ok_times = 0
-        if not ololo:
+        if not do_not_make_prediction_and_apply_cell_states:
             self.apply_new_cell_state()
             # применяем новое состояние клеток
 
