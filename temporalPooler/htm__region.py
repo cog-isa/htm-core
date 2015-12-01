@@ -368,7 +368,7 @@ class Region:
             print(i)
         print()
 
-    def out_binary_prediction(self):
+    def get_binary_prediction(self):
         """
         вывод информации о колонках в состоянии предсказания
         :return:матрица состояния состояния колонок 1 если колонка в состоянии предсказания
