@@ -3,7 +3,7 @@ from random import randrange, shuffle
 
 class MakeBubble:
     def __init__(self, inner_generator, square_size, scale):
-        self.inner_generator = inner_generator(square_size)
+        self.inner_generator = inner_generator(inner_generator, square_size, scale)
         self.scale = scale
         self.square_size = square_size
 
@@ -29,7 +29,7 @@ class MakeBubble:
 
 
 class TestSimpleSteps:
-    def __init__(self, square_size):
+    def __init__(self, inner_generator, square_size, scale):
         self.square_size = square_size
         self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.current_step = 0
@@ -62,7 +62,7 @@ class TestSimpleSteps:
 
 
 class TooTestSimpleSteps:
-    def __init__(self, square_size):
+    def __init__(self, inner_generator, square_size, scale):
         self.square_size = square_size
         self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.current_step = 0
@@ -95,7 +95,7 @@ class TooTestSimpleSteps:
 
 
 class Too2TestSimpleSteps:
-    def __init__(self, square_size):
+    def __init__(self, inner_generator, square_size, scale):
         self.square_size = square_size
         self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.current_step = 0
@@ -170,7 +170,7 @@ class Too2TestSimpleSteps:
 
 
 class HardSteps:
-    def __init__(self, square_size):
+    def __init__(self, inner_generator, square_size, scale):
         self.square_size = square_size
         self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.state = 0
@@ -257,7 +257,7 @@ class HardSteps:
 
 
 class HardStepsLen2:
-    def __init__(self, square_size):
+    def __init__(self, inner_generator, square_size, scale):
         self.square_size = square_size
         self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.current_step = 0
@@ -302,7 +302,7 @@ class HardStepsLen2:
 
 
 class Cross:
-    def __init__(self, square_size):
+    def __init__(self, inner_generator, square_size, scale):
         self.square_size = square_size
         self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
         self.center_x = self.x = (square_size - 1) // 2
@@ -348,7 +348,7 @@ class Cross:
 
 
 class ConstantActiveBit:
-    def __init__(self, square_size):
+    def __init__(self, inner_generator, square_size, scale):
         self.square_size = square_size
         assert (square_size >= 2)
         self.a = [[0 for _ in range(square_size)] for _ in range(square_size)]
@@ -375,7 +375,7 @@ class ConstantActiveBit:
 
 
 class Snake:
-    def __init__(self, square_size):
+    def __init__(self, inner_generator, square_size, scale):
         self.SNAKE = 1
         self.FOOD = 2
         self.EMPTY = 0

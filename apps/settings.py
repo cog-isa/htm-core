@@ -1,3 +1,4 @@
+from gens.combine_gens import StepsAndCross
 from gens.input_generators import *
 from spatialPooler.mappers.sp_square_mapper_auto_radius import SquareMapperAutoRadius
 
@@ -5,23 +6,23 @@ from spatialPooler.mappers.sp_square_mapper_auto_radius import SquareMapperAutoR
 class InputSettings:
     def __init__(self):
         # раздувание
-        self.SCALE = 1
+        self.SCALE = 2
         self.STEPS_NUMBER = 900
 
-        # GENERATOR = HardSteps
-        # GENERATOR = ConstantActiveBit
-        # GENERATOR = TestSimpleSteps
-        self.GENERATOR = TestSimpleSteps
+        # self.GENERATOR = HardSteps
+        # self.GENERATOR = ConstantActiveBit
+        # self.GENERATOR = TestSimpleSteps
+        # self.GENERATOR = TestSimpleSteps
+        self.GENERATOR = StepsAndCross
         self.MAPPER = SquareMapperAutoRadius
 
 
 class TemporalSettings:
     def __init__(self):
-        # раздувание
-        self.REGION_SIZE_N = 3
+        self.REGION_SIZE_N = 5
 
         # количество клеток в колонке
-        self.COLUMN_SIZE = 4
+        self.COLUMN_SIZE = 8
 
         self.INITIAL_PERMANENCE = 0.30
         self.SYNAPSE_THRESHOLD = 0.25
