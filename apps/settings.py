@@ -1,3 +1,4 @@
+from gens.combine_gens import StepsAndCross
 from gens.input_generators import *
 from spatialPooler.mappers.sp_square_mapper_auto_radius import SquareMapperAutoRadius
 
@@ -8,10 +9,11 @@ class InputSettings:
         self.SCALE = 1
         self.STEPS_NUMBER = 900
 
-        # GENERATOR = HardSteps
-        # GENERATOR = ConstantActiveBit
-        # GENERATOR = TestSimpleSteps
-        self.GENERATOR = TestSimpleSteps
+        # self.GENERATOR = HardSteps
+        # self.GENERATOR = ConstantActiveBit
+        # self.GENERATOR = TestSimpleSteps
+        # self.GENERATOR = TestSimpleSteps
+        self.GENERATOR = StepsAndCross
         self.MAPPER = SquareMapperAutoRadius
 
 

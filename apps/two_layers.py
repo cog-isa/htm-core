@@ -30,7 +30,7 @@ for i in range(input_settings.STEPS_NUMBER):
         print(j)
     r1_t.step_forward(inp_t)
     print('TP1')
-    r1_t.out_prediction()
+    # r1_t.out_prediction()
 
     inp2_t = r2_s.step_forward(to_binmatrix(inp_t))
     print('SP2')
