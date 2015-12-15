@@ -278,9 +278,6 @@ class Region:
                                 break
                         if new_den:
                             cell.dendrites.append(new_den)
-                            if len(a) < 15:
-                                print("New_den_active_synapses", len(new_den.synapses))
-
             pass
 
         for _ in self.get_columns(active=False, prediction=False):

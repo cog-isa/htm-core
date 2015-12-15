@@ -7,7 +7,7 @@ class InputSettings:
     def __init__(self):
         # раздувание
         self.SCALE = 2
-        self.STEPS_NUMBER = 900
+        self.STEPS_NUMBER = 9000
 
         # self.GENERATOR = HardSteps
         # self.GENERATOR = ConstantActiveBit
@@ -22,7 +22,7 @@ class TemporalSettings:
         self.REGION_SIZE_N = 5
 
         # количество клеток в колонке
-        self.COLUMN_SIZE = 8
+        self.COLUMN_SIZE = 4
 
         self.INITIAL_PERMANENCE = 0.30
         self.SYNAPSE_THRESHOLD = 0.25
