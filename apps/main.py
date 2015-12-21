@@ -16,7 +16,7 @@ r_t = tp.Region(spatial_settings.xdimension, temporal_settings.COLUMN_SIZE)
 for i in range(input_settings.STEPS_NUMBER):
     data=generator.get_data()
     generator.out()
-    inp_t = r_s.step_forward(data)
+    inp_t = data #r_s.step_forward(data)
     for j in inp_t:
         print(j)
     r_t.step_forward(inp_t)
