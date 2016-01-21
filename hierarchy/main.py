@@ -3,8 +3,29 @@ from copy import deepcopy
 import temporalPooler.htm__region as tp
 from apps.settings import *
 from hierarchy.CombinedGenerator import CombineGenerator
-from hierarchy.util import zip_binary_matrix, unzip_binary_matrix
+from hierarchy.util import zip_binary_matrix, unzip_binary_matrix, zip_binary_3, unzip_binary_3_to_matrix, \
+    unzip_binary_3
 
+
+class ListOfSynapse:
+    def __init__(self, a):
+        self.a = set(a)
+
+    def __eq__(self, other):
+        return not (self.a - other.a)
+
+    def __hash__(self):
+        x = 0
+        for i in self.a:
+            x += 2 ** i
+        return x
+
+    def to_column_active_matrix(self, size, cells_columns: {}):
+        res = [[0 for _ in range(size)] for _ in range(size)]
+        for i in self.a:
+            x, y = cells_columns[i]
+            res[x][y] = 1
+        return res
 
 def main():
     # немного двигаем SimpleSteps вперед, чтобы первончальная вершина вела в однозначное место
@@ -15,8 +36,8 @@ def main():
 
     generator = CombineGenerator([tss1, tss2])
     input_size = len(generator.empty)
-
-    r_t = tp.Region(input_size, 4)
+    CELLS_IN_COLUMN = 4
+    r_t = tp.Region(input_size, CELLS_IN_COLUMN)
 
     for i in range(input_settings.STEPS_NUMBER):
         data = generator.get_data()
@@ -42,40 +63,52 @@ def main():
 
     for Dendrite in start_patterns:
         sz = len(generator.get_data())
-        p = [[0 for _ in range(sz)] for _ in range(sz)]
+        p = []
         for i in Dendrite.synapses:
             x, y = cells_column[i.id_to]
-            p[x][y] = 1
+            p.append(i.id_to)
 
-        nodes.append(p)
+        nodes.append(ListOfSynapse(p))
 
+    """
+    for D in nodes:
+        res = [[0 for _ in range(sz)] for _ in range(sz)]
+        for i, I in enumerate(res):
+            for j, J in enumerate(I):
+                res[i][j] = int(sum(D[i][j]) > 0)
+        for i in res:
+            print(i)
+        print()
+    exit(0)
+    """
     # удаляем дубликаты
-    nodes = set(map(zip_binary_matrix, nodes))
-    for i in nodes:
-        print(i)
-
-    # теперь для каждого паттерна будет смотреть что предскажет тп
+    sz = len(generator.get_data())
+    nodes = set(nodes)
+    # теперь для каждого паттерна будем смотреть что предскажет тп
     # для начала будет подавать тп на вход пустоту, чтобы он не создал новых дендритов (божественный костыль)
     # новые дендриты, на самом деле, могут добавляться, но количество синапсов у них будет нулевое
     empty_input = deepcopy(generator.empty)
-
     for I in nodes:
         ss = set()
         current_input = I
         chain = [current_input]
+
         while 1:
             r_t.step_forward(empty_input)
-            r_t.step_forward(unzip_binary_matrix(current_input, input_size))
-            prediction = zip_binary_matrix(r_t.get_binary_prediction())
+            r_t.step_forward(current_input.to_column_active_matrix(sz, cells_column))
+            prediction = ListOfSynapse(r_t.get_predicted_cells_ids())
             r_t.step_forward(empty_input)
-            if prediction in ss or prediction == 0:
+            if prediction in ss:
                 break
             ss.add(prediction)
             current_input = prediction
             chain.append(prediction)
+            t = list(map(lambda x: x.__hash__(), chain))
+            print(t)
+            print()
         print("***" * 5)
         for i in chain:
-            for j in unzip_binary_matrix(i, input_size):
+            for j in i.to_column_active_matrix(sz, cells_column):
                 print(j)
             print()
 

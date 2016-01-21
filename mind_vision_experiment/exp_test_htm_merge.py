@@ -105,7 +105,7 @@ def main():
         print("----" * 10)
         r[0].out_prediction()
         r[1].out_prediction()
-        new_place = zip_bubbled_data(r[1].out_binary_prediction(), BUBBLE_SIZE)
+        new_place = zip_bubbled_data(r[1].get_binary_prediction(), BUBBLE_SIZE)
         place = new_place
 
 

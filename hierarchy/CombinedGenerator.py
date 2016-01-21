@@ -33,11 +33,12 @@ class CombineGenerator:
 
         for gen in self.gens:
             a = []
+            t = deepcopy(gen)
             for i in range(period_calc_size):
                 a.append(zip_binary_matrix(gen.get_data()))
                 gen.move()
             self.gens_periods.append(get_period(a))
-
+            gen = t
         print(self.gens_periods)
 
     def move(self):
@@ -74,7 +75,11 @@ class CombineGenerator:
 
 
 def test():
-    cg = CombineGenerator([TestSimpleSteps(3), TestSimpleSteps(3)])
+    tss1 = TestSimpleSteps(3)
+    tss1.move()
+    tss2 = TestSimpleSteps(3)
+    tss2.move()
+    cg = CombineGenerator([tss1, tss2])
     for i in range(20):
         cg.out()
         cg.move()
@@ -82,5 +87,3 @@ def test():
 
 if __name__ == "__main__":
     test()
-
-

@@ -331,7 +331,6 @@ class Region:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
 
-
     def apply_new_cell_state(self):
         for i in range(self.region_size):
             for j in range(self.region_size):
@@ -379,3 +378,16 @@ class Region:
                     if cell.state == PREDICTION:
                         res[i][j] = 1
         return res
+
+    def get_predicted_cells_ids(self):
+        """
+        отдает список id-шников активных клеток региона
+        :return: список id-шников активных клеток региона
+        """
+        t = []
+        for i in range(self.region_size):
+            for j in range(self.region_size):
+                for cell in self.columns[i][j].cells:
+                    if cell.state == PREDICTION:
+                        t.append(cell)
+        return map(lambda x: x.id, t)

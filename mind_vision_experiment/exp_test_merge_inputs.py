@@ -112,7 +112,7 @@ def main():
         r.step_forward(merge_input([make_bubble(place, BUBBLE_SIZE), hello(three, place)]))
 
         r.out_prediction()
-        new_place = zip_bubbled_data(do_cut(r.out_binary_prediction(), len(make_bubble(place, BUBBLE_SIZE))),
+        new_place = zip_bubbled_data(do_cut(r.get_binary_prediction(), len(make_bubble(place, BUBBLE_SIZE))),
                                      BUBBLE_SIZE)
         place = new_place
 

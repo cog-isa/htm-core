@@ -7,7 +7,7 @@ class InputSettings:
     def __init__(self):
         # раздувание
         self.SCALE = 2
-        self.STEPS_NUMBER = 9000
+        self.STEPS_NUMBER = 30000
 
         # self.GENERATOR = HardSteps
         # self.GENERATOR = ConstantActiveBit
@@ -29,7 +29,7 @@ class TemporalSettings:
         self.DENDRITE_PERMANENCE_INC_DELTA = 0.02
         self.DENDRITE_PERMANENCE_DEC_DELTA = -0.1
         self.DENDRITE_ACTIVATE_THRESHOLD = 1
-        self.PASSIVE_TIME_TO_ACTIVE_THRESHOLD = 2000
+        self.PASSIVE_TIME_TO_ACTIVE_THRESHOLD = 1000
 
 
 class SpatialSettings:
