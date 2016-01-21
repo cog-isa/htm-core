@@ -3,9 +3,9 @@ from gens.input_generators import TestSimpleSteps, Cross
 __author__ = 'AVPetrov'
 
 class StepsAndCross:
-    def __init__(self, inner_generator, square_size, scale):
-        self.simplesteps = TestSimpleSteps(inner_generator, square_size, scale)
-        self.cross = Cross(inner_generator, square_size, scale)
+    def __init__(self, square_size):
+        self.simplesteps = TestSimpleSteps(square_size)
+        self.cross = Cross(square_size)
         self.inner_generator = self.simplesteps
         self.steps = 0
         self.square_size = square_size
