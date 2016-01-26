@@ -80,7 +80,6 @@ def main():
     CELLS_IN_COLUMN = 3
     r_t = tp.Region(input_size, CELLS_IN_COLUMN)
 
-
     for i in range(input_settings.STEPS_NUMBER):
         data = generator.get_data()
         generator.out()
@@ -116,7 +115,27 @@ def main():
             if q >= temporal_settings.DENDRITE_ACTIVATE_THRESHOLD:
                 ans.append(den)
         dfs(ans)
-    draw_graph("hello.png", edges)
+
+    # ВОТ ТУТ ГРАФ С ВЕРШИНАМИ - НОМЕРАМИ
+    mm = {}
+    cnt = 0
+    for i in edges:
+        x, y = i
+        if not x in mm:
+            mm[x] = cnt
+            cnt += 1
+        if not y in mm:
+            mm[y] = cnt
+            cnt += 1
+    for i in mm:
+        print(mm[i], i)
+    print()
+    for i in edges:
+        x, y = i
+        print(mm[x], mm[y])
+    # в mm лежит название вершины -> индекс, цифра
+
+    # draw_graph("hello.png", edges)
 
 #only for linux
 def draw_graph(file_name, res):
