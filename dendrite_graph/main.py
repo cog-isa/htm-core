@@ -1,5 +1,3 @@
-import pygraphviz as pgv
-
 import temporalPooler.htm__region as tp
 from apps.settings import *
 from hierarchy.CombinedGenerator import CombineGenerator
@@ -58,6 +56,12 @@ def dfs(state, cnt=0):
     for i in ans:
         b[i.position_x_y[0]][i.position_x_y[1]] = 1
 
+    # [19:49:34] Скрынник Алексей: т - номера дендритов
+    # [19:49:37] Скрынник Алексей: текущие
+    # [19:49:43] Скрынник Алексей: to - номера дендритов куда идем
+    # [19:49:51] Скрынник Алексей: a - матрица дендритов текущих
+    # [19:49:59] Скрынник Алексей: клетки, которые они активируют
+    # [19:50:06] Скрынник Алексей: b - матрица дендритов куда идем
     edges.append([make_string(t) + "\n" + make_string_(a), make_string(to) + "\n" + make_string_(b)])
 
     # edges.append([make_string(t), make_string(to)])
@@ -114,8 +118,9 @@ def main():
         dfs(ans)
     draw_graph("hello.png", edges)
 
-
+#only for linux
 def draw_graph(file_name, res):
+    import pygraphviz as pgv # на Windows не смогли собрать pygraphviz
     g_out = pgv.AGraph(strict=False, directed=True)
 
     for i in res:
@@ -132,6 +137,67 @@ def draw_graph(file_name, res):
     g_out.layout(prog='dot')
     g_out.draw(file_name)
 
+def draw_graph(file_name, res):
+    f = open(file_name, 'w')
+    s = """
+<!doctype html>
+<html>
+<head>
+  <title>Network | Basic usage</title>
+
+  <script type="text/javascript" src="vis.js"></script>
+  <link href="/vis.css" rel="stylesheet" type="text/css" />
+
+  <style type="text/css">
+    #mynetwork {
+      width: 600px;
+      height: 400px;
+      border: 1px solid lightgray;
+    }
+  </style>
+</head>
+<body>
+
+<p>
+  Create a simple network with some nodes and edges.
+</p>
+
+<div id="mynetwork"></div> """ + edges + """
+
+<script type="text/javascript">
+  // create an array with nodes
+  var nodes = new vis.DataSet([
+    {id: 1, label: 'Node 1'},
+    {id: 2, label: 'Node 2'},
+    {id: 3, label: 'Node 3'},
+    {id: 4, label: 'Node 4'},
+    {id: 5, label: 'Node 5'}
+  ]);
+
+  // create an array with edges
+  var edges = new vis.DataSet([
+    {from: 1, to: 3},
+    {from: 1, to: 2},
+    {from: 2, to: 4},
+    {from: 2, to: 5}
+  ]);
+
+  // create a network
+  var container = document.getElementById('mynetwork');
+  var data = {
+    nodes: nodes,
+    edges: edges
+  };
+  var options = {};
+  var network = new vis.Network(container, data, options);
+</script>
+
+</body>
+</html>
+"""
+    f.write(s)
+    f.close()
 
 if __name__ == "__main__":
+   # / draw_graph("out.html",[])
     main()
