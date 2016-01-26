@@ -1,3 +1,4 @@
+from jsonpickle import json
 import temporalPooler.htm__region as tp
 from apps.settings import *
 from hierarchy.CombinedGenerator import CombineGenerator
@@ -116,7 +117,11 @@ def main():
                 ans.append(den)
         dfs(ans)
 
-    # ВОТ ТУТ ГРАФ С ВЕРШИНАМИ - НОМЕРАМИ
+    # draw_graph("hello.png", edges)
+
+    # переделаем edges для visjs
+    # в mm лежит название вершины -> индекс, цифра
+
     mm = {}
     cnt = 0
     for i in edges:
@@ -130,12 +135,18 @@ def main():
     for i in mm:
         print(mm[i], i)
     print()
+    edges_str = "["
     for i in edges:
         x, y = i
-        print(mm[x], mm[y])
-    # в mm лежит название вершины -> индекс, цифра
+        print(mm[x], mm[y]) # ребор
+        edges_str = edges_str + "["+str(mm[x])+","+str(mm[y])+"],"
+    edges_str += "]"
 
-    # draw_graph("hello.png", edges)
+    nodes = json.encode(mm)
+
+    draw_graph("out.html",nodes,edges_str)
+
+
 
 #only for linux
 def draw_graph(file_name, res):
@@ -156,7 +167,7 @@ def draw_graph(file_name, res):
     g_out.layout(prog='dot')
     g_out.draw(file_name)
 
-def draw_graph(file_name, res):
+def draw_graph(file_name, nodes, edges):
     f = open(file_name, 'w')
     s = """
 <!doctype html>
@@ -165,7 +176,7 @@ def draw_graph(file_name, res):
   <title>Network | Basic usage</title>
 
   <script type="text/javascript" src="vis.js"></script>
-  <link href="/vis.css" rel="stylesheet" type="text/css" />
+  <link href="vis.css" rel="stylesheet" type="text/css" />
 
   <style type="text/css">
     #mynetwork {
@@ -181,25 +192,28 @@ def draw_graph(file_name, res):
   Create a simple network with some nodes and edges.
 </p>
 
-<div id="mynetwork"></div> """ + edges + """
+<div id="mynetwork"></div>
 
 <script type="text/javascript">
+  var nodes_dict = """ + nodes + """
+  var edges_list = """ + edges + """
+ var nodes_visjs=[]
   // create an array with nodes
-  var nodes = new vis.DataSet([
-    {id: 1, label: 'Node 1'},
-    {id: 2, label: 'Node 2'},
-    {id: 3, label: 'Node 3'},
-    {id: 4, label: 'Node 4'},
-    {id: 5, label: 'Node 5'}
-  ]);
+  for(n in nodes_dict)
+	nodes_visjs.push({id:nodes_dict[n],label: n})
+
+  var nodes = new vis.DataSet(nodes_visjs);
+
+  var edges_visjs=[]
+  	console.log(edges_list)
+  for(n in edges_list)
+  {
+	edges_visjs.push({from:edges_list[n][0],to: edges_list[n][1]})
+	console.log(n)
+  }
 
   // create an array with edges
-  var edges = new vis.DataSet([
-    {from: 1, to: 3},
-    {from: 1, to: 2},
-    {from: 2, to: 4},
-    {from: 2, to: 5}
-  ]);
+  var edges = new vis.DataSet(edges_visjs);
 
   // create a network
   var container = document.getElementById('mynetwork');
@@ -218,5 +232,4 @@ def draw_graph(file_name, res):
     f.close()
 
 if __name__ == "__main__":
-   # / draw_graph("out.html",[])
     main()
