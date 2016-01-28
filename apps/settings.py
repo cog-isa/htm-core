@@ -7,7 +7,7 @@ class InputSettings:
     def __init__(self):
         # раздувание
         self.SCALE = 2
-        self.STEPS_NUMBER = 30
+        self.STEPS_NUMBER = 3000
 
         # self.GENERATOR = HardSteps
         # self.GENERATOR = ConstantActiveBit
