@@ -1,14 +1,17 @@
+import sys
+
 import temporalPooler.htm__region as tp
 from apps.settings import *
-from hierarchy.CombinedGenerator import CombineGenerator
-from dendrite_graph.draw_graph_vis import draw_graph
+from dendrite_graph.draw_graph_pygraphviz import draw_graph as draw_graph_pg
+from dendrite_graph.draw_graph_vis import draw_graph as draw_graph_vis
+from gens import input_generators
 
 used = {}
 
 edges = []
 
 dendrites = []
-SIZE = 6
+SIZE = 4
 
 
 def make_string(t):
@@ -72,13 +75,14 @@ def dfs(state, cnt=0):
 def main():
     # немного двигаем SimpleSteps вперед, чтобы первончальная вершина вела в однозначное место
     tss1 = TestSimpleSteps(3)
-    # tss1.move()
     tss2 = TestSimpleSteps(3)
-    # tss2.move()
 
-    generator = CombineGenerator([tss1, tss2])
-    input_size = len(generator.empty)
-    CELLS_IN_COLUMN = 4
+    # generator = CombineGenerator([tss1, tss2])
+    #input_size = len(generator.empty)
+    generator = input_generators.Hierarchy2l(4)
+    input_size = 4
+
+    CELLS_IN_COLUMN = 1
     r_t = tp.Region(input_size, CELLS_IN_COLUMN)
 
     for i in range(input_settings.STEPS_NUMBER):
@@ -117,11 +121,10 @@ def main():
                 ans.append(den)
         dfs(ans)
 
-    # draw_graph("hello.png", edges)
-
-
-    draw_graph("out.html", edges)
-    # draw_graph("out.html", nodes, edges_str)
+    if sys.platform == "linux":
+        draw_graph_pg("hello.png", edges)
+    else:
+        draw_graph_vis("out.html", edges)
 
 
 if __name__ == "__main__":

@@ -393,5 +393,48 @@ class Snake:
         return res
 
 
+class Hierarchy2l:
+    def __init__(self, square_size):
+        assert (square_size == 4)
+
+        self.square_size = square_size
+
+        self.a = [0, 0]
+        self.b = [0, 3]
+        self.cur = 0
+        self.go = ['a', 'b', 'a', 'b', 'b', 'a']
+
+    def move(self):
+
+        if self.go[self.cur] == 'a':
+            x, y = self.a
+            if x == 3 and y == 3:
+                self.a = [0, 0]
+                self.cur = (self.cur + 1) % len(self.go)
+            else:
+                self.a = [x+1, y+1]
+        else:
+            x, y = self.b
+            if x == 3 and y == 0:
+                self.b = [0, 3]
+                self.cur = (self.cur + 1) % len(self.go)
+            else:
+                self.b = [x+1, y-1]
+
+    def out(self):
+        for i in self.get_data():
+            print(i)
+        print()
+
+    def get_data(self):
+        result = [[0 for _ in range(self.square_size)] for _ in range(self.square_size)]
+        if self.go[self.cur] == 'a':
+            x, y = self.a
+        else:
+            x, y = self.b
+        result[x][y] = 1
+        return result
+
+
 if __name__ == "__main__":
     s = Snake(5)
