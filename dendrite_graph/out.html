@@ -1,103 +1,79 @@
 
-<!doctype html>
-<html>
-<head>
-  <title>Network | Basic usage</title>
+    <!doctype html>
+    <html>
+    <head>
+      <title>Network | Basic usage</title>
 
-  <script type="text/javascript" src="vis.js"></script>
-  <link href="vis.css" rel="stylesheet" type="text/css" />
+      <script type="text/javascript" src="vis.js"></script>
+      <link href="vis.css" rel="stylesheet" type="text/css" />
 
-  <style type="text/css">
-    #mynetwork {
-      width: 600px;
-      height: 400px;
-      border: 1px solid lightgray;
-    }
-  </style>
-</head>
-<body>
+      <style type="text/css">
+        #mynetwork {
+          width: 1000px;
+          height: 800px;
+          border: 1px solid lightgray;
+        }
+      </style>
+    </head>
+    <body>
 
-<p>
-  Create a simple network with some nodes and edges.
-</p>
+    <p>
+      Create a simple network with some nodes and edges.
+    </p>
 
-<div id="mynetwork"></div>
+    <div id="mynetwork"></div>
 
-<script type="text/javascript">
-  var nodes_dict = {" 5\n[0, 0, 0, 0, 0, 0]\n[0, 1, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n": 2, " 10\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 1, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n": 3, " 11\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 1, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n": 5, " 7\n[0, 0, 0, 0, 0, 0]\n[0, 1, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n": 4, " 13\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 1, 0]\n[0, 0, 0, 0, 0, 0]\n": 6, " 2 3\n[1, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n": 0, " 17 18 19\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 1]\n": 7, "\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0]\n": 1}
-  var edges_list = [[0,1],[2,3],[3,4],[4,0],[5,1],[6,5],[7,6],]
- var nodes_visjs=[]
-  // create an array with nodes
-  for(n in nodes_dict)
-	nodes_visjs.push({id:nodes_dict[n],label: n})
+    <script type="text/javascript">
+      var nodes_dict = {" 10\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[0, 0, 0, 1]\n": 2, " 9\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[1, 0, 0, 0]\n": 6, " 8\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[0, 0, 1, 0]\n[0, 0, 0, 0]\n": 1, "\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n": 3, " 5\n[0, 0, 0, 0]\n[0, 1, 0, 0]\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n": 0, " 6\n[0, 0, 0, 0]\n[0, 0, 1, 0]\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n": 4, " 7\n[0, 0, 0, 0]\n[0, 0, 0, 0]\n[0, 1, 0, 0]\n[0, 0, 0, 0]\n": 5}
+      var edges_list = [[0,1],[1,2],[2,3],[4,5],[5,6],[6,3],]
+     var nodes_visjs=[]
+      // create an array with nodes
+      for(n in nodes_dict)
+        nodes_visjs.push({id:nodes_dict[n],label: n})
 
-  var nodes = new vis.DataSet(nodes_visjs);
+      var nodes = new vis.DataSet(nodes_visjs);
 
-  var edges_visjs=[]
-  	console.log(edges_list)
-  for(n in edges_list)
-  {
-	edges_visjs.push({from:edges_list[n][0],to: edges_list[n][1]})
-	console.log(n)
-  }
+      var edges_visjs=[]
+        console.log(edges_list)
+      for(n in edges_list)
+      {
+        edges_visjs.push({from:edges_list[n][0],to: edges_list[n][1]})
+        console.log(n)
+      }
 
-  // create an array with edges
-  var edges = new vis.DataSet(edges_visjs);
+      // create an array with edges
+      var edges = new vis.DataSet(edges_visjs);
 
-  // create a network
-  var container = document.getElementById('mynetwork');
-  var data = {
-    nodes: nodes,
-    edges: edges
-  };
-  var options = {
-  physics:{
-    enabled: true,
-    barnesHut: {
-      gravitationalConstant: -2000,
-      centralGravity: 0.3,
-      springLength: 95,
-      springConstant: 0.04,
-      damping: 0.09,
-      avoidOverlap: 400
+      // create a network
+      var container = document.getElementById('mynetwork');
+      var data = {
+        nodes: nodes,
+        edges: edges
+      };
+       var options = {
+       edges:{
+    arrows: {
+      to:     {enabled: true, scaleFactor:1},
+      middle: {enabled: false, scaleFactor:1},
+      from:   {enabled: false, scaleFactor:1}
     },
-    forceAtlas2Based: {
-      gravitationalConstant: -5000,
-      centralGravity: 10,
-      springConstant: 1,
-      springLength: 400,
-      damping: 0.4,
-      avoidOverlap: 100
-    },
-    repulsion: {
-      centralGravity: 0.2,
-      springLength: 200,
-      springConstant: 0.05,
-      nodeDistance: 400,
-      damping: 0.09
-    },
-    hierarchicalRepulsion: {
-      centralGravity: 0.0,
-      springLength: 100,
-      springConstant: 0.01,
-      nodeDistance: 220,
-      damping: 0.09
-    },
-    maxVelocity: 50,
-    minVelocity: 0.1,
-    solver: 'forceAtlas2Based',
-    stabilization: {
-      enabled: true,
-      iterations: 1000,
-      updateInterval: 100,
-      onlyDynamicEdges: false,
-      fit: true
-    },
-    timestep: 0.0,
-    adaptiveTimestep: true
-  }};
-  var network = new vis.Network(container, data, options);
-</script>
+       },
+	  physics:{
+		enabled: true,
+		barnesHut: {
+		  gravitationalConstant: -2000,
+		  centralGravity: 0.3,
+		  springLength: 95,
+		  springConstant: 0.04,
+		  damping: 0.09,
+		  avoidOverlap: 0
+		},
+	  timestep:0.0,
+	  }
+	  };
+      var network = new vis.Network(container, data, options);
+    </script>
 
-</body>
-</html>
+    </body>
+    </html>
+    
