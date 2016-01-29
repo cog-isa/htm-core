@@ -35,8 +35,8 @@ def draw_graph(file_name, input_edges):
 
       <style type="text/css">
         #mynetwork {
-          width: 600px;
-          height: 400px;
+          width: 1000px;
+          height: 800px;
           border: 1px solid lightgray;
         }
       </style>
@@ -76,7 +76,27 @@ def draw_graph(file_name, input_edges):
         nodes: nodes,
         edges: edges
       };
-      var options = {};
+       var options = {
+       edges:{
+    arrows: {
+      to:     {enabled: true, scaleFactor:1},
+      middle: {enabled: false, scaleFactor:1},
+      from:   {enabled: false, scaleFactor:1}
+    },
+       },
+	  physics:{
+		enabled: true,
+		barnesHut: {
+		  gravitationalConstant: -2000,
+		  centralGravity: 0.3,
+		  springLength: 95,
+		  springConstant: 0.04,
+		  damping: 0.09,
+		  avoidOverlap: 0
+		},
+	  timestep:0.0,
+	  }
+	  };
       var network = new vis.Network(container, data, options);
     </script>
 
