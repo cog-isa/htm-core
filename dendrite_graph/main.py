@@ -12,7 +12,7 @@ edges = []
 
 dendrites = []
 SIZE = 4
-
+id_to_Cell = {}
 
 def make_string(t):
     res = ""
@@ -55,9 +55,16 @@ def dfs(state, cnt=0):
         to += 2 ** i.id
     a = [[0 for _ in range(SIZE)] for _ in range(SIZE)]
     for i in state:
-        a[i.position_x_y[0]][i.position_x_y[1]] = 1
+        for j in i.synapses:
+            x, y = id_to_Cell[j.id_to].position_x_y
+            a[x][y] = 1
+        # a[i.position_x_y[0]][i.position_x_y[1]] = 1
     b = [[0 for _ in range(SIZE)] for _ in range(SIZE)]
-    for i in ans:
+    # for i in ans:
+    #     for j in i.synapses:
+    #         x, y = id_to_Cell[j.id_to].position_x_y
+    #         b[x][y] = 1
+    for i in state:
         b[i.position_x_y[0]][i.position_x_y[1]] = 1
 
     # т - номера дендритов
@@ -94,9 +101,12 @@ def main():
 
     dendrite_id_cnt = 0
     id_to_dendrite_map = {}
+
     for i, I in enumerate(r_t.columns):
         for j, J in enumerate(I):
             for cell, Cell in enumerate(r_t.columns[i][j].cells):
+                id_to_Cell[Cell.id] = Cell
+                Cell.position_x_y = [i, j]
                 for dendrite, Dendrite in enumerate(Cell.dendrites):
                     dendrites.append(Dendrite)
                     Dendrite.id = dendrite_id_cnt
@@ -105,12 +115,14 @@ def main():
                     Dendrite.position_x_y = [i, j]
                     id_to_dendrite_map[Dendrite.id] = Dendrite
     for current in dendrites:
+        print(current.position_x_y)
         active_cells = set()
         for i in current.synapses:
             if i.permanence > temporal_settings.SYNAPSE_THRESHOLD:
                 active_cells.add(i.id_to)
         if len(active_cells) < temporal_settings.DENDRITE_ACTIVATE_THRESHOLD:
             continue
+        print(active_cells)
         ans = []
         for den in dendrites:
             q = 0
@@ -119,6 +131,9 @@ def main():
                     q += 1
             if q >= temporal_settings.DENDRITE_ACTIVATE_THRESHOLD:
                 ans.append(den)
+        print("---" * 5)
+        for t in ans:
+            print(t.position_x_y)
         dfs(ans)
 
     if sys.platform == "linux":
