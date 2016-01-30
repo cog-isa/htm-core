@@ -412,14 +412,14 @@ class Hierarchy2l:
                 self.a = [0, 0]
                 self.cur = (self.cur + 1) % len(self.go)
             else:
-                self.a = [x+1, y+1]
+                self.a = [x + 1, y + 1]
         else:
             x, y = self.b
             if x == 3 and y == 0:
                 self.b = [0, 3]
                 self.cur = (self.cur + 1) % len(self.go)
             else:
-                self.b = [x+1, y-1]
+                self.b = [x + 1, y - 1]
 
     def out(self):
         for i in self.get_data():
@@ -434,6 +434,25 @@ class Hierarchy2l:
             x, y = self.b
         result[x][y] = 1
         return result
+
+
+class SequenceLoader:
+    # засовываем в этот генератор уже готовую последовательность, он выдает ее по шагам - профит
+    def __init__(self, square_size, a):
+        self.a = a
+        self.square_size = square_size
+        self.cnt = 0
+
+    def move(self):
+        self.cnt += 1
+
+    def out(self):
+        for i in self.get_data():
+            print(i)
+        print()
+
+    def get_data(self):
+        return self.a[self.cnt]
 
 
 if __name__ == "__main__":
