@@ -1,8 +1,8 @@
 from random import randrange
 
+from apps.settings import TemporalSettings
 from temporalPooler.htm_column import Column
 from temporalPooler.util import ACTIVE, PREDICTION, PASSIVE
-from apps.settings import temporal_settings
 from temporalPooler.htm_dendrite import Dendrite
 
 
@@ -11,16 +11,15 @@ class Region:
     Регион htm, реализует основую логику временного группировщика
     """
 
-    def __init__(self, region_size, column_size, start_cells_id=0):
+    def __init__(self, temporal_settings: TemporalSettings):
         """
         инициализация региона
-        :param region_size: размера стороны квадрата - региона
-        :param column_size: количество клеток в колонке
-        :param start_cells_id: начальный индекс клеток, нужно для объединения нескольких регионов
+        :param temporal_settings: настройки региона
         :return:
         """
-        self.region_size = region_size
-        self.columns = [[Column(column_size) for _ in range(region_size)] for _ in range(region_size)]
+
+        self.columns = [[Column(temporal_settings.column_size) for _ in range(temporal_settings.region_size)] for _ in
+                        range(temporal_settings.region_size)]
         self.ptr_to_cell = {}
         self.ok_times = 0
         self.ok = 0
@@ -37,7 +36,12 @@ class Region:
 
         self.average_correctness_max_size = 500
         self.average_correctness = []
-        self.start_cells_id = start_cells_id
+
+        # забираем свободные id для клеток, чтобы не было ссылочных конфликтов с другими регионами
+        self.start_cells_id = temporal_settings.free_id
+        temporal_settings.free_id += len(self.columns) * len(self.columns[0]) * temporal_settings.column_size
+
+        self.temporal_settings = temporal_settings
 
     def get_active_cells(self):
         """
@@ -45,8 +49,8 @@ class Region:
         :return: список активных клеток
         """
         res = []
-        for i in range(self.region_size):
-            for j in range(self.region_size):
+        for i in range(self.temporal_settings.region_size):
+            for j in range(self.temporal_settings.region_size):
                 for cell in self.columns[i][j].cells:
                     if cell.state == ACTIVE:
                         res.append(cell)
@@ -61,8 +65,8 @@ class Region:
         """
         events = 0
         errors = 0
-        for i in range(self.region_size):
-            for j in range(self.region_size):
+        for i in range(self.temporal_settings.region_size):
+            for j in range(self.temporal_settings.region_size):
                 column_state = PASSIVE
 
                 for cell in self.columns[i][j].cells:
@@ -121,8 +125,8 @@ class Region:
         :param a: матрица активных колонок на текущем шаге
         :return: True или False, а в зависимости от результата
         """
-        for i in range(self.region_size):
-            for j in range(self.region_size):
+        for i in range(self.temporal_settings.region_size):
+            for j in range(self.temporal_settings.region_size):
                 if not self.check_column_state(self.columns[i][j], a[i][j]):
                     return False
         return True
@@ -134,8 +138,8 @@ class Region:
         :return:
         """
         # обновляем состояние колонок по поступившим данным от пространственного группировщика
-        for i in range(self.region_size):
-            for j in range(self.region_size):
+        for i in range(self.temporal_settings.region_size):
+            for j in range(self.temporal_settings.region_size):
                 self.columns[i][j].state = ACTIVE if a[i][j] else PASSIVE
 
     @staticmethod
@@ -177,7 +181,8 @@ class Region:
         :return: список подходящих колонок
         """
 
-        return [self.columns[i][j] for i in range(self.region_size) for j in range(self.region_size) if
+        return [self.columns[i][j] for i in range(self.temporal_settings.region_size) for j in
+                range(self.temporal_settings.region_size) if
                 self.column_satisfies(self.columns[i][j], active, prediction)]
 
     def get_ptr_to_cells(self):
@@ -220,7 +225,7 @@ class Region:
 
             for cell in column.cells:
                 active_from_passive_time = False
-                if cell.passive_time > temporal_settings.PASSIVE_TIME_TO_ACTIVE_THRESHOLD:
+                if cell.passive_time > self.temporal_settings.passive_time_to_active_threshold:
                     # назначаем следующее состояние клетки - активным
                     cell.update_new_state(ACTIVE)
                     active_from_passive_time = True
@@ -240,7 +245,7 @@ class Region:
                         if dendrite.active:
                             for syn in dendrite.synapses:
                                 if syn.id_to in [a_cell.id for a_cell in active_cells]:
-                                    syn.change_permanence(temporal_settings.DENDRITE_PERMANENCE_INC_DELTA)
+                                    syn.change_permanence(self.temporal_settings.dendrite_permanence_inc_delta)
 
         for column in self.get_columns(active=False, prediction=True):
             # рассматриваем все колонки,который были предсказаны неправильно
@@ -252,7 +257,7 @@ class Region:
                         if dendrite.active:
                             for syn in dendrite.synapses:
                                 if syn.id_to in [a_cell.id for a_cell in active_cells]:
-                                    syn.change_permanence(temporal_settings.DENDRITE_PERMANENCE_DEC_DELTA)
+                                    syn.change_permanence(self.temporal_settings.dendrite_permanence_dec_delta)
             pass
 
         for column in self.get_columns(active=True, prediction=False):
@@ -268,13 +273,14 @@ class Region:
                         cell.update_new_state(ACTIVE)
                         ok = True
 
-                        new_den = Dendrite(active_cells)
+                        new_den = Dendrite(temporal_settings=self.temporal_settings, cells=active_cells)
                         for dendrite in cell.dendrites:
                             if dendrite.equal(new_den):
                                 new_den = None
                                 for synapse in dendrite.synapses:
                                     if synapse.id_to in [a_cell.id for a_cell in active_cells]:
-                                        synapse.change_permanence(temporal_settings.DENDRITE_PERMANENCE_INC_DELTA * 0.1)
+                                        synapse.change_permanence(
+                                            self.temporal_settings.dendrite_permanence_inc_delta * 0.1)
                                 break
                         if new_den:
                             cell.dendrites.append(new_den)
@@ -308,8 +314,8 @@ class Region:
 
     def make_prediction(self):
         # делаем предсказание
-        for i in range(self.region_size):
-            for j in range(self.region_size):
+        for i in range(self.temporal_settings.region_size):
+            for j in range(self.temporal_settings.region_size):
                 current_column = self.columns[i][j]
                 mx = 0
                 dendrite_mx = None
@@ -320,20 +326,20 @@ class Region:
                         q = 0
                         for syn in dendrite.synapses:
                             if self.ptr_to_cell[syn.id_to].new_state == ACTIVE \
-                                    and syn.permanence > temporal_settings.SYNAPSE_THRESHOLD:
+                                    and syn.permanence > self.temporal_settings.synapse_threshold:
                                 q += 1
                         if q > mx and current_cell.new_state == PASSIVE:
                             # в состояние предсказание может перейти только пассивная клетка
                             mx = q
                             cell_for_update = current_cell
                             dendrite_mx = dendrite
-                if mx >= temporal_settings.DENDRITE_ACTIVATE_THRESHOLD:
+                if mx >= self.temporal_settings.dendrite_activate_threshold:
                     dendrite_mx.active = True
                     cell_for_update.update_new_state(PREDICTION)
 
     def apply_new_cell_state(self):
-        for i in range(self.region_size):
-            for j in range(self.region_size):
+        for i in range(self.temporal_settings.region_size):
+            for j in range(self.temporal_settings.region_size):
                 for cell in self.columns[i][j].cells:
                     cell.apply_new_state()
 
@@ -342,9 +348,10 @@ class Region:
         вывод текстовой информации состояния региона
         :return:
         """
-        res = [["" for _ in range(self.region_size)] for _ in range(self.region_size)]
-        for i in range(self.region_size):
-            for j in range(self.region_size):
+        res = [["" for _ in range(self.temporal_settings.region_size)] for _ in
+               range(self.temporal_settings.region_size)]
+        for i in range(self.temporal_settings.region_size):
+            for j in range(self.temporal_settings.region_size):
                 cnt = 0
                 for cell in self.columns[i][j].cells:
                     cnt += 1
@@ -370,10 +377,11 @@ class Region:
         :return:матрица состояния состояния колонок 1 если колонка в состоянии предсказания
         """
 
-        res = [[0 for _ in range(self.region_size)] for _ in range(self.region_size)]
+        res = [[0 for _ in range(self.temporal_settings.region_size)] for _ in
+               range(self.temporal_settings.region_size)]
 
-        for i in range(self.region_size):
-            for j in range(self.region_size):
+        for i in range(self.temporal_settings.region_size):
+            for j in range(self.temporal_settings.region_size):
                 for cell in self.columns[i][j].cells:
                     if cell.state == PREDICTION:
                         res[i][j] = 1
@@ -385,8 +393,8 @@ class Region:
         :return: список id-шников активных клеток региона
         """
         t = []
-        for i in range(self.region_size):
-            for j in range(self.region_size):
+        for i in range(self.temporal_settings.region_size):
+            for j in range(self.temporal_settings.region_size):
                 for cell in self.columns[i][j].cells:
                     if cell.state == PREDICTION:
                         t.append(cell)

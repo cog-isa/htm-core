@@ -1,5 +1,5 @@
+from apps.settings import TemporalSettings
 from temporalPooler.htm_synapse import Synapse
-from apps.settings import temporal_settings
 
 
 class Dendrite:
@@ -7,7 +7,7 @@ class Dendrite:
     дендрит,подключенный к клетке
     """
 
-    def __init__(self, cells=None):
+    def __init__(self, temporal_settings: TemporalSettings, cells=None):
         """
         инициализация дендрита
         :param cells: клетки к которым он подключается
@@ -17,9 +17,11 @@ class Dendrite:
         self.synapses = []
         self.active = False
         self.was_active = False
+        self.temporal_settings = temporal_settings
 
         if cells:
-            self.synapses = [Synapse(id_to=cell.id, permanence=temporal_settings.INITIAL_PERMANENCE) for cell in cells]
+            self.synapses = [Synapse(id_to=cell.id, permanence=self.temporal_settings.initial_permanence) for cell in
+                             cells]
 
     def add_synapse(self, synapse):
         """

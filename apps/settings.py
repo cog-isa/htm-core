@@ -1,35 +1,36 @@
 from gens.combine_gens import StepsAndCross
-from gens.input_generators import *
+from gens.input_generators import TestSimpleSteps
 from spatialPooler.mappers.sp_square_mapper_auto_radius import SquareMapperAutoRadius
 
 
 class InputSettings:
     def __init__(self):
         # раздувание
-        self.SCALE = 2
-        self.STEPS_NUMBER = 3000
+        self.SCALE = 1
+        self.STEPS_NUMBER = 700
 
         # self.GENERATOR = HardSteps
         # self.GENERATOR = ConstantActiveBit
         # self.GENERATOR = TestSimpleSteps
-        # self.GENERATOR = TestSimpleSteps
-        self.GENERATOR = StepsAndCross
+        self.GENERATOR = TestSimpleSteps
+        # self.GENERATOR = StepsAndCross
         self.MAPPER = SquareMapperAutoRadius
 
 
 class TemporalSettings:
-    def __init__(self):
-        self.REGION_SIZE_N = 5
+    # статическое поле, используется для предотвращения пересечений id клеток в разных регионах
+    free_id = 0
 
-        # количество клеток в колонке
-        self.COLUMN_SIZE = 4
-
-        self.INITIAL_PERMANENCE = 0.30
-        self.SYNAPSE_THRESHOLD = 0.25
-        self.DENDRITE_PERMANENCE_INC_DELTA = 0.02
-        self.DENDRITE_PERMANENCE_DEC_DELTA = -0.1
-        self.DENDRITE_ACTIVATE_THRESHOLD = 1
-        self.PASSIVE_TIME_TO_ACTIVE_THRESHOLD = 1000
+    def __init__(self, region_size, column_size, initial_permanence, synapse_threshold, dendrite_permanence_inc_delta,
+                 dendrite_permanence_dec_delta, dendrite_activate_threshold, passive_time_to_active_threshold):
+        self.region_size = region_size
+        self.column_size = column_size
+        self.initial_permanence = initial_permanence
+        self.synapse_threshold = synapse_threshold
+        self.dendrite_permanence_inc_delta = dendrite_permanence_inc_delta
+        self.dendrite_permanence_dec_delta = dendrite_permanence_dec_delta
+        self.dendrite_activate_threshold = dendrite_activate_threshold
+        self.passive_time_to_active_threshold = passive_time_to_active_threshold
 
 
 class SpatialSettings:
@@ -52,5 +53,4 @@ class SpatialSettings:
 
 
 input_settings = InputSettings()
-temporal_settings = TemporalSettings()
 spatial_settings = SpatialSettings()
