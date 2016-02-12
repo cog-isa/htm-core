@@ -8,12 +8,6 @@ class InputSettings:
         # раздувание
         self.SCALE = 1
         self.STEPS_NUMBER = 700
-
-        # self.GENERATOR = HardSteps
-        # self.GENERATOR = ConstantActiveBit
-        # self.GENERATOR = TestSimpleSteps
-        self.GENERATOR = TestSimpleSteps
-        # self.GENERATOR = StepsAndCross
         self.MAPPER = SquareMapperAutoRadius
 
 
@@ -50,7 +44,3 @@ class SpatialSettings:
         self.permanence_dec = 0.1
         self.max_boost = 2
         self.min_duty_cycle_fraction = 0.2
-
-
-input_settings = InputSettings()
-spatial_settings = SpatialSettings()

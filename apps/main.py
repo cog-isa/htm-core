@@ -6,7 +6,8 @@ temporal_settings = TemporalSettings(region_size=4, column_size=4, initial_perma
                                      dendrite_activate_threshold=1, dendrite_permanence_inc_delta=0.02,
                                      dendrite_permanence_dec_delta=-0.1, passive_time_to_active_threshold=1000,
                                      synapse_threshold=0.45)
-generator = MakeBubble(input_settings.GENERATOR, temporal_settings.region_size, input_settings.SCALE)
+input_settings = InputSettings(generator)
+generator = MakeBubble(TestSimpleSteps, temporal_settings.region_size, input_settings.SCALE)
 temporal_pooler_region = TemporalPoolerRegion(temporal_settings=temporal_settings)
 
 for i in range(input_settings.STEPS_NUMBER):
