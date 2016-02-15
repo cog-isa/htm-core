@@ -1,5 +1,5 @@
 # -*- coding: utf8 -*-
-from apps.settings import spatial_settings
+from apps.settings import SpatialSettings
 
 __author__ = 'gmdidro'
 
@@ -77,7 +77,10 @@ def test_ladder():
     TOTAL_STEPS = 1000
     STEP_SIZE = STEPS
 
-    setting = spatial_settings
+    setting = SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     setting.debug = True
 
     setting.min_overlap = 1
@@ -159,7 +162,10 @@ def test_ladder():
 def test_learning():
     inp = [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
-    settings = spatial_settings
+    settings = SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     settings.debug = True
 
     settings.min_overlap = 1
@@ -191,7 +197,10 @@ def test_learning():
 def test_update_active_duty_cycle():
     inp = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
-    settings = spatial_settings
+    settings = SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     settings.debug = True
 
     settings.min_overlap = 1
@@ -242,7 +251,10 @@ def test_update_active_duty_cycle():
 def testUpdateSynapses():
     inp = [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
-    settings = spatial_settings
+    settings = SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     settings.debug = True
 
     settings.min_overlap = 1
@@ -272,7 +284,10 @@ def testUpdateSynapses():
 def test_inhibition_phase():
     inp = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
 
-    settings = spatial_settings
+    settings = SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     settings.debug = True
 
     settings.min_overlap = 1
@@ -309,7 +324,10 @@ def test_inhibition_phase():
 def test_overlap_on_ones():
     inp = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
-    settings = spatial_settings
+    settings = SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     settings.debug = True
 
     settings.min_overlap = 1
@@ -354,7 +372,10 @@ def test_overlap_on_ones():
 def test_overlap_on_not_ones():
     inp = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
 
-    settings = spatial_settings
+    settings = SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     settings.debug = True
 
     settings.min_overlap = 1
@@ -375,7 +396,10 @@ def test_overlap_on_not_ones():
 
 
 def test_htm_constructuion():
-    setting = spatial_settings
+    setting = SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     setting.debug = True
 
     setting.min_overlap = 1
@@ -399,7 +423,10 @@ def test_htm_constructuion():
 
 
 def test_out_prediction():
-    setting = spatial_settings
+    setting = SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     setting.debug = True
 
     setting.min_overlap = 1
@@ -424,7 +451,10 @@ def test_out_prediction():
 
 
 def test_debug_false():
-    setting = spatial_settings
+    setting =  SpatialSettings(debug = False, min_overlap = 1, desired_local_activity = 4, connected_pct = 1,
+                               connected_perm = 0.01, xinput = 3, yinput = 3, potential_radius = 4, xdimension = 3,
+                               ydimension = 3, initial_inhibition_radius = 1, permanence_inc = 0.1, permanence_dec = 0.1,
+                               max_boost = 2, min_duty_cycle_fraction = 0.2)
     setting.debug = False
 
     setting.min_overlap = 1

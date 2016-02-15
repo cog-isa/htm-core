@@ -4,11 +4,11 @@ from spatialPooler.mappers.sp_square_mapper_auto_radius import SquareMapperAutoR
 
 
 class InputSettings:
-    def __init__(self):
+    def __init__(self, SCALE, STEPS_NUMBER, MAPPER):
         # раздувание
-        self.SCALE = 1
-        self.STEPS_NUMBER = 700
-        self.MAPPER = SquareMapperAutoRadius
+        self.SCALE = SCALE #1
+        self.STEPS_NUMBER = STEPS_NUMBER #700
+        self.MAPPER = MAPPER #SquareMapperAutoRadius
 
 
 class TemporalSettings:
@@ -28,19 +28,23 @@ class TemporalSettings:
 
 
 class SpatialSettings:
-    def __init__(self):
+
+
+    def __init__(self, debug, min_overlap, desired_local_activity, connected_pct, connected_perm, xinput, yinput,
+                 potential_radius, xdimension, ydimension, initial_inhibition_radius, permanence_inc, permanence_dec,
+                 max_boost, min_duty_cycle_fraction):
         self.debug = False
-        self.min_overlap = 1
-        self.desired_local_activity = 4
-        self.connected_pct = 1
-        self.connected_perm = 0.01
-        self.xinput = 3
-        self.yinput = 3
-        self.potential_radius = 4
-        self.xdimension = 3
-        self.ydimension = 3
-        self.initial_inhibition_radius = 1
-        self.permanence_inc = 0.1
-        self.permanence_dec = 0.1
-        self.max_boost = 2
-        self.min_duty_cycle_fraction = 0.2
+        self.min_overlap = min_overlap #1
+        self.desired_local_activity = desired_local_activity #4
+        self.connected_pct = connected_pct #1
+        self.connected_perm = connected_perm #0.01
+        self.xinput = xinput #3
+        self.yinput = yinput #3
+        self.potential_radius = potential_radius# 4
+        self.xdimension = xdimension #3
+        self.ydimension = ydimension #3
+        self.initial_inhibition_radius = initial_inhibition_radius #1
+        self.permanence_inc = permanence_inc #0.1
+        self.permanence_dec = permanence_dec #0.1
+        self.max_boost = max_boost #2
+        self.min_duty_cycle_fraction = min_duty_cycle_fraction #0.2
