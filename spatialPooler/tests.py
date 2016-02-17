@@ -270,6 +270,9 @@ def testUpdateSynapses():
     settings.permanence_dec = 0.2
     r = Region(settings, SimpleMapper())
 
+    overlaps = r.update_overlaps(r.get_columns(), inp)
+    r.inhibition_phase(r.get_columns(), overlaps)
+
     r.get_columns()[0].get_potential_synapses().get(4).set_permanence(0.5)
     r.update_synapses(r.get_columns(), inp)
     v = r.get_columns()[0].get_potential_synapses().get(4).get_permanence()
@@ -475,12 +478,12 @@ def test_debug_false():
 
 if __name__ == "__main__":
     print("Testing")
-    test_debug_false()
-    test_out_prediction()
-    test_htm_constructuion()
-    test_overlap_on_ones()
-    test_inhibition_phase()
+    # test_debug_false()
+    # test_out_prediction()
+    # test_htm_constructuion()
+    # test_overlap_on_ones()
+    # test_inhibition_phase()
     testUpdateSynapses()
-    test_learning()
-    test_overlap_on_not_ones()
-    test_ladder()
+    # test_learning()
+    # test_overlap_on_not_ones()
+    # test_ladder()
