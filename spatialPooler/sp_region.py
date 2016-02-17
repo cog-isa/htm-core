@@ -7,16 +7,16 @@ __author__ = 'AVPetrov'
 
 
 class Region:
-    def __init__(self, settings, mapper):
+    def __init__(self, spatial_settings, mapper):
         """
         конструктор класса
-        :param settings: настройки региона
+        :param spatial_settings: настройки региона
         :param mapper: объект, реализующий отображение индексов колонок на индексы элементов нижнего слоя
         :return:
         """
         self.mapper = mapper
         self.columns = []
-        self.settings = settings
+        self.settings = spatial_settings
         self.active_duty_cycles = [0 for i in range(self.settings.xdimension * self.settings.ydimension)]
         self.overlap_duty_cycles = [0 for i in range(self.settings.xdimension * self.settings.ydimension)]
         bottom_indices = mapper.map_all((self.settings.xinput, self.settings.yinput),
