@@ -157,7 +157,7 @@ def main():
                     Dendrite.position_x_y = [i, j]
                     id_to_dendrite_map[Dendrite.id] = Dendrite
     for current in dendrites:
-        print(current.position_x_y)
+        print(current.position_x_yw)
         active_cells = set()
         for i in current.synapses:
             if i.permanence > temporal_settings.SYNAPSE_THRESHOLD:

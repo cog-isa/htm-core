@@ -34,6 +34,12 @@ def to_binvector(m):
             output.append(1 if j else 0)
     return output
 
+def print_matrix(matrix):
+    for s in matrix:
+        str_row=""
+        for elem in s:
+            str_row=str_row+str(elem)+" "
+        print("["+str_row+"]")
 
 def to_matrix(region):
     return [[region.get_columns()[j * region.get_col_h() + i].get_is_active() for i in range(region.get_col_h())] for j
@@ -41,11 +47,12 @@ def to_matrix(region):
 
 
 def to_binmatrix(m):
-    output = [[]]
+    output = []
     r = 0
     for i in m:
         output.append([])
         for j in i:
             output[r].append(1 if j else 0)
         r = r + 1
+
     return output

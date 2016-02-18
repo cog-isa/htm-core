@@ -1,0 +1,2 @@
+A_raw.bmp
+X_raw.bmp
