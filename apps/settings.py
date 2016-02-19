@@ -4,11 +4,10 @@ from spatialPooler.mappers.sp_square_mapper_auto_radius import SquareMapperAutoR
 
 
 class InputSettings:
-    def __init__(self, SCALE, STEPS_NUMBER, MAPPER):
+    def __init__(self, SCALE, STEPS_NUMBER):
         # раздувание
         self.SCALE = SCALE #1
         self.STEPS_NUMBER = STEPS_NUMBER #700
-        self.MAPPER = MAPPER #SquareMapperAutoRadius
 
 
 class TemporalSettings:
