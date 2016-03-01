@@ -263,7 +263,7 @@ class Region:
         for column in self.get_columns(active=True, prediction=False):
             # рассматриваем все колонки, которые не были предсказаны
 
-            # активируем каждую из клеток, также добалвяем новый дендрит или незначительно увеличиваем
+            # активируем каждую из клеток, также добавляем новый дендрит или незначительно увеличиваем
             # перманентность у текущего если такой дендрит уже есть
             ok = False
 
@@ -364,9 +364,11 @@ class Region:
                     if cell.active_from_passive_time:
                         res[i][j] += "O" + str(cnt)
                         cell.active_from_passive_time = False
-
+                if res[i][j] == '':
+                    res[i][j] = "  "
         print("Правильно предсказано раз: ", self.very_ok_times)
         print("Максимально правильно предсказано раз: ", self.max_ok_times)
+        print("Корректность: ", self.correctness_sum / self.correctness_steps)
         for i in res:
             print(i)
         print()

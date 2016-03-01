@@ -11,13 +11,13 @@ used = {}
 edges = []
 
 dendrites = []
-SIZE = 4
+SIZE = 2
 id_to_Cell = {}
 
 
 def make_string(t):
     res = ""
-    for i in range(0, 400):
+    for i in range(0, 1000):
         if t & (2 ** i):
             res = res + ' ' + str(i)
 
@@ -127,11 +127,16 @@ def main():
 
     # generator = CombineGenerator([tss1, tss2])
     # input_size = len(generator.empty)
-    generator = input_generators.Hierarchy2l(4)
-    # generator = TestSimpleSteps(2)
-    input_size = 4
 
-    CELLS_IN_COLUMN = 1
+
+    # ТО ЧТО НУЖНО ВЕРНУТь
+    #generator = input_generators.Hierarchy2l(4)
+
+    generator = MakeBubble(input_generators.H3, 2, 1)
+    # generator = TestSimpleSteps(2)
+    input_size = 2
+
+    CELLS_IN_COLUMN = 4
     r_t = tp.Region(input_size, CELLS_IN_COLUMN)
 
     for i in range(input_settings.STEPS_NUMBER):
@@ -182,7 +187,7 @@ def main():
         draw_graph_pg("hello.png", edges)
     else:
         draw_graph_vis("out.html", edges)
-
+    exit(0)
     #
     #
     # РАЗБИВАЕМ ГРАФ НА ЦЕПОЧКИ
