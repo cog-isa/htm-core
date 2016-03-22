@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 from gens.list_images_gen import ListImages
+from spatialPooler.mappers.sp_random_mapper import RandomMapper
 from spatialPooler.utils import print_matrix, to_binmatrix
 
 __author__ = 'AVPetrov'
@@ -23,7 +24,7 @@ temporal_settings = TemporalSettings(region_size=spatial_settings.xdimension, co
                                      synapse_threshold=0.45)
 
 
-spatial_pooler_region = SpatialPoolerRegion(spatial_settings=spatial_settings, mapper=SquareMapperAutoRadius)
+spatial_pooler_region = SpatialPoolerRegion(spatial_settings=spatial_settings, mapper=RandomMapper())
 temporal_pooler_region = TemporalPoolerRegion(temporal_settings=temporal_settings)
 
 for i in range(input_settings.STEPS_NUMBER):
