@@ -2,6 +2,7 @@
 from spatialPooler.sp_column import Column
 from spatialPooler.utils import kth_score, to_vector, to_matrix
 import random
+from temporalPooler.util import *
 
 __author__ = 'AVPetrov'
 
@@ -193,20 +194,33 @@ class Region:
         self.learning_phase(self.get_columns(), inp, ov)
         return to_matrix(self)
 
-    def out_prediction(self, colindexies):
+    def out_prediction(self, cols,sizeh):
         """
         Спуск предсказаний Temporal Pooler на уровень ниже
+        печатает матрицу предсказаний (дробные числа от 0 до 1) активности элементов нижнего слоя на следующем шаге
         :param colindexies: матрица состояний колонок Temporal Pooler
-        :return: возвращает матрицу предсказаний (дробные числа от 0 до 1) активности элементов нижнего слоя на следующем шаге
+        :return: none
         """
+        res = [[" " for i in range(0, self.get_input_h())] for i in range(0, self.get_input_w())]
         output = [[0 for i in range(0, self.get_input_h())] for i in range(0, self.get_input_w())]
-        tp_cols = to_vector(colindexies)
-        for colindx in range(len(tp_cols)):
-            if tp_cols[colindx] == 1:
-                col = self.columns[colindx]
-                for syn in col.get_potential_synapses().values():
-                    x = (int)(syn.get_index_connect_to() / self.get_input_h())
-                    y = (int)(syn.get_index_connect_to() % self.get_input_w())
-                    # один элемент может быть связан с несколькими синапсами
-                    output[x][y] = min(output[x][y] + syn.get_permanence(), 1)
-        return output
+        for i in range(sizeh):
+            for j in range(sizeh):
+                if cols[i][j].state == ACTIVE:
+                    col = self.columns[i*self.settings.ydimension+j]
+                    for syn in col.get_potential_synapses().values():
+                        x = (int)(syn.get_index_connect_to() / self.get_input_h())
+                        y = (int)(syn.get_index_connect_to() % self.get_input_w())
+                        # один элемент может быть связан с несколькими синапсами
+                        output[x][y] = min(output[x][y] + syn.get_permanence(), 1)
+
+        for i in range(sizeh):
+            for j in range(sizeh):
+                res[i][j] = str('%.2f' % output[i][j])
+
+        for i in res:
+            print(i)
+        print()
+
+
+
+
