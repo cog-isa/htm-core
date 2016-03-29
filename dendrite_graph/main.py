@@ -1,10 +1,10 @@
 import sys
-from copy import deepcopy
-import temporalPooler.htm__region as tp
-from apps.settings import *
-from dendrite_graph.draw_graph_pygraphviz import draw_graph as draw_graph_pg
-from dendrite_graph.draw_graph_vis import draw_graph as draw_graph_vis
-from gens import input_generators
+# from copy import deepcopy
+# import temporalPooler.htm__region as tp
+# from apps.settings import *
+# from dendrite_graph.draw_graph_pygraphviz import draw_graph as draw_graph_pg
+# from dendrite_graph.draw_graph_vis import draw_graph as draw_graph_vis
+# from gens import input_generators
 
 used = {}
 
