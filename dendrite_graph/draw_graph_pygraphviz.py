@@ -24,8 +24,8 @@ def draw_graph(file_name, res):
     # g_out.layout(prog='neato')
     # g_out.layout(prog='circo')
     g_out.layout(prog='dot')
-    # g_out.draw(file_name + ".png")
-    g_out.draw(file_name + ".ps")
+    g_out.draw(file_name + ".png")
+    # g_out.draw(file_name + ".ps")
 
 
 def main():
