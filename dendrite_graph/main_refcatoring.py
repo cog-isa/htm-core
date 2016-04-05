@@ -1,9 +1,12 @@
+import sys
 from apps.settings import TemporalSettings
 from gens.make_bubble import MakeBubble
 from gens import input_generators
 from temporalPooler.htm__region import Region
-from dendrite_graph.draw_graph_pygraphviz import draw_graph as draw_graph_pg
-
+if sys.platform == "linux":
+    from dendrite_graph.draw_graph_pygraphviz import draw_graph as draw_graph_pg
+else:
+    from dendrite_graph.draw_graph_vis import draw_graph as draw_graph_vis
 
 class Foo:
     class Chain:
@@ -32,6 +35,7 @@ class Foo:
             res += str(i) + "\n"
         return res
 
+
     def dfs_chain(self, t, chain):
         if t.id in self.graph_used_vertex:
             return
@@ -52,6 +56,7 @@ class Foo:
             if cnt == 1:
                 self.dfs_chain(to, chain)
 
+    #поиск в глубину
     def dfs(self, state, cnt=0):
         size = self.tp_level_one.temporal_settings.region_size
 
@@ -93,8 +98,8 @@ class Foo:
         self.dfs(ans, cnt + 1)
 
     def __init__(self, pre_learning_steps):
-        self.generator = MakeBubble(input_generators.TestSimpleSteps, 3, 2)
-        tp_level_one_settings = TemporalSettings(region_size=6, column_size=1, initial_permanence=0.5,
+        self.generator = MakeBubble(input_generators.TestSimpleSteps, 3, 1)
+        tp_level_one_settings = TemporalSettings(region_size=3, column_size=4, initial_permanence=0.5,
                                                  dendrite_activate_threshold=2, dendrite_permanence_inc_delta=0.02,
                                                  dendrite_permanence_dec_delta=-0.1,
                                                  passive_time_to_active_threshold=1000,
@@ -151,7 +156,10 @@ class Foo:
             for t in ans:
                 print(t.position_x_y)
             self.dfs(ans)
-        draw_graph_pg("refactoring", self.edges)
+        if sys.platform == "linux":
+            draw_graph_pg("refactoring", self.edges)
+        else:
+            draw_graph_vis("out.html", self.edges)
 
         self.graph_used_vertex = set()
         self.chains = []
