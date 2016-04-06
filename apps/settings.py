@@ -17,12 +17,19 @@ class TemporalSettings:
     def __init__(self, region_size, column_size, initial_permanence, synapse_threshold, dendrite_permanence_inc_delta,
                  dendrite_permanence_dec_delta, dendrite_activate_threshold, passive_time_to_active_threshold):
         self.region_size = region_size
+        # Количество клеток в колонке
         self.column_size = column_size
+        # Начальная перманентность синапса
         self.initial_permanence = initial_permanence
+        # Если перманентность синапса выше этой велечины, он будет срабатывать
         self.synapse_threshold = synapse_threshold
+        # Значение, которое будет прибавляться к перманентности синапсов дендрита, которые привели к правильному предсказанию
         self.dendrite_permanence_inc_delta = dendrite_permanence_inc_delta
+        # Значение, которое будет прибавляться к перманентности синапсов дендрита, которые привели к неправильному предсказанию
         self.dendrite_permanence_dec_delta = dendrite_permanence_dec_delta
+        # Необходимое количество активных синапсов для активации дендрита
         self.dendrite_activate_threshold = dendrite_activate_threshold
+        # Порог, определяющий активацию клетки, даже если она не была предсказана (долго простаивала)
         self.passive_time_to_active_threshold = passive_time_to_active_threshold
 
 
