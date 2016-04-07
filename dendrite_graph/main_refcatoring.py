@@ -98,7 +98,7 @@ class Foo:
         self.dfs(ans, cnt + 1)
 
     def __init__(self, pre_learning_steps):
-        self.generator = MakeBubble(input_generators.TestSimpleSteps, 3, 2)
+        self.generator = MakeBubble(input_generators.TestSimpleSteps, 3,2)
         tp_level_one_settings = TemporalSettings(region_size=6, column_size=4, initial_permanence=0.5,
                                                  dendrite_activate_threshold=2, dendrite_permanence_inc_delta=0.02,
                                                  dendrite_permanence_dec_delta=-0.1,
@@ -136,14 +136,14 @@ class Foo:
         self.graph_edges = []
 
         for current in self.dendrites:
-            print(current.position_x_y)
+            print("id"+str(current.id)+":"+str(current.position_x_y))
             active_cells = set()
             for i in current.synapses:
                 if i.permanence > tp_level_one_settings.synapse_threshold:
                     active_cells.add(i.id_to)
             if len(active_cells) < tp_level_one_settings.dendrite_activate_threshold:
                 continue
-            print(active_cells)
+            print("acells:"+str(active_cells))
             ans = []
             for den in self.dendrites:
                 q = 0
@@ -200,7 +200,7 @@ class Foo:
             s = ""
             for j in i.a:
                 s += "[" + self.make_string(j.id) + "]"
-            print(s)
+            print("chain"+str(s))
 
         print("----" * 9)
 
