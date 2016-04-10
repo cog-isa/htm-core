@@ -61,6 +61,7 @@ class Foo:
         size = self.tp_level_one.temporal_settings.region_size
 
         t = 0
+        # закодируем состояние один числом (побитовое "или")
         for i in state:
             t |= 2 ** i.id
         if t == 0:
@@ -98,8 +99,8 @@ class Foo:
         self.dfs(ans, cnt + 1)
 
     def __init__(self, pre_learning_steps):
-        self.generator = MakeBubble(input_generators.TestSimpleSteps, 3,2)
-        tp_level_one_settings = TemporalSettings(region_size=6, column_size=4, initial_permanence=0.5,
+        self.generator = MakeBubble(input_generators.TestSimpleSteps, 3,1)
+        tp_level_one_settings = TemporalSettings(region_size=3, column_size=2, initial_permanence=0.5,
                                                  dendrite_activate_threshold=2, dendrite_permanence_inc_delta=0.02,
                                                  dendrite_permanence_dec_delta=-0.1,
                                                  passive_time_to_active_threshold=1000,
@@ -114,6 +115,7 @@ class Foo:
         tp_level_one_settings.dendrite_permanence_dec_delta = tp_level_one_settings.dendrite_permanence_inc_delta = 0.0
         tp_level_one_settings.passive_time_to_active_threshold = 10000000000000000000
 
+        # получаем список всех дендритов
         dendrite_id_cnt = 0
         self.id_to_dendrite_map = {}
         self.id_to_Cell = {}
@@ -232,7 +234,7 @@ class Foo:
             # print("----" * 5)
 
 def main():
-    f = Foo(1000)
+    f = Foo(20)
     # for i in range(10000):
     #     f.move()
 
