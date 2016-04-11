@@ -1,9 +1,12 @@
+import sys
 from apps.settings import TemporalSettings
 from gens.make_bubble import MakeBubble
 from gens import input_generators
 from temporalPooler.htm__region import Region
-from dendrite_graph.draw_graph_pygraphviz import draw_graph as draw_graph_pg
-
+if sys.platform == "linux":
+    from dendrite_graph.draw_graph_pygraphviz import draw_graph as draw_graph_pg
+else:
+    from dendrite_graph.draw_graph_vis import draw_graph as draw_graph_vis
 
 class Foo:
     class Chain:
@@ -32,6 +35,7 @@ class Foo:
             res += str(i) + "\n"
         return res
 
+
     def dfs_chain(self, t, chain):
         if t.id in self.graph_used_vertex:
             return
@@ -52,6 +56,7 @@ class Foo:
             if cnt == 1:
                 self.dfs_chain(to, chain)
 
+    #поиск в глубину
     def dfs(self, state, cnt=0):
         size = self.tp_level_one.temporal_settings.region_size
 
@@ -132,14 +137,14 @@ class Foo:
         self.graph_edges = []
 
         for current in self.dendrites:
-            print(current.position_x_y)
+            print("id"+str(current.id)+":"+str(current.position_x_y))
             active_cells = set()
             for i in current.synapses:
                 if i.permanence > tp_level_one_settings.synapse_threshold:
                     active_cells.add(i.id_to)
             if len(active_cells) < tp_level_one_settings.dendrite_activate_threshold:
                 continue
-            print(active_cells)
+            print("acells:"+str(active_cells))
             ans = []
             for den in self.dendrites:
                 q = 0
@@ -152,7 +157,10 @@ class Foo:
             for t in ans:
                 print(t.position_x_y)
             self.dfs(ans)
-        draw_graph_pg("refactoring", self.edges)
+        if sys.platform == "linux":
+            draw_graph_pg("refactoring", self.edges)
+        else:
+            draw_graph_vis("out.html", self.edges)
 
         self.graph_used_vertex = set()
         self.chains = []
@@ -193,7 +201,7 @@ class Foo:
             s = ""
             for j in i.a:
                 s += "[" + self.make_string(j.id) + "]"
-            print(s)
+            print("chain"+str(s))
 
         print("----" * 9)
 
@@ -249,8 +257,8 @@ class Foo:
             # print("----" * 5)
             # print("cur:", cur)
             # for i in self.chains:
-            # for j in i.a:
-            # print(j.id)
+            #     for j in i.a:
+            #         print(j.id)
             # print("----" * 5)
 
 
