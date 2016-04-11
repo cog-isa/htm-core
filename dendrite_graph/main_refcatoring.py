@@ -94,7 +94,7 @@ class Foo:
 
     def __init__(self, pre_learning_steps):
         self.generator = MakeBubble(input_generators.TestSimpleSteps, 3, 2)
-        tp_level_one_settings = TemporalSettings(region_size=6, column_size=1, initial_permanence=0.5,
+        tp_level_one_settings = TemporalSettings(region_size=6, column_size=4, initial_permanence=0.5,
                                                  dendrite_activate_threshold=2, dendrite_permanence_inc_delta=0.02,
                                                  dendrite_permanence_dec_delta=-0.1,
                                                  passive_time_to_active_threshold=1000,
@@ -113,6 +113,7 @@ class Foo:
         self.id_to_dendrite_map = {}
         self.id_to_Cell = {}
         self.dendrites = []
+
         for i, I in enumerate(self.tp_level_one.columns):
             for j, J in enumerate(I):
                 for cell, Cell in enumerate(self.tp_level_one.columns[i][j].cells):
@@ -199,6 +200,18 @@ class Foo:
         self.tp_level_one.temporal_settings.dendrite_permanence_dec_delta = 0
         self.tp_level_one.temporal_settings.dendrite_permanence_inc_delta = 0
         self.tp_level_one.temporal_settings.initial_permanence = 0
+        self.column_dendrite_dependencies = {}
+
+        for i, I in enumerate(self.tp_level_one.columns):
+            for j, J in enumerate(I):
+                for cell, Cell in enumerate(self.tp_level_one.columns[i][j].cells):
+                    for dendrite_left, DendriteLeft in enumerate(Cell.dendrites):
+                        if DendriteLeft.id not in self.column_dendrite_dependencies.keys():
+                            self.column_dendrite_dependencies[DendriteLeft.id] = set()
+                        for cellRight, CellRight in enumerate(self.tp_level_one.columns[i][j].cells):
+                            for dendrite_right, DendriteRight in enumerate(CellRight.dendrites):
+                                if DendriteLeft.id != DendriteRight.id:
+                                    self.column_dendrite_dependencies[DendriteLeft.id].add(DendriteRight.id)
 
     def move(self):
         self.tp_level_one.step_forward(self.generator.get_data())
@@ -207,21 +220,39 @@ class Foo:
         for i in self.dendrites:
             if i.active:
                 cur |= 2 ** i.id
+                # print(2 ** i.id)
+
+        # создаем битовый вектор в котором хранится информация о том, какие дендриты не могут быть в данной комбинации
+        reverse_bit_vector = 0
+
+        for i in self.dendrites:
+            if i.active:
+                # print(self.column_dendrite_dependencies.keys())
+                # print(i.id)
+                for j, J in enumerate(self.column_dendrite_dependencies[i.id]):
+                    reverse_bit_vector |= 2 ** J
         f = False
+        if cur & reverse_bit_vector:
+            raise KeyError("Конфликт текущего дендрита и активируемого", cur, reverse_bit_vector, cur&reverse_bit_vector, self.column_dendrite_dependencies[cur&reverse_bit_vector])
         for i in self.chains:
             for j in i.a:
-                if j.id == cur:
+                state_id = j.id
+                state_id |= reverse_bit_vector
+                state_id ^= reverse_bit_vector
+                if state_id == cur:
                     print("found:", cur)
                     f = True
+
         if not f:
             # print()
-            print("not found")
+            print("not found", cur)
             # print("----" * 5)
             # print("cur:", cur)
             # for i in self.chains:
-            #     for j in i.a:
-            #         print(j.id)
+            # for j in i.a:
+            # print(j.id)
             # print("----" * 5)
+
 
 def main():
     f = Foo(1000)
