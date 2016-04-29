@@ -448,7 +448,7 @@ class SequenceLoader:
         print()
 
     def get_data(self):
-        return self.a[self.cnt]
+        return self.a[self.cnt % len(self.a)]
 
 
 if __name__ == "__main__":
