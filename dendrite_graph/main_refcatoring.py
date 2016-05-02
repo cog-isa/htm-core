@@ -257,7 +257,7 @@ class Foo:
                 state_id |= reverse_bit_vector
                 state_id ^= reverse_bit_vector
                 if state_id == cur:
-                    my_state = cur
+                    my_state = i.id
                     if my_state not in self.my_states:
                         self.my_states[my_state] = len(self.my_states)
                     # проверяем умещается ли у нас выход для второго слоя
