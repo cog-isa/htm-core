@@ -1,0 +1,8 @@
+2016-08-23 14:46:17,264       INFO Logger initialized
+2016-08-23 14:46:17,264       INFO Importing tasks from data/sample/raw/ to data/sample/imported/
+2016-08-23 14:46:17,264       INFO Loading task from xml data/sample/raw/1.xml
+2016-08-23 14:46:17,265       INFO Task data/sample/raw/1.xml loaded
+2016-08-23 14:46:17,266       INFO Saving 1 to compact
+2016-08-23 14:46:17,267       INFO Saved task data/sample/imported/paths/1.pickle
+2016-08-23 14:46:17,267       INFO Imported 0 tasks
+2016-08-23 14:46:17,267       INFO Imported tasks from data/sample/raw/ to data/sample/imported/
